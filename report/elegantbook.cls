@@ -491,4 +491,844 @@
   \newcommand{\axiomname}{Assioma}
   \newcommand{\postulatename}{Postulato}
   \newcommand{\lemmaname}{Lemma}
-  \newcommand{ç´¶‰ËkºwµçUÑ•ÈÍ•ÀôÁÁÑt…Ğ€¡q±¥¹•İ¥‘Ñ µİ¥‘Ñ °À¤ì(€€€€€€€€€qÑ•áÑ½±½ÉíÑ¡¥É‘õì‘qÍÁ…‘•ÍÕ¥Ğ‘õôíõô±ô(€€”q¹•İÑ‰Ñ¡•½É•µm…ÕÑ¼½Õ¹Ñ•È±¹Õµ‰•Èİ¥Ñ¡¥¸õ¡…ÁÑ•Éuí‘•™¥¹¥Ñ¥½¹õíq‘•™¥¹¥Ñ¥½¹¹…µ•õí‘•™ÍÑå±•õí‘•™ô(€q•±…É•Q½±½É	½ám…ÕÑ¼½Õ¹Ñ•È±¹Õµ‰•Èİ¥Ñ¡¥¸õq19QÑ¡µ¹Ñuí‘•™¥¹¥Ñ¥½¹õìœ¼Ñq±…‰•°œõì(€€€½µµ½¸±‘•™ÍÑå±”°(€€€%™Y…±Õ•QõìŒÅô(€€€€€íÑ¥Ñ±”õíq‘•™¥¹¥Ñ¥½¹¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Ép€ ŒÄ¥õô(€€€€€ì(€€€€€€€%™Y…±Õ•QõìŒÉô€(€€€€€€€€€íÑ¥Ñ±”õíq‘•™¥¹¥Ñ¥½¹¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Ép€ ŒÈ¥õô(€€€€€€€€€íÑ¥Ñ±”õq‘•™¥¹¥Ñ¥½¹¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Éô(€€€€€ô°(€€€%™	½½±•…¹QõìŒÍõí±…‰•°ôŒÑõí±…‰•°õí‘•˜èŒÑõõô(€€”q¹•İÑ‰Ñ¡•½É•µm…ÕÑ¼½Õ¹Ñ•È±¹Õµ‰•Èİ¥Ñ¡¥¸õ¡…ÁÑ•ÉuíÑ¡•½É•µõíqÑ¡•½É•µ¹…µ•õíÑ¡µÍÑå±•õíÑ¡µô(€q•±…É•Q½±½É	½ám…ÕÑ¼½Õ¹Ñ•È±¹Õµ‰•Èİ¥Ñ¡¥¸õq19QÑ¡µ¹ÑuíÑ¡•½É•µõìœ¼Ñq±…‰•°œõì(€€€½µµ½¸±Ñ¡µÍÑå±”°(€€€%™Y…±Õ•QõìŒÅô(€€€€€íÑ¥Ñ±”õíqÑ¡•½É•µ¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Ép€ ŒÄ¥õô(€€€€€ì(€€€€€€€%™Y…±Õ•QõìŒÉô€(€€€€€€€€€íÑ¥Ñ±”õíqÑ¡•½É•µ¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Ép€ ŒÈ¥õô(€€€€€€€€€íÑ¥Ñ±”õqÑ¡•½É•µ¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Éô(€€€€€ô°(€€€%™	½½±•…¹QõìŒÍõí±…‰•°ôŒÑõí±…‰•°õíÑ¡´èŒÑõõô(€€”q¹•İÑ‰Ñ¡•½É•µm…ÕÑ¼½Õ¹Ñ•È±¹Õµ‰•Èİ¥Ñ¡¥¸õ¡…ÁÑ•ÉuíÁ½ÍÑÕ±…Ñ•õíqÁ½ÍÑÕ±…Ñ•¹…µ•õíÑ¡µÍÑå±•õíÁ½Íô(€q•±…É•Q½±½É	½ám…ÕÑ¼½Õ¹Ñ•È±¹Õµ‰•Èİ¥Ñ¡¥¸õq19QÑ¡µ¹ÑuíÁ½ÍÑÕ±…Ñ•õìœ¼Ñq±…‰•°œõì(€€€½µµ½¸±Ñ¡µÍÑå±”°(€€€%™Y…±Õ•QõìŒÅô(€€€€€íÑ¥Ñ±”õíqÁ½ÍÑÕ±…Ñ•¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Ép€ ŒÄ¥õô(€€€€€ì(€€€€€€€%™Y…±Õ•QõìŒÉô€(€€€€€€€€€íÑ¥Ñ±”õíqÁ½ÍÑÕ±…Ñ•¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Ép€ ŒÈ¥õô(€€€€€€€€€íÑ¥Ñ±”õqÁ½ÍÑÕ±…Ñ•¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Éô(€€€€€ô°(€€€%™	½½±•…¹QõìŒÍõí±…‰•°ôŒÑõí±…‰•°õíÁ½ÌèŒÑõõô(€€”q¹•İÑ‰Ñ¡•½É•µm…ÕÑ¼½Õ¹Ñ•È±¹Õµ‰•Èİ¥Ñ¡¥¸õ¡…ÁÑ•Éuí…á¥½µõíq…á¥½µ¹…µ•õíÑ¡µÍÑå±•õí…á¥ô(€q•±…É•Q½±½É	½ám…ÕÑ¼½Õ¹Ñ•È±¹Õµ‰•Èİ¥Ñ¡¥¸õq19QÑ¡µ¹Ñuí…á¥½µõìœ¼Ñq±…‰•°œõì(€€€½µµ½¸±Ñ¡µÍÑå±”°(€€€%™Y…±Õ•QõìŒÅô(€€€€€íÑ¥Ñ±”õíq…á¥½µ¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Ép€ ŒÄ¥õô(€€€€€ì(€€€€€€€%™Y…±Õ•QõìŒÉô€(€€€€€€€€€íÑ¥Ñ±”õíq…á¥½µ¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Ép€ ŒÈ¥õô(€€€€€€€€€íÑ¥Ñ±”õq…á¥½µ¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Éô(€€€€€ô°(€€€%™	½½±•…¹QõìŒÍõí±…‰•°ôŒÑõí±…‰•°õí…á¤èŒÑõõô(€€”q¹•İÑ‰Ñ¡•½É•µm…ÕÑ¼½Õ¹Ñ•È±¹Õµ‰•Èİ¥Ñ¡¥¸õ¡…ÁÑ•Éuí½É½±±…Éåõíq½É½±±…Éå¹…µ•õíÑ¡µÍÑå±•õí½Éô(€q•±…É•Q½±½É	½ám…ÕÑ¼½Õ¹Ñ•È±¹Õµ‰•Èİ¥Ñ¡¥¸õq19QÑ¡µ¹Ñuí½É½±±…Éåõìœ¼Ñq±…‰•°œõì(€€€½µµ½¸±Ñ¡µÍÑå±”°(€€€%™Y…±Õ•QõìŒÅô(€€€€€íÑ¥Ñ±”õíq½É½±±…Éå¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Ép€ ŒÄ¥õô(€€€€€ì(€€€€€€€%™Y…±Õ•QõìŒÉô€(€€€€€€€€€íÑ¥Ñ±”õíq½É½±±…Éå¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Ép€ ŒÈ¥õô(€€€€€€€€€íÑ¥Ñ±”õq½É½±±…Éå¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Éô(€€€€€ô°(€€€%™	½½±•…¹QõìŒÍõí±…‰•°ôŒÑõí±…‰•°õí½ÈèŒÑõõô(€€”q¹•İÑ‰Ñ¡•½É•µm…ÕÑ¼½Õ¹Ñ•È±¹Õµ‰•Èİ¥Ñ¡¥¸õ¡…ÁÑ•Éuí±•µµ…õíq±•µµ…¹…µ•õíÑ¡µÍÑå±•õí±•µô(€q•±…É•Q½±½É	½ám…ÕÑ¼½Õ¹Ñ•È±¹Õµ‰•Èİ¥Ñ¡¥¸õq19QÑ¡µ¹Ñuí±•µµ…õìœ¼Ñq±…‰•°œõì(€€€½µµ½¸±Ñ¡µÍÑå±”°(€€€%™Y…±Õ•QõìŒÅô(€€€€€íÑ¥Ñ±”õíq±•µµ…¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Ép€ ŒÄ¥õô(€€€€€ì(€€€€€€€%™Y…±Õ•QõìŒÉô€(€€€€€€€€€íÑ¥Ñ±”õíq±•µµ…¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Ép€ ŒÈ¥õô(€€€€€€€€€íÑ¥Ñ±”õq±•µµ…¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Éô(€€€€€ô°(€€€%™	½½±•…¹QõìŒÍõí±…‰•°ôŒÑõí±…‰•°õí±•´èŒÑõõô(€€”q¹•İÑ‰Ñ¡•½É•µm…ÕÑ¼½Õ¹Ñ•È±¹Õµ‰•Èİ¥Ñ¡¥¸õ¡…ÁÑ•ÉuíÁÉ½Á½Í¥Ñ¥½¹õíqÁÉ½Á½Í¥Ñ¥½¹¹…µ•õíÁÉ½ÁÍÑå±•õíÁÉ½ô(€q•±…É•Q½±½É	½ám…ÕÑ¼½Õ¹Ñ•È±¹Õµ‰•Èİ¥Ñ¡¥¸õq19QÑ¡µ¹ÑuíÁÉ½Á½Í¥Ñ¥½¹õìœ¼Ñq±…‰•°œõì(€€€½µµ½¸±ÁÉ½ÁÍÑå±”°(€€€%™Y…±Õ•QõìŒÅô(€€€€€íÑ¥Ñ±”õíqÁÉ½Á½Í¥Ñ¥½¹¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Ép€ ŒÄ¥õô(€€€€€ì(€€€€€€€%™Y…±Õ•QõìŒÉô€(€€€€€€€€€íÑ¥Ñ±”õíqÁÉ½Á½Í¥Ñ¥½¹¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Ép€ ŒÈ¥õô(€€€€€€€€€íÑ¥Ñ±”õqÁÉ½Á½Í¥Ñ¥½¹¹…µ•ùqÑ¡•Ñ‰½Õ¹Ñ•Éô(€€€€€ô°(€€€%™	½½±•…¹QõìŒÍõí±…‰•°ôŒÑõí±…‰•°õíÁÉ¼èŒÑõõô)õíqÉ•±…áô(()q¥™‘•™ÍÑÉ¥¹íq19Qµ½‘•õíÍ¥µÁ±•õì(€q±•Ñq½Á•¹‰½áqÉ•±…à(€qI•ÅÕ¥É•A…­…•í…µÍÑ¡µô(€q±•ÑqÁÉ½½™qÉ•±…à(€€”q±•ÑqÁÉ½½™¹…µ•qÉ•±…à(€q±•Ñq•¹‘ÁÉ½½™qÉ•±…à((€€”‘•±…É”„¹•ÜÑ¡•½É•´ÍÑå±”(€q¹•İÑ¡•½É•µÍÑå±•í‘•™ÍÑå±•õìÍÁÑõìÍÁÑõíq¥ÑÍ¡…Á•õì´ÍÁÑõì(€€€q‰™Í•É¥•Íq½±½Éíµ…¥¹õõíõìÀ¸Õ•µõíqÑ¡µ¹…µ•ìŒÅôqÑ¡µ¹Õµ‰•ÉìŒÉôqÑ¡µ¹½Ñ•ì ŒÌ¥õô(€q¹•İÑ¡•½É•µÍÑå±•íÑ¡µÍÑå±•õìÍÁÑõìÍÁÑõíq¥ÑÍ¡…Á•õì´ÍÁÑõì(€€€q‰™Í•É¥•Íq½±½ÉíÍ•½¹‘õõíõìÀ¸Õ•µõíqÑ¡µ¹…µ•ìŒÅôqÑ¡µ¹Õµ‰•ÉìŒÉôqÑ¡µ¹½Ñ•ì ŒÌ¥õô(€q¹•İÑ¡•½É•µÍÑå±•íÁÉ½ÍÑå±•õìÍÁÑõìÍÁÑõíq¥ÑÍ¡…Á•õì´ÍÁÑõì(€€€q‰™Í•É¥•Íq½±½ÉíÑ¡¥É‘õõíõìÀ¸Õ•µõíqÑ¡µ¹…µ•ìŒÅôqÑ¡µ¹Õµ‰•ÉìŒÉôqÑ¡µ¹½Ñ•ì ŒÌ¥õô(((€qÑ¡•½É•µÍÑå±•í‘•™ÍÑå±•ô€”‘•™¥¹¥Ñ¥½¸ÍÑå±”(€q¹•İÑ¡•½É•µí‘•™¥¹¥Ñ¥½¹õíq‘•™¥¹¥Ñ¥½¹¹…µ•õmq19QÑ¡µ¹Ñt((€qÑ¡•½É•µÍÑå±•íÑ¡µÍÑå±•ô€•Ñ¡•½É•´ÍÑå±”(€q¹•İÑ¡•½É•µíÑ¡•½É•µõíqÑ¡•½É•µ¹…µ•õmq19QÑ¡µ¹Ñt(€q¹•İÑ¡•½É•µí±•µµ…õíq±•µµ…¹…µ•õmq19QÑ¡µ¹Ñt(€q¹•İÑ¡•½É•µí½É½±±…Éåõíq½É½±±…Éå¹…µ•õmq19QÑ¡µ¹Ñt(€q¹•İÑ¡•½É•µíÁ½ÍÑÕ±…Ñ•õíqÁ½ÍÑÕ±…Ñ•¹…µ•õmq19QÑ¡µ¹Ñt(€q¹•İÑ¡•½É•µí…á¥½µõíq…á¥½µ¹…µ•õmq19QÑ¡µ¹Ñt((€qÑ¡•½É•µÍÑå±•íÁÉ½ÍÑå±•ô€”ÁÉ½Á½Í¥Ñ¥½¸ÍÑå±”(€q¹•İÑ¡•½É•µíÁÉ½Á½Í¥Ñ¥½¹õíqÁÉ½Á½Í¥Ñ¥½¹¹…µ•õmq19QÑ¡µ¹Ñt)õíqÉ•±…áô((”µ…¥»¾ò!É••¸µ‘•˜¤è•á…µÁ±”•á•É¥Í”ÁÉ½‰±•´Í½±ÕÑ¥½¸(”Í•½¹“¾ò!½É…¹”µÑ¡·¾ò$èÁÉ½½˜¹½Ñ”É•µ…É¬€€(”Ñ¡¥É“¾ò!‰±Õ”µÁÉ½À¤è€…ÍÍÕµÁÑ¥½¹ÌÁÉ½Á•ÉÑä½¹±ÕÍ¥½¸ÕÍÑ½´((””á…µÁ±”İ¥Ñ ½Õ¹Ñ•È)q¹•İ½Õ¹Ñ•Éí•á…µõm¡…ÁÑ•Ét)qÍ•Ñ½Õ¹Ñ•Éí•á…µõìÁô)qÉ•¹•İ½µµ…¹‘íqÑ¡••á…µõíqÑ¡•¡…ÁÑ•È¹q…É…‰¥í•á…µõô)q¹•İ•¹Ù¥É½¹µ•¹Ñí•á…µÁ±•õlÅumuì(€qÉ•™ÍÑ•Á½Õ¹Ñ•Éí•á…µô(€qÁ…Éq¹½¥¹‘•¹ÑqÑ•áÑ‰™íq½±½Éíµ…¥¹õíq•á…µÁ±•¹…µ•ôqÑ¡••á…´€ŒÄõqÉµ™…µ¥±åõì(€qÁ…Éq¥¹½É•ÍÁ…•Í…™Ñ•É•¹‘ô((””á•É¥Í”İ¥Ñ ½Õ¹Ñ•È)q¹•İ½Õ¹Ñ•Éí•á•Éõm¡…ÁÑ•Ét)qÍ•Ñ½Õ¹Ñ•Éí•á•ÉõìÁô)qÉ•¹•İ½µµ…¹‘íqÑ¡••á•ÉõíqÑ¡•¡…ÁÑ•È¹q…É…‰¥í•á•Éõô)q¹•İ•¹Ù¥É½¹µ•¹Ñí•á•É¥Í•õlÅumuì(€qÉ•™ÍÑ•Á½Õ¹Ñ•Éí•á•Éô(€qÁ…Éq¹½¥¹‘•¹Ñqµ…­•‰½ál´ÍÁÑumÉuì(€€€qÍÉ¥ÁÑÍ¥é•q½±½ÉíÉ•„äÁõq!…¹‘A•¹¥±1•™ÑqÅÕ…‘ô(€€€qÑ•áÑ‰™íq½±½Éíµ…¥¹õíq•á•É¥Í•¹…µ•ôqÑ¡••á•È€ŒÄõqÉµ™…µ¥±åõì(€€€qÁ…Éq¥¹½É•ÍÁ…•Í…™Ñ•É•¹‘ô((””AÉ½‰±•´İ¥Ñ ½Õ¹Ñ•È)q¹•İ½Õ¹Ñ•ÉíÁÉ½‰õm¡…ÁÑ•Ét)qÍ•Ñ½Õ¹Ñ•ÉíÁÉ½‰õìÁô)qÉ•¹•İ½µµ…¹‘íqÑ¡•ÁÉ½‰õíqÑ¡•¡…ÁÑ•È¹q…É…‰¥íÁÉ½‰õô)q¹•İ•¹Ù¥É½¹µ•¹ÑíÁÉ½‰±•µõlÅumuì(€qÉ•™ÍÑ•Á½Õ¹Ñ•ÉíÁÉ½‰ô(€qÁ…Éq¹½¥¹‘•¹ÑqÑ•áÑ‰™íq½±½Éíµ…¥¹õíqÁÉ½‰±•µ¹…µ•ôqÑ¡•ÁÉ½ˆ€ŒÄõqÉµ™…µ¥±åõì(€qÁ…Éq¥¹½É•ÍÁ…•Í…™Ñ•É•¹‘ô()q¹•İ•¹Ù¥É½¹µ•¹Ñí¹½Ñ•õì(€qÁ…Éq¹½¥¹‘•¹Ñqµ…­•‰½ál´ÍÁÑumÉuì(€€€qÍÉ¥ÁÑÍ¥é•q½±½ÉíÉ•„äÁõqÑ•áÑ‘‰•¹‘qÅÕ…‘ô(€€€qÑ•áÑ‰™íq½±½ÉíÍ•½¹‘õq¹½Ñ•¹…µ•ôq¥ÑÍ¡…Á•õíqÁ…Éô()q¹•İ•¹Ù¥É½¹µ•¹ÑíÁÉ½½™õì(€qÁ…Éq¹½¥¹‘•¹ÑqÑ•áÑ‰™íq½±½ÉíÍ•½¹‘õqÁÉ½½™¹…µ•píô(€q½±½Éí‰±…¬„äÁõq™Íõì(€€”q¡™¥±°‘q	½à‘qÅÕ…(€qÁ…Éô()q¹•İ•¹Ù¥É½¹µ•¹ÑíÍ½±ÕÑ¥½¹õíqÁ…Éq¹½¥¹‘•¹ÑqÑ•áÑ‰™íq½±½Éíµ…¥¹õqÍ½±ÕÑ¥½¹¹…µ•ôq¥ÑÍ¡…Á•õíqÁ…Éô)q¹•İ•¹Ù¥É½¹µ•¹ÑíÉ•µ…É­õíq¹½¥¹‘•¹ÑqÑ•áÑ‰™íq½±½ÉíÍ•½¹‘õqÉ•µ…É­¹…µ•õõíqÁ…Éô)q¹•İ•¹Ù¥É½¹µ•¹Ñí…ÍÍÕµÁÑ¥½¹õíqÁ…Éq¹½¥¹‘•¹ÑqÑ•áÑ‰™íq½±½ÉíÑ¡¥É‘õq…ÍÍÕµÁÑ¥½¹¹…µ•ôq¥ÑÍ¡…Á•õíqÁ…Éô)q¹•İ•¹Ù¥É½¹µ•¹Ñí½¹±ÕÍ¥½¹õíqÁ…Éq¹½¥¹‘•¹ÑqÑ•áÑ‰™íq½±½ÉíÑ¡¥É‘õq½¹±ÕÍ¥½¹¹…µ•ôq¥ÑÍ¡…Á•õíqÁ…Éô)q¹•İ•¹Ù¥É½¹µ•¹ÑíÁÉ½Á•ÉÑåõíqÁ…Éq¹½¥¹‘•¹ÑqÑ•áÑ‰™íq½±½ÉíÑ¡¥É‘õqÁÉ½Á•ÉÑå¹…µ•ôq¥ÑÍ¡…Á•õíqÁ…Éô)q¹•İ•¹Ù¥É½¹µ•¹ÑíÕÍÑ½µõlÅuíqÁ…Éq¹½¥¹‘•¹ÑqÑ•áÑ‰™íq½±½ÉíÑ¡¥É‘ô€ŒÅôq¥ÑÍ¡…Á•õíqÁ…Éô()qI•ÅÕ¥É•A…­…•íµÕ±Ñ¥½±ô)qÑ‰Í•Ñì(€¥¹ÑÉ½‘ÕÑ¥½¹ÍÑä¼¹ÍÑå±”õì(€€€•¹¡…¹•°(€€€‰É•…­…‰±”°(€€€½±‰…¬õÍÑÉÕÑÕÉ•½±½È„ÄÀ°(€€€½±™É…µ”õÍÑÉÕÑÕÉ•½±½È°(€€€™½¹ÑÑ¥Ñ±”õq‰™Í•É¥•Ì°(€€€½±‰…­Ñ¥Ñ±”õÍÑÉÕÑÕÉ•½±½È°(€€€™½¹ÑÕÁÁ•Èõq¥ÑÍ¡…Á”°(€€€…ÑÑ… ‰½á•Ñ¥Ñ±”Ñ¼Ñ½À•¹Ñ•ÈõíåÍ¡¥™Ğô´Íµ´±åÍ¡¥™ÑÑ•áĞô´Åµµô°(€€€‰½áÉÕ±”ôÁÁĞ°(€€€Ñ½ÁÉÕ±”ôÀ¸ÕÁĞ°(€€€‰½ÑÑ½µÉÕ±”ôÀ¸ÕÁĞ°(€€€Ñ½ÀôáÁĞ°(€€€‰•™½É”Í­¥ÀôáÁĞ°(€€€Í¡…ÉÀ½É¹•ÉÌ(€ô°)ô()q¹•İ•¹Ù¥É½¹µ•¹Ñí¥¹ÑÉ½‘ÕÑ¥½¹õlÅumq¥¹ÑÉ½‘ÕÑ¥½¹¹…µ•uì(€q‰•¥¹íÑ½±½É‰½áõm¥¹ÑÉ½‘ÕÑ¥½¹ÍÑä±Ñ¥Ñ±”õìŒÅõt(€€€q‰•¥¹íµÕ±Ñ¥½±ÍõìÉô(€€€€€q‰•¥¹í¥Ñ•µ¥é•õm±…‰•°õqÑ•áÑ½±½ÉíÍÑÉÕÑÕÉ•½±½ÉõíqÕÁÍ¡…Á•qÍÉ¥ÁÑÍ¥é•qMÅÕ…É•M¡…‘½İ	½ÑÑ½µI¥¡Ñõuõì(€€€€€q•¹‘í¥Ñ•µ¥é•ô(€€€q•¹‘íµÕ±Ñ¥½±Íô(€q•¹‘íÑ½±½É‰½áõô()qI•ÅÕ¥É•A…­…•í…‘™½É¹ô()q¹•İ•¹Ù¥É½¹µ•¹ÑíÁÉ½‰±•µÍ•ÑõlÅumqá¡…ÁÑ•ÉÑ¥Ñ±•ùq•á•É¥Í•¹…µ•uì(€qÙÍÁ…”©ìÄÁÁÑô(€q‰•¥¹í•¹Ñ•Éô(€€€qÁ¡…¹Ñ½µÍ•Ñ¥½¹q…‘‘½¹Ñ•¹ÑÍ±¥¹•íÑ½õíÍ•Ñ¥½¹õíqÑ•á½ÉÁ‘™ÍÑÉ¥¹íqá¡…ÁÑ•ÉÑ¥Ñ±•ùq•á•É¥Í•¹…µ•õíq•á•É¥Í•¹…µ•õô(€€€€”qµ…É­‰½Ñ¡ìŒÅõíqÉ¥¡Ñµ…É­ô(€€€qµ…É­É¥¡ÑìŒÅô(€€€qÑ•áÑ½±½ÉíÍÑÉÕÑÕÉ•½±½Éõíq1…É•q‰™Í•É¥•Íq…‘™ÑÉ¥Á±•™±½ÕÉ¥Í¡±•™ÑøŒÅùq…‘™ÑÉ¥Á±•™±½ÕÉ¥Í¡É¥¡Ñô(€q•¹‘í•¹Ñ•Éô(€q‰•¥¹í•¹Õµ•É…Ñ•õõì(€q•¹‘í•¹Õµ•É…Ñ•õô()q‘•™qÉ•±Í•íq•¹‘É½ÕÀÍÑ…ÉÑô)q‘•™q•¹‘É•±Í•í•¹‘q‰•¥¹É½ÕÁq‘•˜qÕÉÉ•¹Ù¥ÈíÉ•±Í•õô()q¥™‘•™ÍÑÉ¥¹íq19QÉ•ÍÕ±Ñõí¹½…¹Íİ•Éõì(€qÑ	•¥¹½Õµ•¹Ñì(€q•á±Õ‘•½µµ•¹ÑíÍ½±ÕÑ¥½¹ô(€q•á±Õ‘•½µµ•¹ÑíÁÉ½½™ô(€q•á±Õ‘•½µµ•¹Ñí¥¹±¥¹•ô(€ô)õíqÉ•±…áô(((—¦†×r'¦†×¢h)qI•ÅÕ¥É•A…­…•í™…¹å¡‘Éô)q™…¹å¡™íô(()q™…¹å™½½Ñmuíq½±½ÉíÍÑÉÕÑÕÉ•½±½ÉõqÍµ…±±qÑ¡•Á…•ô)q¥™Ñİ½Í¥‘”(€q™…¹å¡•…‘m1uíq½±½ÉíÍÑÉÕÑÕÉ•½±½Éõq¹½Éµ…±q±•™Ñµ…É­ô(€q™…¹å¡•…‘m=Iuíq½±½ÉíÍÑÉÕÑÕÉ•½±½Éõq¹½Éµ…±qÉ¥¡Ñµ…É­ô)q•±Í”(€q™…¹å¡•…‘mIuíq½±½ÉíÍÑÉÕÑÕÉ•½±½Éõq¹½Éµ…±qÉ¥¡Ñµ…É­ô)q™¤()qÉ•¹•İ½µµ…¹‘íq¡•…‘ÉÕ±•õíq½±½ÉíÍÑÉÕÑÕÉ•½±½Éõq¡ÉÕ±”İ¥‘Ñ¡qÑ•áÑİ¥‘Ñ¡ô)qÁ…•ÍÑå±•í™…¹åô)qÉ•¹•İ½µµ…¹‘íq¡•…‘ÉÕ±•İ¥‘Ñ¡õìÅÁÑô(”qÉ•¹•İ½µµ…¹‘íq¡•…‘ÉÕ±•õíô)q™…¹åÁ…•ÍÑå±•íÁ±…¥¹õíqÉ•¹•İ½µµ…¹‘íq¡•…‘ÉÕ±•İ¥‘Ñ¡õìÁÁÑõq™…¹å¡™íõqÉ•¹•İ½µµ…¹‘íq¡•…‘ÉÕ±•õíõô)qÉ•¹•İ½µµ…¹‘íqÍ•Ñ¥½¹µ…É­õlÅuíqµ…É­É¥¡ÑíqÑ¡•Í•Ñ¥½¹p°€ŒÅõíõô)qÉ•¹•İ½µµ…¹‘íq¡…ÁÑ•Éµ…É­õlÅuíqµ…É­‰½Ñ¡íqá¡…ÁÑ•ÉÑ¥Ñ±•p°€ŒÅõíõô(()qÉ•¹•İ½µµ…¹©íqµ…­•Ñ¥Ñ±•õì”)q¡åÁ•ÉÍ•ÑÕÁíÁ…•…¹¡½Èõ™…±Í•ô)qÁ…•¹Õµ‰•É¥¹í±Á¡ô)q‰•¥¹íÑ¥Ñ±•Á…•ô(€q¹•İ•½µ•ÑÉåíµ…É¥¸€ô€Á¥¹ô(€qÁ…É¥¹‘•¹ĞôÁÁĞ(€q¥™‘•™ÍÑÉ¥¹íq19Q‘•Ù¥•õí¹½Éµ…±õì(€€€q¥™Í¹…µ”½Ù•Éq•¹‘Í¹…µ”(€€€€€q¥¹±Õ‘•É…Á¡¥Ímİ¥‘Ñ õq±¥¹•İ¥‘Ñ¡uíq½Ù•Éô(€€€q•±Í”(€€€€€q¥¹±Õ‘•É…Á¡¥Ímİ¥‘Ñ õq±¥¹•İ¥‘Ñ¡uí•á…µÁ±”µ¥µ…•ô(€€€q™¤(€õíqÉ•±…áô(€q¥™‘•™ÍÑÉ¥¹íq19Q‘•Ù¥•õíÁ…‘õì(€€€q¥™Í¹…µ”½Ù•Éq•¹‘Í¹…µ”(€€€€€q¥¹±Õ‘•É…Á¡¥ÍmÑÉ¥´ôÀ€ÈÙ‰À€À€ÈÙ‰À±±¥ÀõÑÉÕ”°İ¥‘Ñ õq±¥¹•İ¥‘Ñ¡uíq½Ù•Éô(€€€q•±Í”(€€€€€q¥¹±Õ‘•É…Á¡¥ÍmÑÉ¥´ôÀ€ÈÙ‰À€À€ÈÙ‰À±±¥ÀõÑÉÕ”°İ¥‘Ñ õq±¥¹•İ¥‘Ñ¡uí•á…µÁ±”µ¥µ…•ô(€€€q™¤(€õíqÉ•±…áô(€qÍ•Ñ±•¹Ñ¡íq™‰½áÍ•ÁõìÁÁÑô(€q½±½É‰½áí½Ù•É±¥¹•½±½Éõíqµ…­•‰½ámq±¥¹•İ¥‘Ñ¡umuíqÍ¡½ÉÑÍÑ…­muíqÙÍÁ…•ìÀ¸Õ¥¹õõõô(€qÙ™¥±°(€qÙÍ­¥À´É•à(€q¡ÍÁ…•ìÉ•µô(€qÁ…É‰½áìÀ¸áqÑ•áÑİ¥‘Ñ¡õì(€€€q‰™Í•É¥•Íq!Õ”€(€€€€€q¥™Í¹…µ”Ñ¥Ñ±•q•¹‘Í¹…µ”qÑ¥Ñ±”q™¤(€€€qÁ…Éô(€qÙ™¥±°(€qÙÍÁ…•ì´Ä¸Áµô(€qÍ•ÑÍÑÉ•Ñ¡ìÈ¸Õô(€q¡ÍÁ…•ìÈ¸Õ•µô(€q‰•¥¹íµ¥¹¥Á…•õmuìÀ¸Øİq±¥¹•İ¥‘Ñ¡ô(€€€íq½±½Éí‘…É­É…åõq‰™Í•É¥•Íq1…É”(€€€€€q¥™Í¹…µ”ÍÕ‰Ñ¥Ñ±•q•¹‘Í¹…µ•qÍÕ‰Ñ¥Ñ±•qqlÉ•áuq™¥ô(€€€q½±½ÉíÉ…åõq¹½Éµ…±Í¥é”(€€€íqÉ•¹•İ½µµ…¹‘íq…ÉÉ…åÍÑÉ•Ñ¡õìÀ¸ØÄáô(€€€q‰•¥¹íÑ…‰Õ±…Éõí±ô(€€€€€€”q¥™Í¹…µ”…ÕÑ¡½Éq•¹‘Í¹…µ”q…ÕÑ¡½É¹…µ”q…ÕÑ¡½Éqqq™¤(€€€€€q¥™áq…ÕÑ¡½Éq•µÁÑåq•±Í•q…ÕÑ¡½É¹…µ•q¹½Éµ…±q…ÕÑ¡½Éqpq™¤(€€€€€q¥™Í¹…µ”¥¹ÍÑ¥ÑÕÑ•q•¹‘Í¹…µ”q¥¹ÍÑ¥ÑÕÑ•¹…µ”q¹½Éµ…±q¥¹ÍÑ¥ÑÕÑ•qpq™¤(€€€€€€”q¥™Í¹…µ”‘…Ñ•q•¹‘Í¹…µ”€q‘…Ñ•qqq™¤(€€€€€q¥™áq‘…Ñ•q•µÁÑåq•±Í•q‘…Ñ•¹…µ•q¹½Éµ…±q‘…Ñ”qpq™¤(€€€€€q¥™Í¹…µ”Ù•ÉÍ¥½¹q•¹‘Í¹…µ”q¹½Éµ…±qÙ•ÉÍ¥½¹¹…µ•qÙ•ÉÍ¥½¹qpq™¤(€€€€€q¥™Í¹…µ”‰¥½¥¹™½q•¹‘Í¹…µ”q¹½Éµ…±q‰¥½¥¹™½qpq™¤(€€€q•¹‘íÑ…‰Õ±…Éõô(€q•¹‘íµ¥¹¥Á…•ô(€q‰•¥¹íµ¥¹¥Á…•õmuìÀ¸Èİq±¥¹•İ¥‘Ñ¡ô(€q‰•¥¹íÑ¥­éÁ¥ÑÕÉ•õmÉ•µ•µ‰•ÈÁ¥ÑÕÉ”±½Ù•É±…åt(€€€q‰•¥¹íÁ™½¹±…å•Éõí‰…­É½Õ¹‘ô(€€€€€q¹½‘•m½Á…¥ÑäôÀ¸à°(€€€€€€€€€€€…¹¡½ÈõÍ½ÕÑ •…ÍĞ°(€€€€€€€€€€€½ÕÑ•ÈÍ•ÀôÁÁĞ°(€€€€€€€€€€€¥¹¹•ÈÍ•ÀôÁÁÑt…Ğ€ ¡ÕÉÉ•¹ĞÁ…”¹Í½ÕÑ •…ÍĞ¤€¬ ´Ä¸Á¥¸°È¸Õ¥¸¤¤ì(€€€€€€€€€€€€€q¥™Í¹…µ”±½½q•¹‘Í¹…µ•q¥¹±Õ‘•É…Á¡¥Ímİ¥‘Ñ ôÙµuíq±½½õq™¥ôì(€€€q•¹‘íÁ™½¹±…å•Éô(€q•¹‘íÑ¥­éÁ¥ÑÕÉ•ô(€q•¹‘íµ¥¹¥Á…•ô(€qÙ™¥±°(€q‰•¥¹í•¹Ñ•Éô(€€€qÍ•ÑÍÑÉ•Ñ¡ìÄ¸Íô(€€€qÁ…É‰½ámÑuìÀ¸İqÑ•áÑİ¥‘Ñ¡õíq•¹Ñ•É¥¹œq¥ÑÍ¡…Á”€(€€€€€q¥™Í¹…µ”•áÑÉ…¥¹™½q•¹‘Í¹…µ•q•áÑÉ…¥¹™½q™¥ô(€q•¹‘í•¹Ñ•Éô(€qÙ™¥±°)q•¹‘íÑ¥Ñ±•Á…•ô)qÉ•ÍÑ½É••½µ•ÑÉä)qÑ¡¥ÍÁ…•ÍÑå±•í•µÁÑåõô(()q¹•İ½µµ…¹‘íq‘½±±…Éõíqµ‰½áíqÑ•áÑ‘½±±…Éõô()qI•ÅÕ¥É•A…­…•í±¥ÍÑ¥¹Íô)qÉ•¹•İ½µµ…¹‘íqÑÑ‘•™…Õ±ÑõíµÑÑô)q±ÍÑ‘•™¥¹•ÍÑå±•íµåÍÑå±•õì(€‰…Í¥ÍÑå±”ô”(€€€qÑÑ™…µ¥±ä(€€€q±ÍÑ¥™‘¥ÍÁ±…åÍÑå±•qÍµ…±±q™¤)ô()q±ÍÑÍ•Ñí‰…Í¥ÍÑå±”õqÑÑ™…µ¥±ä±ÍÑå±”õµåÍÑå±”±‰É•…­±¥¹•ÌõÑÉÕ•ô()q‘•™¥¹•½±½Éí±¥¡ÑÉ•åõíÉ‰õìÀ¸ä°À¸ä°À¸åô)q‘•™¥¹•½±½Éí™É•¹¡Á±ÕµõíI	õìÄäÀ°ÈÀ°àÍô)q±ÍÑÍ•Ñí±…¹Õ…”õm1…Q•auQ•`°(€Ñ•áÍÍÑå±”ô©q½±½Éíİ¥¹•É•‘ô°(€¹Õµ‰•ÉÌõ¹½¹”°(€µ…Ñ¡•Í…Á”õ™…±Í”°(€‰É•…­±¥¹•ÌõÑÉÕ”°(€­•åİ½É‘ÍÑå±”õq½±½Éíİ¥¹•É•‘ô°(€½µµ•¹ÑÍÑå±”õq½±½ÉíÉ…åô°(€•µÁ õí•±•…¹ÑÁ…Á•È±™½¹Ñ•¹Œ±™½¹ÑÍÁ•Œ±á•),±¥Ñ•ÍÑå±”±¥É…5½¹¼±áÕ¹¥½‘”±™¥ÕÉ”±™¥œ±¥µ…”±¥µœ±Ñ…‰±”±¥Ñ•µ¥é”±•¹Õµ•É…Ñ”±Ñ•à±µ¥É½ÑåÁ”±‘•ÍÉ¥ÁÑ¥½¸±Ñ¥µ•Ì±‰½½­Ñ…‰Ì±Ñ…‰Õ±…È±A1…Q•`±a•1…Q•`±ÑåÁ”Å´±	¥‰Q•`±‘•Ù¥”±½±½È±µ½‘”±±…¹œ±…µÍÑ¡´±Ñ½±½É‰½à±Ñ¥Ñ±•ÍÑå±”±¥Ñ”±Ñ•à±±¥ÍÑ¥¹Ì±‰…Í”±µ…Ñ ±Í¡•µ”±Ñ½Œ±•Í¥¹Ğ±¡¥¹•Í•™½¹Ğ±…µÍµ…Ñ ±‰¥‰ÍÑå±”±¹…Ñ‰¥ˆ±Á™½É¹…µ•¹Ñô°(€•µÁ¡ÍÑå±”õíq½±½Éí™É•¹¡Á±Õµõô°(€µ½É•­•åİ½É‘Ìõí•±…É•Måµ‰½±½¹Ğ±M•ÑMåµ‰½±½¹Ğ±Ñ½ÁÉÕ±”±µ¥‘ÉÕ±”±‰½ÑÑ½µÉÕ±”±¥¹ÍÑ¥ÑÕÑ”±Ù•ÉÍ¥½¸±¥¹±Õ‘•É…Á¡¥Ì±Í•Ñµ…¥¹™½¹Ğ±Í•ÑÍ…¹Í™½¹Ğ±Í•Ñµ½¹½™½¹Ğ€±Í•Ñ)-µ…¥¹™½¹Ğ±Í•Ñ)-Í…¹Í™½¹Ğ±Í•Ñ)-µ½¹½™½¹Ğ±I•ÅÕ¥É•A…­…”±™¥É•˜±Ñ…‰É•˜±•µ…¥°±µ…­•Ñ¥Ñ±”±­•åİ½É‘Ì±‘•™¥¹•½±½È±•áÑÉ…¥¹™¼±±½¼±½Ù•È±ÍÕ‰Ñ¥Ñ±”±…ÁÁ•¹‘¥à±¡…ÁÑ•È±¡åÁ•ÉÍ•ÑÕÀ±µ…¥¹µ…ÑÑ•È±™É½¹Ñµ…ÑÑ•È±Ñ…‰±•½™½¹Ñ•¹ÑÌ±•±•…¹ÑÁ…È±¡•¥Ñ¤±­…¥Í¡Ô±±ÍÑÍ•Ğ±Á…•½±½È±é¡¹Õµ‰•È±µ…É¥¹Á…È±Á…ÉĞ±•ÅÕ½Ñ”±µ…É¥¹¹½Ñ”±‰¥½¥¹™¼±‘…Ñ•¡…¹”±±¥ÍÑ½™¡…¹”±±Ù•ÉĞ±±…ÍÑÁ…”±Í½¹Ñ¤±¡•¥Ñ¤±™…¹Í½¹œ±Í•Ñ)-™…µ¥±å™½¹Ğ±Ñ•áÑ‰™ô°(€™É…µ”õÍ¥¹±”°(€Ñ…‰Í¥é”ôÈ°(€ÉÕ±•½±½Èõq½±½ÉíÍÑÉÕÑÕÉ•½±½Éô°(€™É…µ•ÉÕ±”ôÀ¸ÉÁĞ°(€½±Õµ¹Ìõ™±•á¥‰±”°(€€”‰…­É½Õ¹‘½±½Èõq½±½Éí±¥¡ÑÉ•åô)ô()q¹•İ½µµ…¹‘q‰µµ…áìÁô)qI•ÅÕ¥É•A…­…•í‰µô((”…‘Ñ¡”±¥ÍĞ½˜¡…¹”¡¥ÍÑ½Éä)q¹•İ½µµ…¹‘íq‘…Ñ•¥¹™½±¥¹•õlÉuì(€q¹½¥¹‘•¹Ñqµ…­•‰½álÁÁÑumÉuì”(€qµ…­•‰½ál´Í•µumÉuì”(€€€qÍµ…±°(€€€qÑ•áÑ‰™íqÑ•áÑ½±½ÉíÍÑÉÕÑÕÉ•½±½ÉõìŒÅõõõpípíô”(€íq¥ÑÍ¡…Á•qÕÁ‘…Ñ•¹…µ•q¥¹½É•ÍÁ…•ÌŒÉõô()q¹•İ½µµ…¹‘íq‘…Ñ•¡…¹•õlÉuì”(€q¹½¥¹‘•¹Ñíqµ…­•‰½ámqÑ•áÑİ¥‘Ñ¡umÉuíq½±½ÉíÍÑÉÕÑÕÉ•½±½ÉõqÉÕ±•ìÄ¸ÄÕqÑ•áÑİ¥‘Ñ¡õì¸ÑÁÑõõô(€q‘…Ñ•¥¹™½±¥¹•ìŒÅõìŒÉô(€q…‘‘½¹Ñ•¹ÑÍ±¥¹•í‘…Ñ•ÍõíÍ•Ñ¥½¹õìŒÄ€´´€ŒÉõô()q¹•İ½µµ…¹‘íq±¥ÍÑ½™¡…¹•Íõì”(€q‰•¥¹É½ÕÀ(€€€qÉ•¹•İ½µµ…¹‘íq½¹Ñ•¹ÑÍ¹…µ•õíq¡¥ÍÑ½Éå¹…µ•ô(€€€q±•Ñq½±‘ÍÑ…ÉÑÑ½qÍÑ…ÉÑÑ½Œ(€€€q‘•™qÍÑ…ÉÑÑ½ŒŒŒÅì(€€€€€q½±‘ÍÑ…ÉÑÑ½í‘…Ñ•Íõô(€€€qÑ…‰±•½™½¹Ñ•¹ÑÌ”(€q•¹‘É½ÕÁô(”¡ÑÑÁÌè¼½Ñ•à¹ÍÑ…­•á¡…¹”¹½´½ÅÕ•ÍÑ¥½¹Ì¼ĞÜÈäÌÄ½±¥ÍĞµ½˜µ…±°µ‘…Ñ•Ìµ¥¸µ„µ‘½Õµ•¹Ğ()q¹•İ•¹Ù¥É½¹µ•¹Ñí¡…¹•õì(€q‰•¥¹í•¹Õµ•É…Ñ•õm±…‰•°õqÍµ…±±qÁÉ½Ñ•Ñq¥É±•‘íq…É…‰¥Œ©õuõì(€q•¹‘í•¹Õµ•É…Ñ•õô()q…‘‘‰¥‰É•Í½ÕÉ•m±½…Ñ¥½¸õ±½…±uíÉ•™•É•¹”¹‰¥‰ô()qÉ•¹•İ½µµ…¹‘qÑ…‰±•½™½¹Ñ•¹ÑÍì”(€q¡åÁ•ÉÍ•ÑÕÁí±¥¹­Ñ½Œõ…±°°±¥¹­½±½Èõ‰±…­ô(€€€q¥™Ñİ½½±Õµ¸(€€€€€qÉ•ÍÑ½¹•½±ÑÉÕ•q½¹•½±Õµ¸(€€€q•±Í”(€€€€€qÉ•ÍÑ½¹•½±™…±Í”(€€€q™¤(€€€q¡…ÁÑ•È©íq½¹Ñ•¹ÑÍ¹…µ”(€€€€€€€qµ­‰½Ñ¡ì”(€€€€€€€€€€q5…­•UÁÁ•É…Í•q½¹Ñ•¹ÑÍ¹…µ•õíq5…­•UÁÁ•É…Í•q½¹Ñ•¹ÑÍ¹…µ•õô”(€€€q¥™‘•™ÍÑÉ¥¹íq19QÑ½õíÑİ½½±õì(€€€€€qÍ•Ñ±•¹Ñ¡íq½±Õµ¹Í•ÁõìÉ•µô(€€€€€q‰•¥¹íµÕ±Ñ¥½±ÍõìÉô”(€€€€€€€qÍÑ…ÉÑÑ½íÑ½ô(€€€€€q•¹‘íµÕ±Ñ¥½±Íõõì(€€€€€qÍÑ…ÉÑÑ½íÑ½õô(€€€q¥™É•ÍÑ½¹•½±qÑİ½½±Õµ¹q™¤(€€€q¡åÁ•ÉÍ•ÑÕÁí±¥¹­½±½Èõİ¥¹•É•‘õô(()qÉ•¹•İ½µµ…¹©íq±•…É‘½Õ‰±•Á…•õíq±•…ÉÁ…•q¥™Ñİ½Í¥‘”q¥™½‘‘qÁ…•q•±Í”)q¡‰½áíô”)qÑ¡¥ÍÁ…•ÍÑå±•í•µÁÑåô”)q¹•İÁ…””)q¥™Ñİ½½±Õµ¹q¡‰½áíõq¹•İÁ…•q™¥q™¥q™¥ô(((”¡ÑÑÁÌè¼½Ñ•à¹ÍÑ…­•á¡…¹”¹½´½ÅÕ•ÍÑ¥½¹Ì¼ÔØàÌä½¡…ÁÑ•É¹…µ”µ¥ÌµÕÍ•µ•Ù•¸µ™½Èµ…ÁÁ•¹‘¥àµ¡…ÁÑ•ÉÌµ¥¸µÑ½Œ)qÕÍ•Á…­…•í…±ô)qÕÍ•Á…­…•mÑ¥Ñ±•ÍuíÑ½±½™Ñô)q¥™‘•™ÍÑÉ¥¹íq19Q±…¹õí¹õì(€qÉ•¹•İ½µµ…¹‘íq™Ñ¡…ÁÁÉ•Í¹Õµõíq‰•™½É•¡…ÁqÍÁ…•ô(€qÉ•¹•İ½µµ…¹‘íq™Ñ¡…Á…™Ñ•ÉÍ¹ÕµõíqÍÁ…•q…™Ñ•É¡…Áô(€qÍ•Ñ±•¹Ñ¡íq™Ñ¡…Á¹Õµİ¥‘Ñ¡õíqİ¥‘Ñ¡½™íqÑ•áÑ‰™ï¦f–öUøääåõõô(€q…‘‘Ñ½µ…É½q…ÁÁ•¹‘¥áì”(€€€q…‘‘Ñ½½¹Ñ•¹ÑÍíÑ½õì”(€€€€€qÁÉ½Ñ•ÑqÉ•¹•İ½µµ…¹‘íqÁÉ½Ñ•Ñq™Ñ¡…ÁÁÉ•Í¹Õµõíq…ÁÁ•¹‘¥á¹…µ•qÍÁ…•ô”(€€€€€qÁÉ½Ñ•ÑqÉ•¹•İ½µµ…¹‘íqÁÉ½Ñ•Ñq™Ñ¡…Á…™Ñ•ÉÍ¹Õµõíô”(€€€ô”(€ô)õì(€qÉ•¹•İ½µµ…¹‘íq™Ñ¡…ÁÁÉ•Í¹Õµõíq¡…ÁÑ•É¹…µ•qÍÁ…•ô(€qÉ•¹•İ½µµ…¹‘íq™Ñ¡…Á…™Ñ•ÉÍ¹ÕµõíqÍÁ…•ô(€qÍ•Ñ±•¹Ñ¡íq™Ñ¡…Á¹Õµİ¥‘Ñ¡õíqİ¥‘Ñ¡½™íqÑ•áÑ‰™íÁÁ•¹‘¥áøåõõô(€q…‘‘Ñ½µ…É½q…ÁÁ•¹‘¥áì”(€€€q…‘‘Ñ½½¹Ñ•¹ÑÍíÑ½õì”(€€€€€qÁÉ½Ñ•ÑqÉ•¹•İ½µµ…¹‘íqÁÉ½Ñ•Ñq™Ñ¡…ÁÁÉ•Í¹Õµõíq…ÁÁ•¹‘¥á¹…µ•qÍÁ…•ô”(€€€€€qÁÉ½Ñ•ÑqÉ•¹•İ½µµ…¹‘íqÁÉ½Ñ•Ñq™Ñ¡…Á…™Ñ•ÉÍ¹Õµõíô”(€€€€€qÍ•Ñ±•¹Ñ¡íq™Ñ¡…Á¹Õµİ¥‘Ñ¡õíqİ¥‘Ñ¡½™íqÑ•áÑ‰™íÁÁ•¹‘¥áøääåõõô(€€€ô”(€ô)ô((”É•ÍÑ½É”Ñ¡”ÑĞ‘•™…Õ±Ğ™…µ¥±äÑ¼±µ½‘•É¸ÑĞ™…µ¥±ä)qÉ•¹•İ½µµ…¹‘qÑÑ‘•™…Õ±Ñí±µÑÑ
+  \newcommand{\propositionname}{Proposizione}
+  \newcommand{\corollaryname}{Corollario}
+  \newcommand{\examplename}{Esempio}
+  \newcommand{\exercisename}{Esercizio}
+  \newcommand{\remarkname}{Commento}
+  \newcommand{\assumptionname}{Assunto}
+  \newcommand{\conclusionname}{Conclusione}
+  \newcommand{\solutionname}{Soluzione}
+  \newcommand{\propertyname}{ProprietÃ }
+  \newcommand{\introductionname}{Introduzione}
+  \newcommand\bioinfo[2]{\gdef\@bioinfo{\textbf{#1}: #2}}
+  \newcommand{\updatename}{Aggiornamenti:}
+  \newcommand{\ebibname}{Bibliografia}
+  \newcommand{\historyname}{Cronologia delle versioni}
+}{\relax}
+
+\ifdefstring{\ELEGANT@lang}{fr}{
+  \RequirePackage[utf8]{inputenc}
+  \RequirePackage[T1]{fontenc}
+  \RequirePackage[french]{babel}
+  \setlength\parindent{2em}
+  \renewcommand\figref[1]{\textbf{Figure}\ref{#1}}
+  \renewcommand\tabref[1]{\textbf{Tableau}\ref{#1}}
+  \renewcommand{\chaptername}{Chapitre}
+  \renewcommand{\authorname}{\textbf{Auteur: }}
+  \renewcommand{\institutename}{\textbf{Institut: }}
+  \renewcommand{\datename}{\textbf{Date: }}
+  \renewcommand{\versionname}{\textbf{Version: }}
+  \renewcommand{\notename}{Note}
+  \renewcommand{\proofname}{DÃ©monstration}
+  \renewcommand{\problemname}{ProblÃ¨me}
+  \renewcommand{\definitionname}{DÃ©finition}
+  \renewcommand{\theoremname}{ThÃ©orÃ¨me}
+  \renewcommand{\axiomname}{AxiÃ´me}
+  \renewcommand{\postulatename}{Postulat}
+  \renewcommand{\lemmaname}{Lemme}
+  \renewcommand{\propositionname}{Proposition}
+  \renewcommand{\corollaryname}{Corollaire}
+  \renewcommand{\examplename}{Exemple}
+  \renewcommand{\exercisename}{Exercice}
+  \renewcommand{\remarkname}{Remarque}
+  \renewcommand{\assumptionname}{Supposition}
+  \renewcommand{\conclusionname}{Conclusion}
+  \renewcommand{\solutionname}{Solution}
+  \renewcommand{\propertyname}{PropriÃ©tÃ©}
+  \renewcommand{\introductionname}{Introduction}
+  \renewcommand{\problemsetname}{Exercice}
+  \renewcommand{\updatename}{Mises Ã  jour:}
+  \newcommand{\ebibname}{Bibliographie}
+  \renewcommand{\historyname}{Historique des versions}
+}{\relax}
+
+
+\ifdefstring{\ELEGANT@lang}{nl}{
+  \RequirePackage[dutch]{babel}
+  \setlength\parindent{2em}
+  \newcommand\figref[1]{\textbf{Figuur}~\ref{#1}}
+  \newcommand\tabref[1]{\textbf{Tabel}~\ref{#1}}
+  \renewcommand{\chaptername}{Hoofdstuk}
+  \newcommand{\authorname}{\textbf{Auteur: }}
+  \newcommand{\institutename}{\textbf{Instituut: }}
+  \newcommand{\datename}{\textbf{Datum: }}
+  \newcommand{\versionname}{\textbf{Versie: }}
+  \newcommand{\notename}{Opmerking}
+  \newcommand{\proofname}{Bewijs}
+  \newcommand{\problemname}{Probleem}
+  \newcommand{\definitionname}{Definitie}
+  \newcommand{\theoremname}{Stelling}
+  \newcommand{\axiomname}{Uitgangspunt}
+  \newcommand{\postulatename}{Hypothese}
+  \newcommand{\lemmaname}{Lemma}
+  \newcommand{\propositionname}{Voorstel}
+  \newcommand{\corollaryname}{Gevolgtrekking}
+  \newcommand{\examplename}{Voorbeeld}
+  \newcommand{\exercisename}{Oefening}
+  \newcommand{\remarkname}{Commentaar}
+  \newcommand{\assumptionname}{Veronderstelling}
+  \newcommand{\conclusionname}{Besluit}
+  \newcommand{\solutionname}{Oplossing}
+  \newcommand{\propertyname}{Eigenschap}
+  \newcommand{\introductionname}{Introductie}
+  \newcommand{\problemsetname}{Probleemcomplex}
+  \newcommand\bioinfo[2]{\gdef\@bioinfo{\textbf{#1}: #2}}
+  \newcommand{\updatename}{Update:}
+  \newcommand{\ebibname}{Bibliographie}
+  \newcommand{\historyname}{Versie Geschiedenis}
+}{\relax}
+
+
+\ifdefstring{\ELEGANT@lang}{hu}{
+  \RequirePackage[magyar]{babel}
+  \setlength\parindent{2em}
+  \newcommand\figref[1]{\ref{#1}~\textbf{Ãbra}}
+  \newcommand\tabref[1]{\ref{#1}~\textbf{TÃ¡blÃ¡zat}}
+  \renewcommand{\chaptername}{Fejezet}
+  \newcommand{\authorname}{\textbf{SzerzÅ‘: }}
+  \newcommand{\institutename}{\textbf{IntÃ©zmÃ©ny: }}
+  \newcommand{\datename}{\textbf{DÃ¡tum: }}
+  \newcommand{\versionname}{\textbf{VerziÃ³szÃ¡m: }}
+  \newcommand{\notename}{Jegyzet}
+  \newcommand{\proofname}{BizonyÃ­tÃ¡s}
+  \newcommand{\problemname}{ProblÃ©ma}
+  \newcommand{\definitionname}{DefinÃ­ciÃ³}
+  \newcommand{\theoremname}{TÃ©tel}
+  \newcommand{\axiomname}{AxiÃ³ma}
+  \newcommand{\postulatename}{KÃ¶vetelmÃ©ny}
+  \newcommand{\lemmaname}{Lemma}
+  \newcommand{\propositionname}{ElÅ‘zmÃ©ny}
+  \newcommand{\corollaryname}{KÃ¶vetkezmÃ©ny}
+  \newcommand{\examplename}{PÃ©lda}
+  \newcommand{\exercisename}{Feladat}
+  \newcommand{\remarkname}{MegjegyzÃ©s}
+  \newcommand{\assumptionname}{SejtÃ©s}
+  \newcommand{\conclusionname}{Ã–sszefoglalÃ¡s}
+  \newcommand{\solutionname}{MegoldÃ¡s}
+  \newcommand{\propertyname}{TulajdonsÃ¡g}
+  \newcommand{\introductionname}{BevezetÃ©s}
+  \newcommand{\problemsetname}{Feladatok}
+  \newcommand\bioinfo[2]{\gdef\@bioinfo{\textbf{#1}: #2}}
+  \newcommand{\updatename}{FrissÃ­tve:}
+  \newcommand{\ebibname}{BibliogrÃ¡fia}
+  \newcommand{\historyname}{KorÃ¡bbi verziÃ³k}
+}{\relax}
+
+\ifdefstring{\ELEGANT@lang}{de}{
+  \setlength\parindent{2em}
+  \renewcommand{\contentsname}{Inhaltsverzeichnis}
+  \newcommand\figref[1]{\textbf{Figur}~\ref{#1}}
+  \newcommand\tabref[1]{\textbf{Tabelle}~\ref{#1}}
+  \renewcommand{\partname}{\color{structurecolor} Teil}
+  \renewcommand{\listfigurename}{Abbildungsverzeichnis}
+  \renewcommand{\listtablename}{Tabellenverzeichnis}
+  \renewcommand{\bibname}{Bibliographie}
+  \renewcommand{\appendixname}{Anhang}
+  \renewcommand{\chaptername}{Kapitel}
+  \newcommand{\authorname}{\textbf{Autor: }}
+  \newcommand{\institutename}{\textbf{Institut: }}
+  \newcommand{\datename}{\textbf{Datum: }}
+  \newcommand{\versionname}{\textbf{Version: }}
+  \newcommand{\notename}{Notiz}
+  \newcommand{\proofname}{Beweis}
+  \newcommand{\problemname}{Problem}
+  \newcommand{\definitionname}{Definition}
+  \newcommand{\theoremname}{Theorem}
+  \newcommand{\axiomname}{Axiom}
+  \newcommand{\postulatename}{Postulat}
+  \newcommand{\lemmaname}{Lemma}
+  \newcommand{\propositionname}{Behauptung}
+  \newcommand{\corollaryname}{Corollary}
+  \newcommand{\examplename}{Beispiel}
+  \newcommand{\instancename}{Beispiel} %
+  \newcommand{\exercisename}{\"{U}bung}
+  \newcommand{\remarkname}{Anmerkung}
+  \newcommand{\assumptionname}{Annahme}
+  \newcommand{\conclusionname}{Abschluss}
+  \newcommand{\solutionname}{Aufl\"{o}sung}
+  \newcommand{\propertyname}{Property}
+  \newcommand{\introductionname}{Einleitung}
+  \newcommand\bioinfo[2]{\gdef\@bioinfo{\textbf{#1}: #2}}
+  \newcommand{\updatename}{Updates:}
+  \renewcommand{\ebibname}{Bibliographie}
+  \newcommand{\historyname}{Version der Geschichte}
+}{\relax}
+
+\ifdefstring{\ELEGANT@lang}{es}{
+  \RequirePackage[spanish]{babel}
+  \setlength\parindent{2em}
+  \newcommand\figref[1]{\textbf{Figura}~\ref{#1}}
+  \newcommand\tabref[1]{\textbf{Tabla}~\ref{#1}}
+  \renewcommand{\spanishchaptername}{CapÃ­tulo}
+  \newcommand{\authorname}{\textbf{Autor: }}
+  \newcommand{\institutename}{\textbf{Instituto: }}
+  \newcommand{\datename}{\textbf{Fecha: }}
+  \newcommand{\versionname}{\textbf{VersiÃ³n: }}
+  \newcommand{\notename}{Nota}
+  \newcommand{\proofname}{DemostraciÃ³n}
+  \newcommand{\problemname}{Problema}
+  \newcommand{\definitionname}{DefiniciÃ³n}
+  \newcommand{\theoremname}{Teorema}
+  \newcommand{\axiomname}{Axioma}
+  \newcommand{\postulatename}{Postulado}
+  \newcommand{\lemmaname}{Lema}
+  \newcommand{\propositionname}{ProposiciÃ³n}
+  \newcommand{\corollaryname}{Corolario}
+  \newcommand{\examplename}{Ejemplo}
+  \newcommand{\exercisename}{Ejercicio}
+  \newcommand{\remarkname}{Comentario}
+  \newcommand{\assumptionname}{Asunto}
+  \newcommand{\conclusionname}{ConclusiÃ³n}
+  \newcommand{\solutionname}{SoluciÃ³n}
+  \newcommand{\propertyname}{Propiedad}
+  \newcommand{\introductionname}{IntroducciÃ³n}
+  \newcommand{\problemsetname}{Ejercicio}
+  \newcommand\bioinfo[2]{\gdef\@bioinfo{\textbf{#1}: #2}}
+  \newcommand{\updatename}{ActualizaciÃ³n:}
+  \newcommand{\ebibname}{BibliografÃ­a}
+  \newcommand{\historyname}{Historial de versiones}
+}{\relax}
+
+\ifdefstring{\ELEGANT@lang}{mn}{
+  \RequirePackage[mongolian]{babel}
+  \RequirePackage[utf8]{inputenc}
+  \RequirePackage[T2A]{fontenc}
+  \setlength\parindent{2em}
+  \newcommand\figref[1]{\textbf{Ğ—ÑƒÑ€Ğ°Ğ³}\ref{#1}}
+  \newcommand\tabref[1]{\textbf{Ğ¥Ò¯ÑĞ½ÑĞ³Ñ‚}\ref{#1}}
+  \renewcommand{\chaptername}{Ğ‘Ò¯Ğ»ÑĞ³}
+  \newcommand{\authorname}{\textbf{Ğ—Ğ¾Ñ…Ğ¸Ğ¾Ğ³Ñ‡: }}
+  \newcommand{\institutename}{\textbf{Ğ¡ÑƒÑ€Ğ³ÑƒÑƒĞ»ÑŒ: }}
+  \newcommand{\datename}{\textbf{ĞĞ³Ğ½Ğ¾Ğ¾: }}
+  \newcommand{\versionname}{\textbf{Ğ¥ÑƒĞ²Ğ¸Ğ»Ğ±Ğ°Ñ€: }}
+  \newcommand{\notename}{Ğ¢ÑĞ¼Ğ´ÑĞ³Ğ»ÑĞ»}
+  \newcommand{\proofname}{Ğ‘Ğ°Ñ‚Ğ°Ğ»Ğ³Ğ°Ğ°}
+  \newcommand{\problemname}{Ğ‘Ğ¾Ğ´Ğ»Ğ¾Ğ³Ğ¾}
+  \newcommand{\definitionname}{Ğ¢Ğ¾Ğ´Ğ¾Ñ€Ñ…Ğ¾Ğ¹Ğ»Ğ¾Ğ»Ñ‚}
+  \newcommand{\theoremname}{Ğ¢Ğ¾Ğ¼ÑŒÑ‘Ğ¾}
+  \newcommand{\axiomname}{ĞĞºÑĞ¸Ğ¾Ğ¼}
+  \newcommand{\postulatename}{ĞŸĞ¾ÑÑ‚ÑƒĞ»Ğ°Ñ‚}
+  \newcommand{\lemmaname}{Ğ›ĞµĞ¼Ğ¼Ğ°}
+  \newcommand{\propositionname}{Ğ¢Ğ°Ğ°Ğ¼Ğ°Ğ³Ğ»Ğ°Ğ»}
+  \newcommand{\corollaryname}{Ò®Ñ€ Ğ´Ò¯Ğ½}
+  \newcommand{\examplename}{Ğ–Ğ¸ÑˆÑÑ}
+  \newcommand{\exercisename}{Ğ”Ğ°ÑĞ³Ğ°Ğ»}
+  \newcommand{\remarkname}{Ğ¢Ğ°Ğ¹Ğ»Ğ±Ğ°Ñ€}
+  \newcommand{\assumptionname}{Ğ£Ñ€ÑŒĞ´Ñ‡Ğ¸Ğ»ÑĞ°Ğ½ Ğ½Ó©Ñ…Ñ†Ó©Ğ»}
+  \newcommand{\conclusionname}{Ğ”Ò¯Ğ³Ğ½ÑĞ»Ñ‚}
+  \newcommand{\solutionname}{Ğ¥Ğ°Ñ€Ğ¸ÑƒĞ»Ñ‚}
+  \newcommand{\propertyname}{Ğ¨Ğ¸Ğ½Ğ¶ Ñ‡Ğ°Ğ½Ğ°Ñ€}
+  \newcommand{\introductionname}{Ğ£Ğ´Ğ¸Ñ€Ñ‚Ğ³Ğ°Ğ»}
+  \newcommand{\problemsetname}{Ğ‘Ğ¾Ğ´Ğ»Ğ¾Ğ³ÑƒÑƒĞ´}
+  \newcommand\bioinfo[2]{\gdef@bioinfo{\textbf{#1}: #2}}
+  \newcommand{\updatename}{Ğ¨Ğ¸Ğ½ÑÑ‡Ğ»ÑĞ»Ñ‚Ò¯Ò¯Ğ´:}
+  \newcommand{\ebibname}{ĞĞ¾Ğ¼ Ğ·Ò¯Ğ¹}
+  \newcommand{\historyname}{Ğ¥ÑƒĞ²Ğ¸Ğ»Ğ±Ğ°Ñ€Ñ‹Ğ½ Ñ‚Ò¯Ò¯Ñ…}
+}{\relax}
+
+
+\ifdefstring{\ELEGANT@lang}{pt}{
+  \RequirePackage[portuguese]{babel}
+  \setlength\parindent{2em}
+  \newcommand\figref[1]{\textbf{Figura}~\ref{#1}}
+  \newcommand\tabref[1]{\textbf{Tabela}~\ref{#1}}
+  \renewcommand{\chaptername}{CapÃ­tulo}
+  \newcommand{\authorname}{\textbf{Autor: }}
+  \newcommand{\institutename}{\textbf{InstituiÃ§Ã£o: }}
+  \newcommand{\datename}{\textbf{Data: }}
+  \newcommand{\versionname}{\textbf{VersÃ£o: }}
+  \newcommand{\notename}{ObservaÃ§Ã£o}
+  \newcommand{\proofname}{DemostraÃ§Ã£o}
+  \newcommand{\problemname}{Problema}
+  \newcommand{\definitionname}{DefiniÃ§Ã£o}
+  \newcommand{\theoremname}{Teorema}
+  \newcommand{\axiomname}{Axioma}
+  \newcommand{\postulatename}{Postulado}
+  \newcommand{\lemmaname}{Lema}
+  \newcommand{\propositionname}{ProposiÃ§Ã£o}
+  \newcommand{\corollaryname}{CorolÃ¡rio}
+  \newcommand{\examplename}{Exemplo}
+  \newcommand{\exercisename}{ExercÃ­cio}
+  \newcommand{\remarkname}{ComentÃ¡rio}
+  \newcommand{\assumptionname}{Assunto}
+  \newcommand{\conclusionname}{ConclusÃ£o}
+  \newcommand{\solutionname}{SoluÃ§Ãµes}
+  \newcommand{\propertyname}{Propiedade}
+  \newcommand{\introductionname}{IntroduÃ§Ã£o}
+  \newcommand{\problemsetname}{QuestÃ£o}
+  \newcommand\bioinfo[2]{\gdef\@bioinfo{\textbf{#1}: #2}}
+  \newcommand{\updatename}{AtualizaÃ§Ã£o: }
+  \newcommand{\ebibname}{Bibliografia}
+  \newcommand{\historyname}{HistÃ³rico de versÃµes}
+}{\relax}
+
+
+\ifdefstring{\ELEGANT@lang}{jp}{
+ \RequirePackage{luatexja}
+  \setlength\parindent{2em}
+  \renewcommand{\contentsname}{ç›®æ¬¡}
+  \newcommand\figref[1]{\textbf{å›³}~\ref{#1}}
+  \newcommand\tabref[1]{\textbf{è¡¨}~\ref{#1}}
+  \renewcommand{\partname}{\color{structurecolor}}
+  \renewcommand{\listfigurename}{ã‚¤ãƒ©ã‚¹ãƒˆã‚«ã‚¿ãƒ­ã‚°}
+  \renewcommand{\listtablename}{è¡¨ã‚«ã‚¿ãƒ­ã‚°}
+  \renewcommand{\bibname}{å‚è€ƒæ–‡çŒ®}
+  \renewcommand{\appendixname}{ä»˜éŒ²}
+  \renewcommand{\chaptername}{ç¬¬ \thechapter ç« }
+  \newcommand{\authorname}{\textbf{è‘—è€…ï¼š}}
+  \newcommand{\institutename}{\textbf{çµ„ç¹”å›£ä½“ï¼š}}
+  \newcommand{\datename}{\textbf{æ—¥ä»˜ï¼š}}
+  \newcommand{\versionname}{\textbf{\citshape ãƒãƒ¼ã‚¸ãƒ§ãƒ³ï¼š}}
+  \newcommand{\notename}{ãƒãƒ¼ãƒˆ}
+  \newcommand{\proofname}{è¨¼æ˜}
+  \newcommand{\problemname}{å•é¡Œ}
+  \newcommand{\definitionname}{å®šç¾©}
+  \newcommand{\theoremname}{å®šç†}
+  \newcommand{\axiomname}{å…¬ç†}
+  \newcommand{\postulatename}{å…¬æº–}
+  \newcommand{\lemmaname}{è£œé¡Œ}
+  \newcommand{\propositionname}{å‘½é¡Œ}
+  \newcommand{\corollaryname}{ç³»}
+  \newcommand{\examplename}{ä¾‹é¡Œ}
+  \newcommand{\instancename}{ä¾‹}
+  \newcommand{\exercisename}{ç·´ç¿’}
+  \newcommand{\remarkname}{æ³¨}
+  \newcommand{\assumptionname}{ä»®è¨­}
+  \newcommand{\conclusionname}{çµè«–}
+  \newcommand{\solutionname}{è§£ç­”}
+  \newcommand{\propertyname}{æ€§è³ª}
+  \newcommand{\introductionname}{å†…å®¹æ¦‚è¦}
+  \newcommand\bioinfo[2]{\gdef\@bioinfo{\textbf{#1}: #2}}
+  \newcommand{\updatename}{æ›´æ–°ï¼š}
+  \newcommand{\ebibname}{å‚è€ƒæ–‡çŒ®}
+  \newcommand{\historyname}{ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ›´æ–°å±¥æ­´}
+}{\relax}
+
+
+\graphicspath{{./figure/}{./figures/}{./image/}{./images/}{./graphics/}{./graphic/}{./pictures/}{./picture/}}
+
+\RequirePackage{tikz} %% load tikz without tikz
+\usetikzlibrary{backgrounds,calc,shadows,positioning,fit}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=1pt] (char) {#1};}}
+%  https://tex.stackexchange.com/questions/7032/good-way-to-make-textcircled-numbers
+
+\newcommand*{\eitemi}{\tikz \draw [baseline, ball color=structurecolor,draw=none] circle (2pt);}
+\newcommand*{\eitemii}{\tikz \draw [baseline, fill=structurecolor,draw=none,circular drop shadow] circle (2pt);}
+\newcommand*{\eitemiii}{\tikz \draw [baseline, fill=structurecolor,draw=none] circle (2pt);}
+\setlist[enumerate,1]{label=\color{structurecolor}\arabic*.}
+\setlist[enumerate,2]{label=\color{structurecolor}(\alph*).}
+\setlist[enumerate,3]{label=\color{structurecolor}\Roman*.}
+\setlist[enumerate,4]{label=\color{structurecolor}\Alph*.}
+\setlist[itemize,1]{label={\eitemi}}
+\setlist[itemize,2]{label={\eitemii}}
+\setlist[itemize,3]{label={\eitemiii}}
+
+\RequirePackage{apptools}
+
+% appendix chapter:
+
+\ifdefstring{\ELEGANT@lang}{cn}{
+  \ifdefstring{\ELEGANT@scheme}{chinese}{
+    \newcommand{\xchaptertitle}{ç¬¬\zhnumber{\arabic{chapter}}ç« } }{
+    \newcommand{\xchaptertitle}{ç¬¬ \thechapter{} ç« }} }{
+  \newcommand{\xchaptertitle}{\chaptername~\thechapter~}}
+
+\setcounter{secnumdepth}{5}
+\titleformat{\chapter}[\style]{\bfseries}{
+  \filcenter\LARGE\enspace\bfseries{\color{structurecolor} \IfAppendix{\appendixname\;\thechapter\;}{\xchaptertitle\;}}}{1pt}{
+  \LARGE\bfseries\color{structurecolor}\filcenter}[]
+\titleformat{\section}[hang]{\bfseries}{
+  \Large\bfseries{\color{structurecolor}\thesection}\enspace}{1pt}{%
+  \color{structurecolor}\Large\bfseries\filright}
+\titleformat{\subsection}[hang]{\bfseries}{
+  \large\bfseries\color{structurecolor}\thesubsection\enspace}{1pt}{%
+  \color{structurecolor}\large\bfseries\filright}
+\titleformat{\subsubsection}[hang]{\bfseries}{
+  \large\bfseries\color{structurecolor}\thesubsubsection\enspace}{1pt}{%
+  \color{structurecolor}\large\bfseries\filright}
+
+\titlespacing{\chapter}{0pt}{-20pt}{1.3\baselineskip}
+%\titlespacing{\subsection}{0pt}{0.5\baselineskip}{-\baselineskip}
+
+
+
+%%define the note and proof environment
+\RequirePackage{pifont,manfnt,bbding}
+\RequirePackage[many]{tcolorbox}
+% \newlength{\normalparindent}
+% \setlength{\normalparindent}{\parindent}
+\ifdefstring{\ELEGANT@mode}{fancy}{
+  \tcbset{
+    common/.style={
+      fontupper=\citshape,
+      lower separated=false,
+      % before upper={\setlength{\parindent}{\normalparindent}},
+      coltitle=white,
+      colback=gray!5,
+      boxrule=0.5pt,
+      fonttitle=\bfseries,
+      enhanced,
+      breakable,
+      top=8pt,
+      before skip=8pt,
+      attach boxed title to top left={
+        yshift=-0.11in,
+        xshift=0.15in},
+      boxed title style={
+        boxrule=0pt,
+        colframe=white,
+        arc=0pt,
+        outer arc=0pt},
+      separator sign={.},},
+    defstyle/.style={
+      common,
+      colframe=main,  
+      colback=main!5,
+      colbacktitle=main, 
+      overlay unbroken and last={
+        \node[anchor=south east, outer sep=0pt] at (\linewidth-width,0) {
+          \textcolor{main}{$\clubsuit$}};}},
+    thmstyle/.style={
+      common,
+      colframe=second,  
+      colback=second!5,
+      colbacktitle=second, 
+      overlay unbroken and last={
+        \node[anchor=south east, outer sep=0pt] at (\linewidth-width,0) {
+          \textcolor{second}{$\heartsuit$}};}},
+    propstyle/.style={
+      common,
+      colframe=third,  
+      colback=third!5,
+      colbacktitle=third, 
+      overlay unbroken and last={
+        \node[anchor=south east, outer sep=0pt] at (\linewidth-width,0) {
+          \textcolor{third}{$\spadesuit$}};}},}
+  % \newtcbtheorem[auto counter,number within=chapter]{definition}{\definitionname}{defstyle}{def}
+  \DeclareTColorBox[auto counter,number within=\ELEGANT@thmcnt]{definition}{ g o t\label g }{
+    common,defstyle,
+    IfValueTF={#1}
+      {title={\definitionname~\thetcbcounter\ (#1)}}
+      {
+        IfValueTF={#2} 
+          {title={\definitionname~\thetcbcounter\ (#2)}}
+          {title=\definitionname~\thetcbcounter}
+      },
+    IfBooleanTF={#3}{label=#4}{label={def:#4}}}
+  % \newtcbtheorem[auto counter,number within=chapter]{theorem}{\theoremname}{thmstyle}{thm}
+  \DeclareTColorBox[auto counter,number within=\ELEGANT@thmcnt]{theorem}{ g o t\label g }{
+    common,thmstyle,
+    IfValueTF={#1}
+      {title={\theoremname~\thetcbcounter\ (#1)}}
+      {
+        IfValueTF={#2} 
+          {title={\theoremname~\thetcbcounter\ (#2)}}
+          {title=\theoremname~\thetcbcounter}
+      },
+    IfBooleanTF={#3}{label=#4}{label={thm:#4}}}
+  % \newtcbtheorem[auto counter,number within=chapter]{postulate}{\postulatename}{thmstyle}{pos}
+  \DeclareTColorBox[auto counter,number within=\ELEGANT@thmcnt]{postulate}{ g o t\label g }{
+    common,thmstyle,
+    IfValueTF={#1}
+      {title={\postulatename~\thetcbcounter\ (#1)}}
+      {
+        IfValueTF={#2} 
+          {title={\postulatename~\thetcbcounter\ (#2)}}
+          {title=\postulatename~\thetcbcounter}
+      },
+    IfBooleanTF={#3}{label=#4}{label={pos:#4}}}
+  % \newtcbtheorem[auto counter,number within=chapter]{axiom}{\axiomname}{thmstyle}{axi}
+  \DeclareTColorBox[auto counter,number within=\ELEGANT@thmcnt]{axiom}{ g o t\label g }{
+    common,thmstyle,
+    IfValueTF={#1}
+      {title={\axiomname~\thetcbcounter\ (#1)}}
+      {
+        IfValueTF={#2} 
+          {title={\axiomname~\thetcbcounter\ (#2)}}
+          {title=\axiomname~\thetcbcounter}
+      },
+    IfBooleanTF={#3}{label=#4}{label={axi:#4}}}
+  % \newtcbtheorem[auto counter,number within=chapter]{corollary}{\corollaryname}{thmstyle}{cor}
+  \DeclareTColorBox[auto counter,number within=\ELEGANT@thmcnt]{corollary}{ g o t\label g }{
+    common,thmstyle,
+    IfValueTF={#1}
+      {title={\corollaryname~\thetcbcounter\ (#1)}}
+      {
+        IfValueTF={#2} 
+          {title={\corollaryname~\thetcbcounter\ (#2)}}
+          {title=\corollaryname~\thetcbcounter}
+      },
+    IfBooleanTF={#3}{label=#4}{label={cor:#4}}}
+  % \newtcbtheorem[auto counter,number within=chapter]{lemma}{\lemmaname}{thmstyle}{lem}
+  \DeclareTColorBox[auto counter,number within=\ELEGANT@thmcnt]{lemma}{ g o t\label g }{
+    common,thmstyle,
+    IfValueTF={#1}
+      {title={\lemmaname~\thetcbcounter\ (#1)}}
+      {
+        IfValueTF={#2} 
+          {title={\lemmaname~\thetcbcounter\ (#2)}}
+          {title=\lemmaname~\thetcbcounter}
+      },
+    IfBooleanTF={#3}{label=#4}{label={lem:#4}}}
+  % \newtcbtheorem[auto counter,number within=chapter]{proposition}{\propositionname}{propstyle}{pro}
+  \DeclareTColorBox[auto counter,number within=\ELEGANT@thmcnt]{proposition}{ g o t\label g }{
+    common,propstyle,
+    IfValueTF={#1}
+      {title={\propositionname~\thetcbcounter\ (#1)}}
+      {
+        IfValueTF={#2} 
+          {title={\propositionname~\thetcbcounter\ (#2)}}
+          {title=\propositionname~\thetcbcounter}
+      },
+    IfBooleanTF={#3}{label=#4}{label={pro:#4}}}
+}{\relax}
+
+
+\ifdefstring{\ELEGANT@mode}{simple}{
+  \let\openbox\relax
+  \RequirePackage{amsthm}
+  \let\proof\relax
+  % \let\proofname\relax
+  \let\endproof\relax
+
+  % declare a new theorem style
+  \newtheoremstyle{defstyle}{3pt}{3pt}{\citshape}{-3pt}{
+    \bfseries\color{main}}{}{0.5em}{\thmname{#1} \thmnumber{#2} \thmnote{(#3)}}
+  \newtheoremstyle{thmstyle}{3pt}{3pt}{\citshape}{-3pt}{
+    \bfseries\color{second}}{}{0.5em}{\thmname{#1} \thmnumber{#2} \thmnote{(#3)}}
+  \newtheoremstyle{prostyle}{3pt}{3pt}{\citshape}{-3pt}{
+    \bfseries\color{third}}{}{0.5em}{\thmname{#1} \thmnumber{#2} \thmnote{(#3)}}
+
+
+  \theoremstyle{defstyle} % definition style
+  \newtheorem{definition}{\definitionname}[\ELEGANT@thmcnt]
+
+  \theoremstyle{thmstyle} %theorem style
+  \newtheorem{theorem}{\theoremname}[\ELEGANT@thmcnt]
+  \newtheorem{lemma}{\lemmaname}[\ELEGANT@thmcnt]
+  \newtheorem{corollary}{\corollaryname}[\ELEGANT@thmcnt]
+  \newtheorem{postulate}{\postulatename}[\ELEGANT@thmcnt]
+  \newtheorem{axiom}{\axiomname}[\ELEGANT@thmcnt]
+
+  \theoremstyle{prostyle} % proposition style
+  \newtheorem{proposition}{\propositionname}[\ELEGANT@thmcnt]
+}{\relax}
+
+% mainï¼ˆgreen-def): example exercise problem solution
+% secondï¼ˆorange-thmï¼‰: proof note remark  
+% thirdï¼ˆblue-prop):  assumptions property conclusion custom
+
+%% Example with counter
+\newcounter{exam}[chapter]
+\setcounter{exam}{0}
+\renewcommand{\theexam}{\thechapter.\arabic{exam}}
+\newenvironment{example}[1][]{
+  \refstepcounter{exam}
+  \par\noindent\textbf{\color{main}{\examplename} \theexam #1 }\rmfamily}{
+  \par\ignorespacesafterend}
+
+%% Exercise with counter
+\newcounter{exer}[chapter]
+\setcounter{exer}{0}
+\renewcommand{\theexer}{\thechapter.\arabic{exer}}
+\newenvironment{exercise}[1][]{
+  \refstepcounter{exer}
+  \par\noindent\makebox[-3pt][r]{
+    \scriptsize\color{red!90}\HandPencilLeft\quad}
+    \textbf{\color{main}{\exercisename} \theexer #1 }\rmfamily}{
+    \par\ignorespacesafterend}
+
+%% Problem with counter
+\newcounter{prob}[chapter]
+\setcounter{prob}{0}
+\renewcommand{\theprob}{\thechapter.\arabic{prob}}
+\newenvironment{problem}[1][]{
+  \refstepcounter{prob}
+  \par\noindent\textbf{\color{main}{\problemname} \theprob #1 }\rmfamily}{
+  \par\ignorespacesafterend}
+
+\newenvironment{note}{
+  \par\noindent\makebox[-3pt][r]{
+    \scriptsize\color{red!90}\textdbend\quad}
+    \textbf{\color{second}\notename} \citshape}{\par}
+
+\newenvironment{proof}{
+  \par\noindent\textbf{\color{second}\proofname\;}
+  \color{black!90}\cfs}{
+  % \hfill$\Box$\quad
+  \par}
+
+\newenvironment{solution}{\par\noindent\textbf{\color{main}\solutionname} \citshape}{\par}
+\newenvironment{remark}{\noindent\textbf{\color{second}\remarkname}}{\par}
+\newenvironment{assumption}{\par\noindent\textbf{\color{third}\assumptionname} \citshape}{\par}
+\newenvironment{conclusion}{\par\noindent\textbf{\color{third}\conclusionname} \citshape}{\par}
+\newenvironment{property}{\par\noindent\textbf{\color{third}\propertyname} \citshape}{\par}
+\newenvironment{custom}[1]{\par\noindent\textbf{\color{third} #1} \citshape}{\par}
+
+\RequirePackage{multicol}
+\tcbset{
+  introductionsty/.style={
+    enhanced,
+    breakable,
+    colback=structurecolor!10,
+    colframe=structurecolor,
+    fonttitle=\bfseries,
+    colbacktitle=structurecolor,
+    fontupper=\citshape,
+    attach boxed title to top center={yshift=-3mm,yshifttext=-1mm},
+    boxrule=0pt,
+    toprule=0.5pt,
+    bottomrule=0.5pt,
+    top=8pt,
+    before skip=8pt,
+    sharp corners
+  },
+}
+
+\newenvironment{introduction}[1][\introductionname]{
+  \begin{tcolorbox}[introductionsty,title={#1}]
+    \begin{multicols}{2}
+      \begin{itemize}[label=\textcolor{structurecolor}{\upshape\scriptsize\SquareShadowBottomRight}]}{
+      \end{itemize}
+    \end{multicols}
+  \end{tcolorbox}}
+
+\RequirePackage{adforn}
+
+\newenvironment{problemset}[1][\xchaptertitle~\exercisename]{
+  \vspace*{10pt}
+  \begin{center}
+    \phantomsection\addcontentsline{toc}{section}{\texorpdfstring{\xchaptertitle~\exercisename}{\exercisename}}
+    % \markboth{#1}{\rightmark}
+    \markright{#1}
+    \textcolor{structurecolor}{\Large\bfseries\adftripleflourishleft~#1~\adftripleflourishright}
+  \end{center}
+  \begin{enumerate}}{
+  \end{enumerate}}
+
+\def\relsec{\endgroup start}
+\def\endrelsec{end\begingroup\def \@currenvir {relsec}}
+
+\ifdefstring{\ELEGANT@result}{noanswer}{
+  \AtBeginDocument{
+  \excludecomment{solution}
+  \excludecomment{proof}
+  \excludecomment{inline}
+  }
+}{\relax}
+
+
+%é¡µçœ‰é¡µè„š
+\RequirePackage{fancyhdr}
+\fancyhf{}
+
+
+\fancyfoot[c]{\color{structurecolor}\small\thepage}
+\if@twoside
+  \fancyhead[EL]{\color{structurecolor}\cnormal\leftmark}
+  \fancyhead[OR]{\color{structurecolor}\cnormal\rightmark}
+\else
+  \fancyhead[R]{\color{structurecolor}\cnormal\rightmark}
+\fi
+
+\renewcommand{\headrule}{\color{structurecolor}\hrule width\textwidth}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{1pt}
+% \renewcommand{\headrule}{}
+\fancypagestyle{plain}{\renewcommand{\headrulewidth}{0pt}\fancyhf{}\renewcommand{\headrule}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\, #1}{}}
+\renewcommand{\chaptermark}[1]{\markboth{\xchaptertitle\, #1}{}}
+
+
+\renewcommand*{\maketitle}{%
+\hypersetup{pageanchor=false}
+\pagenumbering{Alph}
+\begin{titlepage}
+  \newgeometry{margin = 0in}
+  \parindent=0pt
+  \ifdefstring{\ELEGANT@device}{normal}{
+    \ifcsname @cover\endcsname
+      \includegraphics[width=\linewidth]{\@cover}
+    \else
+      \includegraphics[width=\linewidth]{example-image}
+    \fi
+  }{\relax}
+  \ifdefstring{\ELEGANT@device}{pad}{
+    \ifcsname @cover\endcsname
+      \includegraphics[trim=0 26bp 0 26bp,clip=true, width=\linewidth]{\@cover}
+    \else
+      \includegraphics[trim=0 26bp 0 26bp,clip=true, width=\linewidth]{example-image}
+    \fi
+  }{\relax}
+  \setlength{\fboxsep}{0pt}
+  \colorbox{coverlinecolor}{\makebox[\linewidth][c]{\shortstack[c]{\vspace{0.5in}}}}
+  \vfill
+  \vskip-2ex
+  \hspace{2em}
+  \parbox{0.8\textwidth}{
+    \bfseries\Huge 
+      \ifcsname @title\endcsname \@title \fi
+    \par}
+  \vfill
+  \vspace{-1.0cm}
+  \setstretch{2.5}
+  \hspace{2.5em}
+  \begin{minipage}[c]{0.67\linewidth}
+    {\color{darkgray}\bfseries\Large
+      \ifcsname @subtitle\endcsname\@subtitle\\[2ex]\fi}
+    \color{gray}\normalsize
+    {\renewcommand{\arraystretch}{0.618}
+    \begin{tabular}{l}
+      % \ifcsname @author\endcsname \authorname \@author\\\fi
+      \ifx\@author\empty\else\authorname\cnormal\@author\\ \fi
+      \ifcsname @institute\endcsname \institutename \cnormal\@institute\\ \fi
+      % \ifcsname @date\endcsname  \@date\\\fi
+      \ifx\@date\empty\else\datename\cnormal\@date \\ \fi
+      \ifcsname @version\endcsname \cnormal\versionname\@version\\ \fi
+      \ifcsname @bioinfo\endcsname \cnormal\@bioinfo\\ \fi
+    \end{tabular}}
+  \end{minipage}
+  \begin{minipage}[c]{0.27\linewidth}
+  \begin{tikzpicture}[remember picture,overlay]
+    \begin{pgfonlayer}{background}
+      \node[opacity=0.8,
+            anchor=south east,
+            outer sep=0pt,
+            inner sep=0pt] at ($(current page.south east) +(-1.0in,2.5in)$) {
+              \ifcsname @logo\endcsname\includegraphics[width=6cm]{\@logo}\fi};
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  \end{minipage}
+  \vfill
+  \begin{center}
+    \setstretch{1.3}
+    \parbox[t]{0.7\textwidth}{\centering \citshape 
+      \ifcsname @extrainfo\endcsname\@extrainfo\fi}
+  \end{center}
+  \vfill
+\end{titlepage}
+\restoregeometry
+\thispagestyle{empty}}
+
+
+\newcommand{\dollar}{\mbox{\textdollar}}
+
+\RequirePackage{listings}
+\renewcommand{\ttdefault}{cmtt}
+\lstdefinestyle{mystyle}{
+  basicstyle=%
+    \ttfamily
+    \lst@ifdisplaystyle\small\fi
+}
+
+\lstset{basicstyle=\ttfamily,style=mystyle,breaklines=true}
+
+\definecolor{lightgrey}{rgb}{0.9,0.9,0.9}
+\definecolor{frenchplum}{RGB}{190,20,83}
+\lstset{language=[LaTeX]TeX,
+  texcsstyle=*\color{winered},
+  numbers=none,
+  mathescape=false,
+  breaklines=true,
+  keywordstyle=\color{winered},
+  commentstyle=\color{gray},
+  emph={elegantpaper,fontenc,fontspec,xeCJK,citestyle,FiraMono,xunicode,figure,fig,image,img,table,itemize,enumerate,ctex,microtype,description,times,booktabs,tabular,PDFLaTeX,XeLaTeX,type1cm,BibTeX,device,color,mode,lang,amsthm,tcolorbox,titlestyle,cite,ctex,listings,base,math,scheme,toc,esint,chinesefont,amsmath,bibstyle,natbib,pgfornament},
+  emphstyle={\color{frenchplum}},
+  morekeywords={DeclareSymbolFont,SetSymbolFont,toprule,midrule,bottomrule,institute,version,includegraphics,setmainfont,setsansfont,setmonofont ,setCJKmainfont,setCJKsansfont,setCJKmonofont,RequirePackage,figref,tabref,email,maketitle,keywords,definecolor,extrainfo,logo,cover,subtitle,appendix,chapter,hypersetup,mainmatter,frontmatter,tableofcontents,elegantpar,heiti,kaishu,lstset,pagecolor,zhnumber,marginpar,part,equote,marginnote,bioinfo,datechange,listofchange,lvert,lastpage,songti,heiti,fangsong,setCJKfamilyfont,textbf},
+  frame=single,
+  tabsize=2,
+  rulecolor=\color{structurecolor},
+  framerule=0.2pt,
+  columns=flexible,
+  % backgroundcolor=\color{lightgrey}
+}
+
+\newcommand\bmmax{0}
+\RequirePackage{bm}
+
+% add the list of change history
+\newcommand{\dateinfoline}[2]{
+  \noindent\makebox[0pt][r]{%
+  \makebox[-3em][r]{%
+    \small
+    \textbf{\textcolor{structurecolor}{#1}}}\;\;}%
+  {\citshape\updatename\ignorespaces#2}}
+
+\newcommand{\datechange}[2]{%
+  \noindent{\makebox[\textwidth][r]{\color{structurecolor}\rule{1.15\textwidth}{.4pt}}}
+  \dateinfoline{#1}{#2}
+  \addcontentsline{dates}{section}{#1 -- #2}}
+
+\newcommand{\listofchanges}{%
+  \begingroup
+    \renewcommand{\contentsname}{\historyname}
+    \let\old@starttoc\@starttoc
+    \def\@starttoc##1{
+      \old@starttoc{dates}}
+    \tableofcontents%
+  \endgroup}
+% https://tex.stackexchange.com/questions/472931/list-of-all-dates-in-a-document
+
+\newenvironment{change}{
+  \begin{enumerate}[label=\small\protect\circled{\arabic*}]}{
+  \end{enumerate}}
+
+\addbibresource[location=local]{reference.bib}
+
+\renewcommand\tableofcontents{%
+  \hypersetup{linktoc=all, linkcolor=black}
+    \if@twocolumn
+      \@restonecoltrue\onecolumn
+    \else
+      \@restonecolfalse
+    \fi
+    \chapter*{\contentsname
+        \@mkboth{%
+           \MakeUppercase\contentsname}{\MakeUppercase\contentsname}}%
+    \ifdefstring{\ELEGANT@toc}{twocol}{
+      \setlength{\columnsep}{2em}
+      \begin{multicols}{2}%
+        \@starttoc{toc}
+      \end{multicols}}{
+      \@starttoc{toc}}
+    \if@restonecol\twocolumn\fi
+    \hypersetup{linkcolor=winered}}
+
+
+\renewcommand*{\cleardoublepage}{\clearpage\if@twoside \ifodd\c@page\else
+\hbox{}%
+\thispagestyle{empty}%
+\newpage%
+\if@twocolumn\hbox{}\newpage\fi\fi\fi}
+
+
+% https://tex.stackexchange.com/questions/56839/chaptername-is-used-even-for-appendix-chapters-in-toc
+\usepackage{calc}
+\usepackage[titles]{tocloft}
+\ifdefstring{\ELEGANT@lang}{cn}{
+  \renewcommand{\cftchappresnum}{\beforechap\space}
+  \renewcommand{\cftchapaftersnum}{\space\afterchap}
+  \setlength{\cftchapnumwidth}{\widthof{\textbf{é™„å½•~999}}}
+  \g@addto@macro\appendix{%
+    \addtocontents{toc}{%
+      \protect\renewcommand{\protect\cftchappresnum}{\appendixname\space}%
+      \protect\renewcommand{\protect\cftchapaftersnum}{}%
+    }%
+  }
+}{
+  \renewcommand{\cftchappresnum}{\chaptername\space}
+  \renewcommand{\cftchapaftersnum}{\space}
+  \setlength{\cftchapnumwidth}{\widthof{\textbf{Appendix~9}}}
+  \g@addto@macro\appendix{%
+    \addtocontents{toc}{%
+      \protect\renewcommand{\protect\cftchappresnum}{\appendixname\space}%
+      \protect\renewcommand{\protect\cftchapaftersnum}{}%
+      \setlength{\cftchapnumwidth}{\widthof{\textbf{Appendix~999}}}
+    }%
+  }
+}
+
+% restore the tt default family to lmodern tt family
+\renewcommand\ttdefault{lmtt}
