@@ -1,0 +1,132 @@
+{
+    "latex-workshop.latex.recipes": [
+        // 写中文论文所以用xelatex编译，在latex-worshop.latex.recipes中把xelatex放在首位
+        // 要写英文论文就把latexmk放在第一位
+        {
+            "name": "xelatex",
+            "tools": [
+                "xelatex"
+            ]
+        },
+        {
+            "name": "bib",
+            "tools": [
+                "biber"
+            ]
+        },
+        {
+            "name": "pdflatex",
+            "tools": [
+                "pdflatex"
+            ]
+        },
+        {
+            "name": "xe->bib->xe->xe",
+            "tools": [
+                "xelatex",
+                "biber",
+                "xelatex",
+                "xelatex"
+            ]
+        },
+        {
+            "name": "pdf->bib->pdf->pdf",
+            "tools": [
+                "pdflatex",
+                "biber",
+                "pdflatex",
+                "pdflatex"
+            ]
+        }
+    ],
+    // 将 tools 中的 %DOC%替换成%DOCFILE%就可以支持中文路径下的文件了
+    // 编译工具如果是Tex-Live 则在command条目不需要"miktex"
+    // 编译工具如果是MikTex的条件下 command条目此内容需要添加"miktex-"
+    "latex-workshop.latex.tools": [
+        // 编译工具和命令
+        {
+            "name": "xelatex",
+            "command": "miktex-xelatex",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "%DOC%"
+            ]
+        },
+        {
+            "name": "latexmk",
+            "command": "miktex-latexmk",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "-pdf",
+                "%DOCFILE%"
+            ]
+        },
+        {
+            "name": "pdflatex",
+            "command": "miktex-pdflatex",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "%DOCFILE%"
+            ]
+        },
+        {
+            "name": "biber",
+            "command": "biber",
+            "args": [
+                "%DOCFILE%"
+            ]
+        }
+    ],
+    //清除辅助文件
+    "latex-workshop.latex.autoClean.run": "onBuilt",
+    "latex-workshop.latex.clean.fileTypes": [
+        "*.aux",
+        "*.bbl",
+        "*.blg",
+        "*.idx",
+        "*.ind",
+        "*.lof",
+        "*.lot",
+        "*.out",
+        "*.toc",
+        "*.acn",
+        "*.acr",
+        "*.alg",
+        "*.glg",
+        "*.glo",
+        "*.gls",
+        "*.ist",
+        "*.fls",
+        "*.log",
+        "*.fdb_latexmk"
+    ],
+    // 用内置pdf阅读器查看
+    // "latex-workshop.view.pdf.viewer": "tab", 
+    "latex-workshop.view.pdf.viewer": "external",
+    // 用外部pdf阅读器查看
+    "latex-workshop.view.pdf.external.viewer.command": "C:/Users/SYE/AppData/Local/SumatraPDF/SumatraPDF.exe",
+    "latex-workshop.view.pdf.external.viewer.args": [
+        "-reuse-instance",
+        "-forward-search",
+        "%TEX%",
+        "%LINE%",
+        "%PDF%"
+    ],
+    "latex-workshop.synctex.afterBuild.enabled": true,
+    // LaTeX Workshop 默认保存的时选择不自动编译
+    "latex-workshop.latex.autoBuild.run": "never",
+    // 屏蔽编译出错，插件弹出的警告框
+    "latex-workshop.message.error.show": false,
+    "latex-workshop.message.warning": false,
+    "latex-workshop.message.warning.show": false,
+    "latex-workshop.showContextMenu": true,
+    "editor.formatOnSave": true,
+    "editor.renderControlCharacters": false,
+    "pasteImage.insertPattern": "\\begin{figure}[htbp]\n    \\centering\n    \\includegraphics[width=0.8\\linewidth]{${imageFilePath}}\n    \\caption{${imageFileName}}\n    \\label{fig:${imageFileNameWithoutExt}}\n\\end{figure}"
+}
