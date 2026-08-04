@@ -1,0 +1,33 @@
+schema_version: "1.0"
+formal_id: formal-experiments-v1
+description: Versioned 31-case formal experiment plan validated by the v0.1.1 pilot.
+output_root: results/formal
+random_seeds: [20260730, 20260731, 20260732]
+baseline:
+  case_id: frozen_baseline
+  random_seed: 20260730
+load_sweep:
+  low_load:
+    cellLoad: 0.45
+    prbUtilization: 0.40
+    availablePrbRatio: 0.60
+    baselineUplinkThroughputMbps: 25.0
+    baselineUplinkDelayMs: 20.0
+    baselineUplinkBler: 0.02
+  medium_load:
+    cellLoad: 0.65
+    prbUtilization: 0.62
+    availablePrbRatio: 0.38
+    baselineUplinkThroughputMbps: 20.0
+    baselineUplinkDelayMs: 28.0
+    baselineUplinkBler: 0.035
+  high_load: {}
+feedback_compare:
+  feedback_disabled: false
+  feedback_enabled: true
+weight_sensitivity:
+  default_weights: {service: 0.60, energy: 0.15, resource: 0.15, risk: 0.10}
+  service_priority: {service: 0.75, energy: 0.05, resource: 0.10, risk: 0.10}
+  energy_priority: {service: 0.50, energy: 0.30, resource: 0.10, risk: 0.10}
+  resource_priority: {service: 0.50, energy: 0.10, resource: 0.30, risk: 0.10}
+  risk_priority: {service: 0.50, energy: 0.10, resource: 0.10, risk: 0.30}

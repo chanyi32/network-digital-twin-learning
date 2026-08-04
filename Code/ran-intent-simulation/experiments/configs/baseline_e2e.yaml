@@ -1,0 +1,9 @@
+schema_version: "1.1"
+experiment_name: baseline_e2e
+description: Frozen v0.1.0 end-to-end baseline.
+fixed_random_seed: 20260730
+output_root: results/experiments
+cases:
+  - case_id: baseline
+    description: Default high-load concert assurance scenario.
+    scenario_id: SCENARIO-HIGH-LOAD

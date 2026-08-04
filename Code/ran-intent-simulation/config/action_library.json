@@ -1,0 +1,50 @@
+{
+  "version": "1.0",
+  "scope": "single_cell_ran_only",
+  "actions": [
+    {
+      "type": "UL_RESOURCE_RESERVE",
+      "targetType": "video_user_group",
+      "isHighCostAction": true,
+      "parameters": {
+        "reservedPrbRatio": {
+          "valueSetRef": "action_space.reserved_prb_ratio"
+        }
+      },
+      "conflicts": ["high_energy_saving_with_high_prb_reserve"]
+    },
+    {
+      "type": "SCHEDULING_WEIGHT_ADJUST",
+      "targetType": "video_user_group",
+      "isHighCostAction": true,
+      "parameters": {
+        "videoSchedulingWeight": {
+          "valueSetRef": "action_space.video_scheduling_weight"
+        }
+      },
+      "conflicts": ["high_video_weight_without_voice_protection"]
+    },
+    {
+      "type": "VOICE_RESOURCE_PROTECT",
+      "targetType": "voice_user_group",
+      "isHighCostAction": true,
+      "parameters": {
+        "minimumVoicePrbRatio": {
+          "valueSetRef": "action_space.minimum_voice_prb_ratio"
+        }
+      },
+      "conflicts": ["total_reserved_prb_exceeds_allocatable_limit"]
+    },
+    {
+      "type": "RAN_ENERGY_SAVING",
+      "targetType": "cell",
+      "isHighCostAction": false,
+      "parameters": {
+        "energySavingIntensity": {
+          "valueSetRef": "energy.saving_intensity_values"
+        }
+      },
+      "conflicts": ["high_energy_saving_with_high_prb_reserve"]
+    }
+  ]
+}

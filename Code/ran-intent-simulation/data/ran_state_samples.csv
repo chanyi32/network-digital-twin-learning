@@ -1,0 +1,5 @@
+scenarioId,timestamp,cellId,userId,userType,cellLoad,prbUtilization,availablePrbRatio,baselineUplinkThroughputMbps,baselineUplinkDelayMs,baselineUplinkBler,baselineVoiceQuality,baselineNormalUserPerformance,baselineRanEnergy,meanSinrDb
+SCENARIO-HIGH-LOAD,2026-07-29T19:30:00+08:00,CELL-101,VIDEO-001,video,0.82,0.80,0.20,16.5,38.0,0.05,0.97,1.0,1.0,8.0
+SCENARIO-HIGH-LOAD,2026-07-29T19:30:00+08:00,CELL-101,VOICE-001,voice,0.82,0.80,0.20,,,,0.97,1.0,1.0,8.0
+SCENARIO-HIGH-LOAD,2026-07-29T19:30:00+08:00,CELL-101,NORMAL-001,normal,0.82,0.80,0.20,,,,0.97,1.0,1.0,8.0
+

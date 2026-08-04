@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ran-intent-simulation"
+version = "0.1.1"
+description = "RAN-only intent-driven decision simulation skeleton."
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+license = {text = "Proprietary"}
+authors = [
+  {name = "RAN Intent Simulation Research Team"},
+]
+dependencies = [
+  "pydantic>=2.7,<3",
+  "PyYAML>=6.0,<7",
+  "pandas>=2.1,<4",
+  "numpy>=1.26,<3",
+  "matplotlib>=3.8,<4",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0,<10",
+]
+
+[project.scripts]
+ran-intent-simulation = "ran_intent_simulation.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+pythonpath = ["src"]

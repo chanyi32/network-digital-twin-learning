@@ -1,0 +1,110 @@
+schema_version: "1.1"
+parameter_nature: simulation_assumption
+
+sla:
+  video:
+    throughput_threshold_mbps: 20.0
+    required_user_satisfaction_ratio: 0.95
+    delay_p95_threshold_ms: 30.0
+  voice:
+    minimum_quality_score: 0.95
+    maximum_degradation_from_baseline: 0.02
+
+resources:
+  maximum_prb_utilization: 0.90
+
+validation:
+  available_prb_ratio_tolerance: 0.000001
+
+intent_extraction:
+  schema_version: "1.0"
+  extraction_method: rule_based_v1
+  confidence:
+    service_assurance_intent: 0.97
+    energy_optimization_intent: 0.95
+    service_protection_intent: 0.96
+    time_expression: 0.99
+    location_expression: 0.99
+    target_object: 0.95
+    target_service: 0.95
+    assurance_target: 0.96
+    optimization_goal: 0.97
+    protected_service: 0.96
+    modifier: 0.95
+    negation: 0.96
+
+statistics:
+  throughput_low_quantile: 0.05
+  delay_high_quantile: 0.95
+  quantile_method: linear
+
+risk:
+  normal_user_maximum_degradation: 0.10
+  bler_risk_scale: 0.10
+  maximum_active_action_count: 4
+
+time:
+  pre_effective_minutes: 15
+  post_effective_minutes: 15
+
+generation:
+  maximum_candidates_per_round: 100
+
+optimization:
+  feedback_enabled: true
+  maximum_feedback_iterations: 10
+  convergence_rounds: 2
+  minimum_score_improvement: 0.01
+  score_threshold: 0.80
+  allow_disable_energy_objective: true
+  allow_expand_action_space: true
+  allow_relax_hard_constraints: false
+
+scoring:
+  version: scoring-v1
+  weights:
+    service: 0.60
+    energy: 0.15
+    resource: 0.15
+    risk: 0.10
+  service_weights:
+    satisfaction: 0.35
+    throughput_p05: 0.20
+    delay_p95: 0.20
+    bler: 0.10
+    voice_quality: 0.15
+  resource_weights:
+    prb_utilization: 0.80
+    control_complexity: 0.20
+  normalization_bounds:
+    video_user_satisfaction_ratio: {minimum: 0.95, maximum: 1.00}
+    video_throughput_p05_mbps: {minimum: 0.00, maximum: 40.00}
+    video_delay_p95_ms: {minimum: 0.00, maximum: 30.00}
+    video_uplink_bler_mean: {minimum: 0.00, maximum: 0.20}
+    voice_quality_score: {minimum: 0.95, maximum: 1.00}
+    energy_saving_ratio: {minimum: -1.00, maximum: 0.95}
+    prb_utilization: {minimum: 0.00, maximum: 0.90}
+    action_complexity: {minimum: 0.00, maximum: 4.00}
+    policy_risk: {minimum: 0.00, maximum: 1.00}
+  tie_break_order:
+    - resource_cost
+    - risk
+    - ran_energy
+    - action_count
+    - policy_id
+
+energy:
+  baseline: 1.0
+  saving_intensity_values: [0.00, 0.05, 0.10]
+
+action_space:
+  reserved_prb_ratio: [0.00, 0.10, 0.20, 0.30]
+  video_scheduling_weight: [1.00, 1.25, 1.50, 2.00]
+  minimum_voice_prb_ratio: [0.05, 0.10, 0.15, 0.20]
+
+reproducibility:
+  random_seed: 20260730
+
+performance_model:
+  version: simplified-ran-v1
+  config_file: config/performance_model_v1.yaml

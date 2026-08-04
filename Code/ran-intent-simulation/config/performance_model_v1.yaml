@@ -1,0 +1,217 @@
+schema_version: "1.0"
+parameter_nature: simulation_assumption
+status: confirmed_for_simplified_simulation_v1
+
+performance_model:
+  model_version: simplified-ran-v1
+  coefficient_version: simplified-ran-coefficients-v1
+  scope: single_cell_ran_only
+  applicability: >-
+    This model validates only the RAN intent-decision workflow and relative
+    trends within the configured discrete action space and the configured
+    low-, medium-, and high-load validation scenarios. Every numeric value is
+    a simulation_assumption, not a 3GPP value, field measurement, or deployment
+    recommendation.
+  stochastic_enabled: false
+  fail_on_monotonicity_violation: true
+
+  neutral_parameters:
+    reserved_prb_ratio: 0.00
+    video_scheduling_weight: 1.00
+    minimum_voice_prb_ratio: 0.00
+    energy_saving_intensity: 0.00
+
+  coefficients:
+    capacity:
+      k_E: 0.80
+      phi_min: 0.70
+      k_r: 0.35
+      k_v: 0.25
+      u_cong: 0.85
+
+    throughput:
+      alpha_r: 1.50
+      alpha_w: 0.35
+      alpha_c: 2.00
+      sinr_gain_per_db: 0.00
+      sinr_reference_db: 8.00
+      sinr_factor_min: 0.80
+      sinr_factor_max: 1.20
+
+    delay:
+      beta_u: 2.00
+      beta_e: 1.00
+      beta_r: 1.20
+      beta_w: 0.40
+
+    bler:
+      chi_u: 0.30
+      chi_r: 0.16
+      chi_w: 0.02
+
+    voice:
+      delta_v: 0.25
+      delta_r: 0.12
+      delta_e: 0.20
+      delta_u: 0.15
+
+    energy:
+      eta_e: 0.80
+      eta_u: 0.30
+      eta_a: 0.01
+
+    normal_user:
+      zeta_r: 0.25
+      zeta_w: 0.08
+      zeta_v: 0.15
+      zeta_e: 0.10
+      zeta_u: 0.30
+
+    risk_weights:
+      omega_u: 0.25
+      omega_q: 0.20
+      omega_e: 0.10
+      omega_a: 0.10
+      omega_f: 0.20
+      omega_b: 0.15
+
+  risk:
+    epsilon: 0.000000001
+    voice_risk_margin: 0.05
+    bler_risk_scale_ref: risk.bler_risk_scale
+    maximum_active_action_count_ref: risk.maximum_active_action_count
+
+  output_bounds:
+    prbUtilization: {lowerBound: 0.00, upperBound: 1.00}
+    videoUplinkThroughputMbps: {lowerBound: 0.00, upperBound: 200.00}
+    videoUplinkDelayMs: {lowerBound: 0.00, upperBound: 1000.00}
+    videoUplinkBler: {lowerBound: 0.00, upperBound: 1.00}
+    videoUserSatisfactionRatio: {lowerBound: 0.00, upperBound: 1.00}
+    voiceQualityScore: {lowerBound: 0.00, upperBound: 1.00}
+    voiceQualityDegradation: {lowerBound: 0.00, upperBound: 1.00}
+    ranEnergy: {lowerBound: 0.05, upperBound: 2.00}
+    normalUserPerformanceDegradation: {lowerBound: 0.00, upperBound: 1.00}
+    riskComponent: {lowerBound: 0.00, upperBound: 1.00}
+    riskScore: {lowerBound: 0.00, upperBound: 1.00}
+
+  clipping_monitor:
+    warning_ratio: 0.10
+    warning_minimum_evaluations: 10
+
+  formula_definitions:
+    sinr_factor: >-
+      clip(1 + sinr_gain_per_db * (user_sinr_db - sinr_reference_db),
+      sinr_factor_min, sinr_factor_max)
+    normal_user_degradation: >-
+      clip(zeta_r*r + zeta_w*(w-1) + zeta_v*v + zeta_e*e
+      + zeta_u*max(0,u_after-u_baseline), 0, 1)
+    overload_risk: >-
+      clip((u_after-u_cong)/(1-u_cong), 0, 1)
+    voice_absolute_margin_risk: >-
+      clip((voice_minimum_quality+voice_risk_margin-Q_after)
+      /voice_risk_margin, 0, 1)
+    voice_baseline_degradation_risk: >-
+      clip(max(0,Q_baseline-Q_after)
+      /max(maximum_voice_degradation,epsilon), 0, 1)
+    voice_risk: >-
+      max(voice_absolute_margin_risk,voice_baseline_degradation_risk)
+    energy_intensity_risk: >-
+      clip(e/max(max_configured_energy_saving_intensity,epsilon), 0, 1)
+    action_complexity_risk: >-
+      clip(active_action_count/maximum_active_action_count, 0, 1)
+    fairness_risk: >-
+      clip(max(0,normal_user_degradation-normal_user_degradation_threshold)
+      /(1-normal_user_degradation_threshold), 0, 1)
+    bler_degradation_risk: >-
+      clip(max(0,bler_after_mean-bler_baseline_mean)/bler_risk_scale, 0, 1)
+
+  monotonicity_validation_scenarios:
+    - scenarioId: MONO-LOW-LOAD
+      timestamp: "2026-07-29T19:30:00+08:00"
+      cellId: CELL-101
+      cellLoad: 0.30
+      prbUtilization: 0.30
+      availablePrbRatio: 0.70
+      videoUserCount: 2
+      voiceUserCount: 1
+      normalUserCount: 2
+      videoThroughputMeanMbps: 30.00
+      videoThroughputP05Mbps: 28.00
+      videoDelayMeanMs: 15.00
+      videoDelayP95Ms: 18.00
+      videoUplinkBlerMean: 0.02
+      voiceQualityScore: 0.98
+      baselineRanEnergy: 1.00
+      meanSinrDb: 15.00
+      normalUserPerformanceIndex: 1.00
+      videoUsers:
+        - userId: LOW-VIDEO-001
+          baselineUplinkThroughputMbps: 32.00
+          baselineUplinkDelayMs: 14.00
+          baselineUplinkBler: 0.02
+          meanSinrDb: 16.00
+        - userId: LOW-VIDEO-002
+          baselineUplinkThroughputMbps: 28.00
+          baselineUplinkDelayMs: 16.00
+          baselineUplinkBler: 0.02
+          meanSinrDb: 14.00
+
+    - scenarioId: MONO-MEDIUM-LOAD
+      timestamp: "2026-07-29T19:30:00+08:00"
+      cellId: CELL-101
+      cellLoad: 0.60
+      prbUtilization: 0.60
+      availablePrbRatio: 0.40
+      videoUserCount: 2
+      voiceUserCount: 2
+      normalUserCount: 3
+      videoThroughputMeanMbps: 22.00
+      videoThroughputP05Mbps: 20.00
+      videoDelayMeanMs: 25.00
+      videoDelayP95Ms: 29.00
+      videoUplinkBlerMean: 0.04
+      voiceQualityScore: 0.97
+      baselineRanEnergy: 1.00
+      meanSinrDb: 8.00
+      normalUserPerformanceIndex: 1.00
+      videoUsers:
+        - userId: MEDIUM-VIDEO-001
+          baselineUplinkThroughputMbps: 24.00
+          baselineUplinkDelayMs: 23.00
+          baselineUplinkBler: 0.03
+          meanSinrDb: 9.00
+        - userId: MEDIUM-VIDEO-002
+          baselineUplinkThroughputMbps: 20.00
+          baselineUplinkDelayMs: 27.00
+          baselineUplinkBler: 0.05
+          meanSinrDb: 7.00
+
+    - scenarioId: MONO-HIGH-LOAD
+      timestamp: "2026-07-29T19:30:00+08:00"
+      cellId: CELL-101
+      cellLoad: 0.82
+      prbUtilization: 0.80
+      availablePrbRatio: 0.20
+      videoUserCount: 2
+      voiceUserCount: 2
+      normalUserCount: 4
+      videoThroughputMeanMbps: 16.50
+      videoThroughputP05Mbps: 15.00
+      videoDelayMeanMs: 38.00
+      videoDelayP95Ms: 44.00
+      videoUplinkBlerMean: 0.05
+      voiceQualityScore: 0.97
+      baselineRanEnergy: 1.00
+      meanSinrDb: 5.00
+      normalUserPerformanceIndex: 1.00
+      videoUsers:
+        - userId: HIGH-VIDEO-001
+          baselineUplinkThroughputMbps: 18.00
+          baselineUplinkDelayMs: 35.00
+          baselineUplinkBler: 0.04
+          meanSinrDb: 6.00
+        - userId: HIGH-VIDEO-002
+          baselineUplinkThroughputMbps: 15.00
+          baselineUplinkDelayMs: 41.00
+          baselineUplinkBler: 0.06
+          meanSinrDb: 4.00
