@@ -1,0 +1,18 @@
+schema_version: "1.1"
+experiment_name: feedback_compare
+description: Compare a single-round decision with the configured feedback loop.
+fixed_random_seed: 20260730
+output_root: results/experiments
+cases:
+  - case_id: feedback_enabled_false
+    description: Evaluate and score round zero without generating feedback.
+    scenario_id: SCENARIO-HIGH-LOAD
+    simulation_overrides:
+      optimization.feedback_enabled: false
+      optimization.maximum_feedback_iterations: 10
+  - case_id: feedback_enabled_true
+    description: Use the frozen maximum of ten feedback iterations.
+    scenario_id: SCENARIO-HIGH-LOAD
+    simulation_overrides:
+      optimization.feedback_enabled: true
+      optimization.maximum_feedback_iterations: 10

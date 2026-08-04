@@ -1,0 +1,35 @@
+{
+  "templateVersion": "simulation-v1",
+  "scenario": "concert_uplink_assurance",
+  "parameterNature": "simulation_assumption",
+  "constraints": [
+    {
+      "metric": "videoUserSatisfactionRatio",
+      "operator": ">=",
+      "thresholdRef": "sla.video.required_user_satisfaction_ratio",
+      "perUserMetric": "videoUplinkThroughputMbps",
+      "perUserThresholdRef": "sla.video.throughput_threshold_mbps"
+    },
+    {
+      "metric": "videoDelayP95Ms",
+      "operator": "<=",
+      "thresholdRef": "sla.video.delay_p95_threshold_ms"
+    },
+    {
+      "metric": "voiceQualityScore",
+      "operator": ">=",
+      "thresholdRef": "sla.voice.minimum_quality_score"
+    },
+    {
+      "metric": "voiceQualityDegradation",
+      "operator": "<=",
+      "thresholdRef": "sla.voice.maximum_degradation_from_baseline"
+    },
+    {
+      "metric": "prbUtilization",
+      "operator": "<=",
+      "thresholdRef": "resources.maximum_prb_utilization"
+    }
+  ]
+}
+

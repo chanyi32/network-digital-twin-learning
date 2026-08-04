@@ -1,0 +1,29 @@
+schema_version: "1.1"
+experiment_name: load_sweep
+description: Compare policy decisions under predefined low, medium, and high RAN loads.
+fixed_random_seed: 20260730
+output_root: results/experiments
+cases:
+  - case_id: low_load
+    description: Simulation-assumption low-load RAN state.
+    scenario_id: SCENARIO-HIGH-LOAD
+    ran_state_overrides:
+      cellLoad: 0.45
+      prbUtilization: 0.40
+      availablePrbRatio: 0.60
+      baselineUplinkThroughputMbps: 25.0
+      baselineUplinkDelayMs: 20.0
+      baselineUplinkBler: 0.02
+  - case_id: medium_load
+    description: Simulation-assumption medium-load RAN state.
+    scenario_id: SCENARIO-HIGH-LOAD
+    ran_state_overrides:
+      cellLoad: 0.65
+      prbUtilization: 0.62
+      availablePrbRatio: 0.38
+      baselineUplinkThroughputMbps: 20.0
+      baselineUplinkDelayMs: 28.0
+      baselineUplinkBler: 0.035
+  - case_id: high_load
+    description: Frozen baseline high-load RAN state.
+    scenario_id: SCENARIO-HIGH-LOAD

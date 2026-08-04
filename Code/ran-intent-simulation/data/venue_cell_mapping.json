@@ -1,0 +1,10 @@
+[
+  {
+    "venueId": "STADIUM-001",
+    "geoFence": "POLYGON(...)",
+    "gnbIds": ["GNB-001"],
+    "cellIds": ["CELL-101"],
+    "carrierIds": ["NR-CARRIER-01"]
+  }
+]
+

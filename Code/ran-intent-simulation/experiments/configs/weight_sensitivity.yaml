@@ -1,0 +1,25 @@
+schema_version: "1.1"
+experiment_name: weight_sensitivity
+description: Compare policy selection under alternative configured scoring weights.
+fixed_random_seed: 20260730
+output_root: results/experiments
+cases:
+  - case_id: frozen_baseline
+    description: Frozen v0.1.0 scoring weights.
+    scenario_id: SCENARIO-HIGH-LOAD
+  - case_id: service_priority
+    description: Simulation-assumption service-priority weighting.
+    scenario_id: SCENARIO-HIGH-LOAD
+    simulation_overrides:
+      scoring.weights.service: 0.75
+      scoring.weights.energy: 0.05
+      scoring.weights.resource: 0.10
+      scoring.weights.risk: 0.10
+  - case_id: energy_priority
+    description: Simulation-assumption energy-priority weighting.
+    scenario_id: SCENARIO-HIGH-LOAD
+    simulation_overrides:
+      scoring.weights.service: 0.50
+      scoring.weights.energy: 0.30
+      scoring.weights.resource: 0.10
+      scoring.weights.risk: 0.10

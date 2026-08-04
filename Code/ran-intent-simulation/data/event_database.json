@@ -1,0 +1,10 @@
+[
+  {
+    "eventId": "EVENT-001",
+    "eventType": "concert",
+    "venueId": "STADIUM-001",
+    "startTime": "2026-07-29T19:30:00+08:00",
+    "endTime": "2026-07-29T22:30:00+08:00"
+  }
+]
+

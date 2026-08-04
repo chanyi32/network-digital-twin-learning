@@ -1,0 +1,30 @@
+schema_version: "1.0"
+pilot_id: minimal-pilot-v1
+description: Minimal six-case pilot for experiment-pipeline validation.
+output_root: results/pilot
+random_seed: 20260730
+maximum_candidates_per_round: 20
+feedback_maximum_iterations: 2
+load_sweep:
+  low_load:
+    cellLoad: 0.45
+    prbUtilization: 0.40
+    availablePrbRatio: 0.60
+    baselineUplinkThroughputMbps: 25.0
+    baselineUplinkDelayMs: 20.0
+    baselineUplinkBler: 0.02
+  high_load: {}
+feedback_compare:
+  feedback_enabled_false: false
+  feedback_enabled_true: true
+weight_sensitivity:
+  default_weights:
+    service: 0.60
+    energy: 0.15
+    resource: 0.15
+    risk: 0.10
+  service_priority_weights:
+    service: 0.75
+    energy: 0.05
+    resource: 0.10
+    risk: 0.10
