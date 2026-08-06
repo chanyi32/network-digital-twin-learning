@@ -22,7 +22,8 @@
 \usepackage{xurl}
 \usepackage{booktabs}
 \usepackage{listings}
-
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
 \lstset{
     basicstyle=\ttfamily\small,
     breaklines=true,
@@ -75,13 +76,7 @@
 
 \section{意图驱动网络价值}
 
-意图驱动网络（Intent-Based Networking, IBN）是面向 6G 自智网络的重要管理模式。其核心思想是将网络管理方式从“人工配置参数”转变为“用户表达目标、系统自动生成策略”。也就是说，用户或业务系统不再直接指定小区功率、切换门限、路由路径、切片资源比例等底层配置，而是提出高层业务目标，例如“保障某区域低时延业务”“提升热点区域用户体验”“降低夜间网络能耗”等，由系统自动完成意图解析、策略生成、孪生验证、编排执行和闭环保障。
-
-意图驱动网络的基本流程可表示为：
-
-Intent→SLA→Policy→Configuration→Pre-verification→Assurance
-
-其中，Intent 表示业务意图，SLA 表示可量化服务指标，Policy 表示网络策略，Configuration 表示具体配置，Verification 表示策略预验证，Assurance 表示持续保障。
+意图驱动网络（Intent-Based Networking, IBN）是面向 6G 自智网络的重要管理模式。其核心思想是将网络管理方式从“人工配置参数”转变为“用户表达目标、系统自动生成策略”。也就是说，用户或业务系统不再直接指定小区功率、切换门限、路由路径、切片资源比例等底层配置，而是提出高层业务目标，例如“保障某区域低时延业务”“提升热点区域用户体验”“降低夜间网络能耗”等，由系统自动完成意图解析、策略生成、孪生验证。
 
 
 6G 网络涉及无线、承载、核心网、边缘云、算力和业务平台等多个网络域，底层参数数量庞大，人工直接配置难度较高。通过意图驱动机制，运维人员只需关注业务目标，系统自动完成目标分解和策略映射，从而降低人工配置复杂度。传统网络优化往往需要人工分析 KPI、告警、用户投诉和业务需求，再手动制定优化方案。意图驱动网络可以结合 AI、知识图谱和规则推理技术，将业务目标快速转换为可执行策略。例如，“保障工业控制业务低时延高可靠”可被转换为时延、可靠性、资源隔离、调度优先级和边缘算力部署等约束条件，并进一步生成网络配置策略。
@@ -99,173 +94,120 @@ Intent→SLA→Policy→Configuration→Pre-verification→Assurance
 
 （3）模型动态校准：根据物理网络执行结果持续更新孪生模型，提高数字空间与真实网络之间的一致性；
 
-（4）优化反馈支撑：结合策略执行效果和网络变化趋势，为后续意图解析和策略生成提供反馈，实现持续优化。
-
 因此，网络数字孪生并不是简单复制物理网络，而是构建连接“业务意图—智能决策—策略验证—网络优化”的虚拟闭环环境，为6G网络实现自主感知、自主决策和自主优化提供关键技术支撑。
 
 \chapter{总体架构与技术体系}
+\label{chap:overall_architecture}
 
-面向6G网络业务多样化、资源异构化和网络自治化发展需求，本文构建面向意图驱动智能决策与网络高精度孪生建模的总体技术架构。该架构以网络数字孪生为基础支撑，以业务意图理解和智能决策为核心，以自动化编排和闭环优化为执行手段，实现从业务需求表达、网络状态感知、孪生模型构建、策略生成验证到网络执行反馈的闭环。
-
-本章采用三层架构、三域模型和双闭环机制的总体架构\cite{Sun_DTN_2021}，并在此架构下研究意图驱动智能决策、高精度孪生建模以及智能编排协同机制。
+面向6G网络业务多样化、资源异构化和网络自治化的发展需求，
+本文围绕“意图驱动智能决策”和“网络高精度孪生建模与编排”两项关键技术，
+构建总体技术架构。
+该架构以业务意图为输入，
+以当前RAN网络状态为基础，
+通过意图理解、目标转译、候选策略生成、
+孪生场景构建、策略推演验证和结果反馈，
+形成从业务需求表达至策略验证优化的完整处理链路。
 
 \section{总体架构}
 
-\subsection*{三层架构}
+总体架构如图\ref{fig:overall_architecture}所示。
+其中，上层为业务意图输入，
+中间包括意图驱动智能决策模块和网络高精度孪生建模与编排模块，
+底层为物理RAN网络及其状态数据。
+两类关键技术通过“候选策略”这一中间对象实现衔接：
+意图驱动智能决策负责根据业务目标生成候选策略，
+网络数字孪生负责在策略作用于物理网络之前完成推演、验证与评估。
 
-三层为物理网络层、孪生网络层和网络应用层。
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{framework.png}
+    \caption{总体技术架构}
+    \label{fig:overall_architecture}
+\end{figure}
 
-物理网络层包括真实运行的网络基础设施，包括无线接入网、核心网、承载网络、边缘计算节点以及终端设备等。该层负责提供真实网络运行环境，并通过数据采集接口向孪生网络层提供网络状态信息，同时接收经过验证后的优化策略。
-
-孪生网络层是数字孪生系统的核心，包括数据域、模型域和管理域。其中：
-\begin{itemize}
-    \item 数据域负责多源异构网络数据采集、存储、治理和服务；
-    \item 模型域负责构建网络拓扑模型、协议模型、业务模型、无线环境模型以及AI预测模型；
-    \item 管理域负责孪生实体生命周期管理、模型更新和虚实一致性维护。
-\end{itemize}
-孪生网络层通过数据驱动和模型驱动方式，实现对物理网络状态的高精度表达。
-
-网络应用层面向业务需求提供智能化网络服务，包括：
-\begin{itemize}
-    \item 意图解析服务；
-    \item 智能决策服务；
-    \item 网络优化服务；
-    \item 策略验证服务；
-    \item 自动化编排服务。
-\end{itemize}
-该层通过调用孪生网络能力，实现面向业务目标的智能网络管理。
-
-\subsection*{三域架构}
-
-为了实现网络数字孪生的高效运行，孪生网络层进一步划分为数据域、模型域和管理域。
-
-数据域负责采集和管理网络运行过程中的多维数据，包括：
-\begin{itemize}
-    \item 网络配置数据；
-    \item 性能指标数据；
-    \item 用户业务数据；
-    \item 告警日志数据；
-    \item 环境感知数据。
-\end{itemize}
-通过数据治理和特征提取，形成支撑模型训练和智能分析的数据基础。
-
-模型域负责构建网络数字孪生模型，包括：
-\begin{itemize}
-    \item 拓扑模型：描述网络节点和连接关系；
-    \item 协议模型：描述网络流程和协议行为；
-    \item 无线模型：描述信道、干扰和传播特性；
-    \item 业务模型：描述业务流量和用户行为；
-    \item AI模型：实现状态预测和智能推理。
-\end{itemize}
-
-管理域负责孪生实体生命周期管理，包括模型创建、更新、同步、版本管理和状态维护，保证数字孪生网络与物理网络的一致性。
-
-\subsection*{双闭环机制}
-
-面向6G网络自治需求，本文采用由内闭环和外闭环组成的双闭环优化机制。内闭环运行于数字孪生空间内部，通过模型推演、策略搜索和仿真验证，实现优化方案生成。其流程为：
-\begin{equation}
-State \rightarrow Prediction \rightarrow Decision \rightarrow Simulation \rightarrow Evaluation
-\end{equation}
-
-
-外闭环连接数字孪生网络和物理网络，将经过验证的优化策略下发至真实网络，并根据执行结果更新孪生模型。其流程为：
-\begin{equation}
-Decision \rightarrow Orchestration \rightarrow Execution \rightarrow Feedback
-\end{equation}
-
-\section{意图驱动智能决策技术架构}
-
-意图驱动智能决策面向6G网络业务目标多样化、服务质量差异化和网络资源动态变化等需求，重点解决“如何将高层业务意图自动转换为网络可执行策略”的问题。该架构以业务意图为输入，以SLA约束建模为中间表达，以智能策略生成为核心输出，形成从业务目标理解到网络策略生成的决策链路。
-
-意图驱动智能决策过程可表示为：
+从功能流程看，
+本文的整体技术链路可概括为：
 
 \begin{equation}
-Intent \rightarrow SLA \rightarrow Policy \rightarrow Candidate\ Strategy
+\text{Intent}
+\rightarrow
+\text{SLA}
+\rightarrow
+\text{Candidate Policy}
+\rightarrow
+\text{Twin Scenario}
+\rightarrow
+\text{Validation Result}
+\label{eq:overall_flow}
 \end{equation}
 
-其中，$Intent$表示业务意图，$SLA$表示可量化服务等级要求，$Policy$表示网络策略规则，$Candidate\ Strategy$表示待验证的候选优化策略。
+其中，
+\textit{Intent}表示用户或业务系统提出的高层业务目标，
+\textit{SLA}表示量化后的业务需求与约束，
+\textit{Candidate Policy}表示面向RAN生成的候选策略，
+\textit{Twin Scenario}表示针对候选策略构建的数字孪生验证场景，
+\textit{Validation Result}表示经过性能推演、约束检查和综合评分后得到的策略验证结果。
 
-从功能组成看，意图驱动智能决策架构主要包括意图输入、意图解析、SLA约束建模、策略生成和策略评估五个核心模块。
+意图驱动智能决策模块主要解决“如何从业务目标生成候选策略”的问题。
+它以业务意图为输入，
+通过业务意图抽取识别时间范围、空间范围、目标业务和约束条件等关键信息，
+再通过业务意图转译将高层需求映射为可计算的网络目标和SLA约束，
+最后结合当前RAN状态生成候选策略，
+为后续验证提供输入。
+该部分内容将在第三章中展开。
 
-\begin{enumerate}
-    \item \textbf{意图输入模块：}
-    负责接收用户、业务系统或上层应用提出的高层业务目标，包括自然语言描述、业务模板和SLA需求等。例如，“保障工业控制业务低时延高可靠”“提升热点区域用户体验”“在满足业务质量前提下降低网络能耗”等。
+网络高精度孪生建模与编排模块主要解决“如何对候选策略进行验证”的问题。
+它以当前RAN状态和候选策略为输入，
+构建与物理网络对应的孪生状态，
+并将候选策略映射为独立的孪生验证场景，
+随后调用性能模型完成策略推演、
+约束检查与评分排序，
+输出策略可行性、效果评估和诊断信息。
+该部分内容将在第四章中展开。
 
-    \item \textbf{意图解析模块：}
-    负责对业务意图进行语义理解和目标分解，识别业务类型、服务目标、约束条件和优先级等关键信息，实现从自然语言或业务需求到结构化意图表示的转换。
-
-    \item \textbf{SLA约束建模模块：}
-    负责将业务意图进一步转换为可量化的网络性能指标和约束条件，例如时延、可靠性、吞吐量、丢包率、资源占用和能耗约束等，从而形成可计算、可优化的网络目标。
-
-    \item \textbf{策略生成模块：}
-    根据业务目标、SLA约束和当前网络状态，结合规则推理、优化算法、知识图谱和人工智能模型，生成满足业务需求的候选网络策略，包括资源调度、参数优化、切片保障和节能控制等策略。
-
-    \item \textbf{策略评估模块：}
-    对生成的候选策略进行初步筛选和优先级排序，判断其是否满足基本约束条件，并输出待进一步验证的候选策略集合，为后续数字孪生环境中的仿真推演和风险评估提供输入。
-\end{enumerate}
-
-上述架构重点描述意图驱动智能决策内部的核心处理流程，即“业务意图理解—SLA约束建模—策略生成—候选策略输出”。其中，网络状态数据作为智能决策的重要输入支撑，网络数字孪生则作为候选策略的验证环境，用于在策略作用于物理网络之前完成仿真推演、效果评估和风险分析。具体的意图解析方法、SLA建模方法和智能策略生成机制将在第三章“意图驱动智能决策”中进一步展开。
-
-
-\section{网络高精度孪生建模与编排机制}
-
-网络高精度孪生建模与编排机制是实现6G网络智能决策和策略验证的重要基础。该机制以物理网络状态精准映射为目标，通过融合多源异构网络数据、知识模型和人工智能模型，构建能够反映网络实体、业务行为、资源状态和性能变化的高精度数字孪生环境。本文提出的网络高精度孪生建模与编排机制具体包括：
-
-\begin{enumerate}
-    \item \textbf{高精度孪生建模模块：}
-    基于采集的数据构建网络数字孪生模型，实现对网络实体、连接关系、业务行为和资源状态的精准描述。通过融合拓扑模型、无线模型、业务模型、协议模型和AI预测模型，提高数字空间对物理网络的表达能力。
-
-    \item \textbf{数字孪生环境编排模块：}
-    面向不同业务需求和验证任务，对孪生环境中的数据资源、模型资源、仿真场景和计算资源进行统一组织与调度，实现针对特定业务场景的快速孪生环境构建。
-\end{enumerate}
-
-通过上述机制，网络数字孪生能够形成从“物理网络状态感知—数字空间建模—孪生环境构建—策略仿真验证”的完整流程，为意图驱动智能决策提供高精度、可交互、可验证的虚拟环境。其中，网络高精度孪生建模方法、模型构建技术以及数字孪生环境编排机制将在第四章“网络高精度孪生建模与编排”中进一步展开。
-
-% ============================================================
-% 第3章 意图驱动智能决策技术
-%
-% 建议导言区包含：
-% \usepackage{amsmath,amssymb}
-% \usepackage{booktabs}
-% \usepackage{tabularx}
-% \usepackage{array}
-% \usepackage{float}
-% \usepackage{xcolor}
-% \usepackage{listings}
-% \usepackage{graphicx}
-% \usepackage{enumitem}
-% ============================================================
+需要说明的是，
+当前研究重点面向单小区RAN场景，
+已完成候选策略生成、孪生场景构建和前向验证流程；
+而实时状态同步、模型在线校准、
+残差修正和多轮反馈优化等能力，
+将在后续研究中进一步增强。
 
 \chapter{意图驱动智能决策技术}
 \label{chap:intent_driven_decision}
 
-意图驱动智能决策是实现网络自动化与自智化管控的重要技术环节。其基本思想是以用户、业务系统或运维人员提出的高层业务目标为输入，由网络系统自动完成业务语义理解、网络目标转译、候选策略生成、策略效果评估和策略迭代改进，从而减少传统网络管理中对人工参数配置和运维经验的依赖。与直接面向设备参数的网络控制方式不同，意图驱动决策首先描述用户希望网络达到的业务效果，而不是直接指定应修改哪些无线参数。例如，用户可以提出如下业务需求：
+意图驱动智能决策是实现网络自动化和自智化管控的重要技术环节。
+其基本思想是以用户或业务系统提出的高层业务目标为输入，
+自动完成业务语义理解、网络目标转译、候选策略生成和策略效果评估，
+从而减少传统网络管理对人工配置和运维经验的依赖。
+
+与直接面向设备参数的控制方式不同，
+意图驱动决策首先描述用户希望网络达到的业务效果，
+而不是直接指定需要修改的无线参数。
+例如，用户可以提出如下需求：
 
 \begin{quote}
 “今晚演唱会期间，保障体育场内视频用户的上行体验，
 尽量减少能耗，同时不影响语音业务。”
 \end{quote}
 
-上述需求同时包含视频业务保障、RAN节能优化和语音业务保护等多个目标，但没有直接给出策略生效时间、目标小区、无线资源配置、调度权重以及业务质量门限等可执行参数。因此，网络系统需要依次回答以下问题：
+上述需求同时包含视频业务保障、RAN节能优化和语音业务保护，
+但没有直接给出策略生效时间、目标小区、无线资源配置、
+调度权重和业务质量门限。
+因此，需要将自然语言需求逐步转换为RAN侧可识别、
+可计算和可评估的候选网络策略。
 
-\begin{enumerate}[label=\arabic*)]
-    \item 用户明确表达了哪些业务目标、作用范围和约束条件；
-    \item 这些业务语义在RAN侧具体对应哪些网络对象、性能指标和SLA约束；
-    \item 为满足上述目标，RAN侧可以生成哪些控制动作和动作参数组合；
-    \item 各候选策略能否满足硬约束，其业务收益、资源代价、能耗和风险如何；
-    \item 当候选策略不满足要求时，如何根据评估结果调整动作参数或动作组合。
-\end{enumerate}
+本文面向单小区无线接入网
+（Radio Access Network, RAN），
+构建从业务意图抽取到候选策略评估的决策原型。
+当前研究不涉及承载网、核心网、多小区协同和真实设备配置下发。
 
-本报告围绕上述问题构建一个面向单小区无线接入网（Radio Access Network, RAN）的意图驱动智能决策原型。
-当前原型重点验证从自然语言业务需求到候选RAN策略评估的完整处理链路，不涉及承载网、核心网、用户面功能、边缘计算、多小区协同以及真实设备配置下发。
-
-需要说明的是，本文当前采用的业务规则、SLA门限、动作空间和性能模型系数均为仿真假设。本章实验结果主要用于验证意图驱动决策流程的可运行性、可解释性和相对变化趋势，不代表真实无线网络测量结果。
 
 \section{总体决策流程}
+\label{sec:intent_decision_overview}
 
-\subsection*{基本处理逻辑}
-
-意图驱动智能决策的核心是完成从业务语言到网络控制策略的逐层转换。本文将该过程划分为业务意图抽取、业务意图转译、候选RAN策略生成以及候选策略评估与反馈优化四个主要环节。其总体处理过程可表示为：
+本文将意图驱动智能决策划分为业务意图抽取、
+业务意图转译、网络策略生成和候选策略评估四个主要环节。
+其总体处理过程可表示为：
 
 \begin{equation}
 \begin{aligned}
@@ -288,31 +230,93 @@ I_{\mathrm{trans}}^{\mathrm{RAN}}
 其中：
 
 \begin{itemize}
-    \item $I_{\mathrm{ext}}$表示从自然语言需求中得到的结构化业务意图；
-    \item $I_{\mathrm{trans}}^{\mathrm{RAN}}$表示完成RAN作用范围、
-    网络目标和SLA约束映射后的转译结果；
+    \item $I_{\mathrm{ext}}$表示从自然语言中抽取的结构化业务意图；
+    \item $I_{\mathrm{trans}}^{\mathrm{RAN}}$表示RAN作用范围、
+    网络目标和SLA约束；
     \item $\mathcal{P}^{(0)}$表示初始候选RAN策略集合；
-    \item $\mathcal{S}^{(0)}$表示候选策略的性能、约束、评分和排序结果；
-    \item $\mathcal{P}^{(1)}$表示根据评估反馈生成的下一轮局部改进策略集合。
+    \item $\mathcal{S}^{(0)}$表示候选策略的性能、约束和评分结果；
+    \item $\mathcal{P}^{(1)}$表示根据评估反馈生成的改进策略集合。
 \end{itemize}
 
-\section{业务意图抽取}
+四个环节之间具有明确的递进关系：
 
-业务意图抽取是意图驱动智能决策链路的起始环节。其目标是从用户、业务系统或运维人员提出的自然语言需求中，识别业务类型、作用范围、目标对象、保障目标、优化方向和保护约束，并将非结构化文本转换为具有统一Schema的结构化业务意图。对于如下业务需求：
+\begin{enumerate}[label=\arabic*)]
+    \item 业务意图抽取识别用户表达的时间、地点、
+    业务对象、目标和约束；
+    \item 业务意图转译补全活动时间、目标小区、
+    RAN目标和SLA门限；
+    \item 网络策略生成将RAN目标映射为动作模板和参数组合；
+    \item 候选策略评估结合当前RAN状态计算策略性能，
+    完成约束检查、评分排序和反馈改进。
+\end{enumerate}
+
+本文各模块的实际实现方法为：
+
+\begin{equation}
+\boxed{
+\begin{aligned}
+&\text{规则驱动的业务意图抽取},\\
+&\text{静态知识驱动的业务意图转译},\\
+&\text{模板与离散参数驱动的策略生成},\\
+&\text{简化RAN模型驱动的策略评估},\\
+&\text{基于局部邻域搜索的反馈优化}.
+\end{aligned}
+}
+\label{eq:implemented_decision_methods}
+\end{equation}
+
+候选策略评估结果不仅用于选择较优策略，
+还可以反馈至策略生成过程。
+设第$n$轮候选策略集合为$\mathcal{P}^{(n)}$，
+其评估结果为$\mathcal{F}^{(n)}$，
+则下一轮策略生成过程为：
+
+\begin{equation}
+\mathcal{P}^{(n)}
+\xrightarrow{\mathrm{Evaluation}}
+\mathcal{F}^{(n)}
+\xrightarrow{\mathrm{Local\ Feedback}}
+\mathcal{P}^{(n+1)}.
+\label{eq:policy_feedback_loop}
+\end{equation}
+
+评估反馈主要包括视频吞吐率不足、视频时延过高、
+语音质量下降、PRB利用率过高和能耗偏高等信息，
+系统据此调整相邻参数档位或动作组合。
+
+
+\section{业务意图抽取}
+\label{sec:business_intent_extraction}
+
+业务意图抽取是意图驱动决策的起始环节，
+其目标是从自然语言需求中识别业务类型、
+作用范围、目标对象、保障目标和保护约束，
+并形成统一的结构化业务意图。
+
+对于如下需求：
 
 \begin{quote}
 “今晚演唱会期间，保障体育场内视频用户的上行体验，
 尽量减少能耗，同时不影响语音业务。”
 \end{quote}
 
-系统需要识别其中包含的时间表达、空间表达、目标用户、目标业务、业务保障目标、节能优化目标和语音保护约束。但是，本阶段不负责确定演唱会的准确起止时间、体育场对应的目标小区、具体SLA门限以及RAN控制参数。上述信息需要在后续业务意图转译和策略生成阶段进一步补全。因此，业务意图抽取主要回答以下两个问题：
+系统需要识别：
 
-\begin{enumerate}[label=\arabic*)]
-    \item 用户在原始文本中明确表达了什么；
-    \item 哪些信息尚未明确，需要由后续知识库、规则或人工确认进行补充。
-\end{enumerate}
+\begin{itemize}
+    \item 时间表达“今晚演唱会期间”；
+    \item 空间表达“体育场内”；
+    \item 目标对象“视频用户”；
+    \item 保障目标“上行体验”；
+    \item 优化目标“减少能耗”；
+    \item 保护对象“语音业务”；
+    \item 视频保障、节能优化和语音保护之间的逻辑关系。
+\end{itemize}
 
-业务意图抽取结果可抽象表示为：
+本阶段只提取用户明确表达的业务语义，
+不负责确定演唱会准确时间、目标小区、
+SLA门限和RAN控制参数。
+
+业务意图抽取结果表示为：
 
 \begin{equation}
 I_{\mathrm{ext}}
@@ -320,7 +324,7 @@ I_{\mathrm{ext}}
 \left\{
 T,L,O,S,G,C,R,U
 \right\},
-\label{eq:intent_extraction_representation}
+\label{eq:structured_intent_representation}
 \end{equation}
 
 其中：
@@ -330,212 +334,17 @@ T,L,O,S,G,C,R,U
     \item $L$表示空间表达；
     \item $O$表示意图作用对象；
     \item $S$表示目标业务；
-    \item $G$表示业务保障目标和优化目标；
+    \item $G$表示保障目标和优化目标；
     \item $C$表示业务保护约束；
     \item $R$表示语义关系和逻辑关系；
-    \item $U$表示尚未解析或需要补充的信息。
+    \item $U$表示尚未解析的信息。
 \end{itemize}
-
-
-\subsection*{问题定义与理论方法}
-
-自然语言业务需求通常具有表达灵活、信息不完整、目标复合和约束隐含等特点。同一业务目标可以有多种表述方式，同一句话中也可能同时包含多个业务目标和保护约束。因此，业务意图抽取并不是简单的关键词识别，而是包含意图分类、实体识别、槽位填充、关系识别和缺失项检测等多个子任务。从理论上看，业务意图抽取可以采用以下几类方法。
-
-\subsubsection*{基于规则和词典的方法}
-
-基于规则的方法通过关键词、正则表达式、领域词典和句式模板，识别自然语言中的业务类型和语义槽位。设输入文本为$x$，规则集合为$\mathcal{R}$，领域关键词集合为$\mathcal{K}$，则规则驱动的抽取过程可表示为：
-
-\begin{equation}
-I_{\mathrm{ext}}
-=
-f_{\mathrm{rule}}
-\left(
-x;\mathcal{R},\mathcal{K}
-\right).
-\label{eq:rule_based_extraction_general}
-\end{equation}
-
-该类方法具有以下优点：
-
-\begin{itemize}
-    \item 处理过程清晰，规则命中结果可解释；
-    \item 不依赖大规模标注数据；
-    \item 结果稳定，便于单元测试和复现；
-    \item 适合业务范围明确、句式相对固定的初步原型。
-\end{itemize}
-
-其主要不足是规则覆盖能力有限，对于同义表达、复杂句式和隐含语义的泛化能力较弱。
-
-\subsubsection*{基于监督学习的方法}
-
-对于具有一定规模标注数据的场景，可以采用文本分类和序列标注模型完成意图抽取。多标签意图分类的一般形式为：
-
-\begin{equation}
-P(c_k\mid x)
-=
-\sigma
-\left(
-\mathbf{w}_k^{T}\mathbf{h}_{\mathrm{CLS}}
-+
-b_k
-\right),
-\label{eq:multilabel_intent_classification}
-\end{equation}
-
-其中，
-$x$表示输入文本，
-$c_k$表示第$k$类意图，
-$\mathbf{h}_{\mathrm{CLS}}$表示由预训练语言模型得到的文本表示，
-$\sigma(\cdot)$表示Sigmoid函数。
-
-当$P(c_k\mid x)$超过相应阈值时，
-认为输入文本包含第$k$类意图。
-由于一个业务请求可能同时包含业务保障、节能优化和业务保护，
-因此应采用多标签分类，而不是单一类别分类。
-
-实体和槽位抽取可采用命名实体识别
-（Named Entity Recognition, NER）、
-槽位填充（Slot Filling）和BIO序列标注等方法。
-例如，可以利用BERT编码器提取上下文表示，
-再利用条件随机场
-（Conditional Random Field, CRF）
-建模相邻标签之间的约束。
-
-需要说明的是，
-式\eqref{eq:multilabel_intent_classification}
-描述的是学习型意图分类的一般方法，
-本文当前原型未训练或调用该类模型。
-
-\subsubsection*{基于大语言模型的方法}
-
-大语言模型可以结合预定义JSON Schema、
-Function Calling或Constrained Decoding，
-直接输出结构化意图对象。
-该方法适合处理长文本、复杂句式和隐含关系，
-但需要额外解决以下问题：
-
-\begin{itemize}
-    \item 输出字段是否满足既定Schema；
-    \item 模型是否生成了原文中不存在的信息；
-    \item 置信度是否具有可解释含义；
-    \item 网络控制相关高风险字段是否需要人工确认；
-    \item 相同输入是否能够获得稳定、一致的输出。
-\end{itemize}
-
-因此，在工程系统中，
-大语言模型通常需要与规则校验、
-领域词典和结构化验证机制结合使用。
-
-\subsubsection*{仿真方法}
-
-本文的重点是验证从自然语言业务需求到RAN候选策略评估的完整闭环，
-而不是构建通用自然语言理解模型。
-为保证结果可解释、可复现并便于自动化测试，
-当前原型采用：
-
-\begin{equation}
-\boxed{
-\text{有序正则表达式}
-+
-\text{领域关键词}
-+
-\text{规则模板}
-+
-\text{Schema校验}
-}
-\label{eq:implemented_intent_extraction_method}
-\end{equation}
-
-构建规则驱动的业务意图抽取基线。
-
-该方法不调用BERT、CRF、大语言模型、
-外部自然语言处理服务或在线API，
-整个抽取过程是确定性的，不包含随机采样。
 
 
 \subsection*{结构化意图表示}
 
-为便于后续业务意图转译，
-本文采用统一的数据对象表示业务意图抽取结果。
-结构化意图主要包括：
-
-\begin{itemize}
-    \item 意图标识和原始文本；
-    \item 多标签意图类型；
-    \item 字段级语义槽位；
-    \item 语义关系和逻辑关系；
-    \item 尚未解析的字段；
-    \item 抽取方法、信息来源和置信度。
-\end{itemize}
-
-结构化意图可表示为：
-
-\begin{equation}
-I_{\mathrm{ext}}
-=
-\left(
-ID,
-X,
-C_I,
-E,
-R_s,
-R_l,
-U,
-M
-\right),
-\label{eq:structured_intent_full}
-\end{equation}
-
-其中：
-
-\begin{itemize}
-    \item $ID$表示意图唯一标识；
-    \item $X$表示原始自然语言文本；
-    \item $C_I$表示多标签意图类型集合；
-    \item $E$表示抽取的语义槽位集合；
-    \item $R_s$表示语义关系；
-    \item $R_l$表示逻辑关系；
-    \item $U$表示待解析项集合；
-    \item $M$表示抽取方法、来源和置信度等元数据。
-\end{itemize}
-
-
-\subsection*{多标签意图类型识别}
-\label{subsec:implemented_intent_type_detection}
-
-实际业务需求通常同时包含多个目标。
-对于本文的演唱会场景，
-当前原型支持识别以下三类意图标签：
-
-\begin{equation}
-C_I
-=
-\left\{
-c_{\mathrm{assurance}},
-c_{\mathrm{energy}},
-c_{\mathrm{protection}}
-\right\},
-\label{eq:implemented_intent_labels}
-\end{equation}
-
-分别表示：
-
-\begin{itemize}
-    \item \texttt{service\_assurance}：业务保障意图；
-    \item \texttt{energy\_optimization}：节能优化意图；
-    \item \texttt{service\_protection}：业务保护意图。
-\end{itemize}
-
-当前规则中，
-当文本同时出现保障语义以及视频或上行语义时，
-生成业务保障标签；
-当文本出现节能、降低能耗或减少能耗等语义时，
-生成节能优化标签；
-当文本同时出现语音业务和保护、不得影响等语义时，
-生成业务保护标签。
-
-对于示例文本，
-可以得到：
+本文采用多标签方式表示业务需求类型，
+当前支持以下三类意图：
 
 \begin{equation}
 C_I
@@ -545,38 +354,33 @@ C_I
 \texttt{energy\_optimization},
 \texttt{service\_protection}
 \right\}.
-\label{eq:concert_intent_labels}
+\label{eq:intent_type_set}
 \end{equation}
 
-多个标签并存说明该业务需求属于复合意图，
-其目标不是单纯提升视频业务性能，
-而是在满足视频保障和语音保护的前提下，
-进一步考虑RAN节能。
+其中：
 
-如果输入文本不能触发任何受支持的意图标签，
-系统不会生成不确定结果，
-而是明确返回不支持的意图错误。
+\begin{itemize}
+    \item \texttt{service\_assurance}表示业务保障意图；
+    \item \texttt{energy\_optimization}表示节能优化意图；
+    \item \texttt{service\_protection}表示业务保护意图。
+\end{itemize}
 
+演唱会场景同时包含上述三类意图，
+因此属于复合业务意图。
 
-\subsection*{语义槽位抽取与规范化}
-\label{subsec:semantic_slot_extraction}
-
-意图类型只能说明业务需求属于哪一类，
-还不能完整描述业务作用时间、空间、对象和目标。
-因此，需要进一步抽取关键语义槽位。
-
-当前原型支持的主要槽位如表
-\ref{tab:implemented_intent_slots}所示。
+为描述业务需求中的关键语义，
+本文定义表\ref{tab:intent_slots_reduced}
+所示的主要槽位。
 
 \begin{table}[H]
     \centering
-    \caption{当前原型支持的业务意图槽位}
-    \label{tab:implemented_intent_slots}
+    \caption{业务意图抽取的主要语义槽位}
+    \label{tab:intent_slots_reduced}
     \small
     \renewcommand{\arraystretch}{1.25}
     \begin{tabularx}{\textwidth}{
-        >{\raggedright\arraybackslash}p{0.29\textwidth}
-        >{\raggedright\arraybackslash}p{0.28\textwidth}
+        >{\raggedright\arraybackslash}p{0.31\textwidth}
+        >{\raggedright\arraybackslash}p{0.26\textwidth}
         >{\raggedright\arraybackslash}X
     }
         \toprule
@@ -584,12 +388,12 @@ C_I
         \midrule
 
         \texttt{TIME\_EXPRESSION}
-        & 时间范围原始表达
+        & 时间表达
         & 今晚演唱会期间
         \\
 
         \texttt{LOCATION\_EXPRESSION}
-        & 空间范围原始表达
+        & 空间表达
         & 体育场内
         \\
 
@@ -604,13 +408,13 @@ C_I
         \\
 
         \texttt{ASSURANCE\_TARGET}
-        & 需要保障的目标
+        & 业务保障目标
         & 上行体验
         \\
 
         \texttt{OPTIMIZATION\_GOAL}
-        & 次级优化目标
-        & 降低RAN能耗
+        & 优化目标
+        & 减少RAN能耗
         \\
 
         \texttt{PROTECTED\_SERVICE}
@@ -619,12 +423,12 @@ C_I
         \\
 
         \texttt{MODIFIER}
-        & 程度或组合修饰语
+        & 程度和组合修饰
         & 尽量、同时
         \\
 
         \texttt{NEGATION}
-        & 非退化或禁止关系
+        & 禁止或非退化关系
         & 不影响
         \\
 
@@ -632,7 +436,7 @@ C_I
     \end{tabularx}
 \end{table}
 
-示例文本可以标注为：
+原始文本可以标注为：
 
 \begin{quote}
 [\textbf{今晚演唱会期间}]$_{\mathrm{TIME}}$，
@@ -643,155 +447,48 @@ C_I
 同时[\textbf{不影响语音业务}]$_{\mathrm{CONSTRAINT}}$。
 \end{quote}
 
-每个槽位不仅保存规范化结果，
-还保留原始文本、信息来源和字段级置信度。
-可以表示为：
+每个槽位保存原始文本和规范化值。
+例如，“视频用户”可以规范化为
+\texttt{video\_users}，
+“上行体验”可以规范化为
+\texttt{uplink\_experience}，
+“减少能耗”可以规范化为
+\texttt{minimize\_ran\_energy}。
+
+原始文本用于保留用户的直接表达，
+规范化值用于后续规则判断和数据查询。
+
+
+\subsection*{规则驱动的意图抽取}
+
+本文采用有序正则表达式、领域关键词、
+规范化词典和Schema校验完成意图抽取。
+
+抽取过程表示为：
 
 \begin{equation}
-e_j
+I_{\mathrm{ext}}
 =
+f_{\mathrm{rule}}
 \left(
-r_j,
-n_j,
-s_j,
-q_j
+x;
+\mathcal{R},
+\mathcal{K},
+\mathcal{D}
 \right),
-\label{eq:semantic_slot_model}
+\label{eq:rule_based_intent_extraction}
 \end{equation}
 
 其中：
 
 \begin{itemize}
-    \item $r_j$表示原始文本片段；
-    \item $n_j$表示规范化后的领域值；
-    \item $s_j$表示信息来源；
-    \item $q_j$表示字段置信度。
+    \item $x$表示原始自然语言文本；
+    \item $\mathcal{R}$表示正则表达式和关系规则集合；
+    \item $\mathcal{K}$表示领域关键词集合；
+    \item $\mathcal{D}$表示术语规范化词典。
 \end{itemize}
 
-例如，“视频用户”可以保存为：
-
-\begin{equation}
-e_{\mathrm{target}}
-=
-\left(
-\text{视频用户},
-\texttt{video\_users},
-\texttt{explicit\_text},
-q_{\mathrm{target}}
-\right).
-\end{equation}
-
-原始文本和规范化值必须分开保存。
-原始文本用于保留用户直接表达的内容，
-规范化值则用于后续程序判断和知识库查询。
-这样可以避免将系统推导或术语规范化结果错误地标记为用户原始输入。
-
-当前原型中的规范化值由固定规则和小型领域词典确定。
-例如：
-
-\begin{itemize}
-    \item “体育场”规范化为\texttt{stadium}；
-    \item “视频用户”规范化为\texttt{video\_users}；
-    \item “上行视频”规范化为\texttt{uplink\_video}；
-    \item “降低能耗”规范化为\texttt{minimize\_ran\_energy}。
-\end{itemize}
-
-
-\subsection*{语义关系与逻辑关系识别}
-\label{subsec:semantic_logical_relation_detection}
-
-仅抽取槽位仍不足以表达各字段之间的作用关系。
-例如，“语音业务”和“不影响”必须结合起来，
-才能表达语音业务是需要保护的对象。
-
-对于示例文本，
-当前原型构造以下主要语义关系：
-
-\begin{equation}
-\operatorname{Assure}
-\left(
-\texttt{video\_uplink\_experience}
-\right),
-\label{eq:assure_relation}
-\end{equation}
-
-\begin{equation}
-\operatorname{Minimize}
-\left(
-\texttt{ran\_energy}
-\right),
-\label{eq:minimize_relation}
-\end{equation}
-
-\begin{equation}
-\operatorname{Protect}
-\left(
-\texttt{voice\_service}
-\right).
-\label{eq:protect_relation}
-\end{equation}
-
-时间和地点分别构成意图的时间范围与空间范围：
-
-\begin{equation}
-\operatorname{TemporalScope}
-\left(
-I_{\mathrm{ext}},
-T
-\right),
-\end{equation}
-
-\begin{equation}
-\operatorname{SpatialScope}
-\left(
-I_{\mathrm{ext}},
-L
-\right).
-\end{equation}
-
-除语义关系外，
-还需要确定多个目标之间的逻辑关系。
-
-在本文场景中：
-
-\begin{itemize}
-    \item 视频业务保障属于主要业务目标；
-    \item 降低能耗属于尽可能实现的软优化目标；
-    \item 语音业务保护属于强制约束；
-    \item “同时”表示多个目标需要共同考虑；
-    \item “尽量”表示节能目标不应以破坏硬约束为代价；
-    \item “不影响”表示语音质量不能出现不可接受的下降。
-\end{itemize}
-
-该复合关系可以表示为：
-
-\begin{equation}
-\begin{aligned}
-R_l
-=
-\{
-&\operatorname{Primary}
-(\texttt{video\_uplink\_assurance}),
-\\
-&\operatorname{SoftObjective}
-(\texttt{ran\_energy\_optimization}),
-\\
-&\operatorname{HardConstraint}
-(\texttt{voice\_service\_protection})
-\}.
-\end{aligned}
-\label{eq:logical_relation_model}
-\end{equation}
-
-当前实现通过连接词、否定词、保护关键词和意图标签组合生成上述关系，
-并未采用依存句法分析、语义角色标注或大语言模型推理。
-
-
-\subsection*{规则驱动抽取流程}
-\label{subsec:implemented_rule_based_flow}
-
-本文业务意图抽取器的实际处理流程如图式
-\eqref{eq:implemented_extraction_flow}所示：
+实际处理过程可表示为：
 
 \begin{equation}
 \begin{aligned}
@@ -801,7 +498,7 @@ x'
 \xrightarrow{\mathrm{Regex/Keyword\ Matching}}
 M
 \\
-&\xrightarrow{\mathrm{Label\ Generation}}
+&\xrightarrow{\mathrm{Intent\ Detection}}
 C_I
 \xrightarrow{\mathrm{Slot\ Construction}}
 E
@@ -813,60 +510,23 @@ U
 \xrightarrow{\mathrm{Schema\ Validation}}
 I_{\mathrm{ext}}.
 \end{aligned}
-\label{eq:implemented_extraction_flow}
+\label{eq:intent_extraction_flow}
 \end{equation}
 
-具体包括以下步骤。
-
-\subsubsection*{文本规范化}
-
-首先去除多余空白，
-并统一部分中文标点和文本形式，
-减少格式差异对规则匹配的影响。
-
-规范化过程可表示为：
-
-\begin{equation}
-x'
-=
-\operatorname{NormalizeText}(x).
-\end{equation}
-
-当前规范化主要服务于规则稳定匹配，
-不执行中文分词、词性标注和句法分析。
-
-\subsubsection*{正则和关键词匹配}
-
-系统按照预设顺序匹配：
+首先对文本进行空白和标点规范化，
+随后按照预设顺序匹配：
 
 \begin{itemize}
-    \item 时间表达；
-    \item 地点表达；
-    \item 视频与上行业务表达；
-    \item 保障类动词；
-    \item 节能或降低能耗表达；
-    \item 语音业务表达；
+    \item 时间和地点表达；
+    \item 视频和上行业务表达；
+    \item 保障类关键词；
+    \item 节能和降低能耗关键词；
+    \item 语音业务关键词；
     \item 保护、不得影响等约束表达；
-    \item “尽量”“同时”等修饰和组合关系。
+    \item “尽量”“同时”等修饰关系。
 \end{itemize}
 
-匹配结果集合记为：
-
-\begin{equation}
-M
-=
-\left\{
-m_1,m_2,\ldots,m_K
-\right\},
-\end{equation}
-
-其中每个$m_k$包含规则类型、匹配文本和文本位置等信息。
-
-\subsubsection*{意图标签生成}
-
-根据匹配结果生成多标签意图集合。
-
-业务保障标签可抽象表示为：
+业务保障标签的生成规则可抽象为：
 
 \begin{equation}
 c_{\mathrm{assurance}}
@@ -880,11 +540,11 @@ m_{\mathrm{video}}
 \lor
 m_{\mathrm{uplink}}
 \right)
-\right].
-\label{eq:service_assurance_rule}
+\right],
+\label{eq:service_assurance_detection}
 \end{equation}
 
-节能标签可表示为：
+节能标签表示为：
 
 \begin{equation}
 c_{\mathrm{energy}}
@@ -892,11 +552,11 @@ c_{\mathrm{energy}}
 \mathbb{I}
 \left[
 m_{\mathrm{energy}}
-\right].
-\label{eq:energy_intent_rule}
+\right],
+\label{eq:energy_intent_detection}
 \end{equation}
 
-业务保护标签可表示为：
+业务保护标签表示为：
 
 \begin{equation}
 c_{\mathrm{protection}}
@@ -907,45 +567,75 @@ m_{\mathrm{voice}}
 \land
 m_{\mathrm{protect}}
 \right].
-\label{eq:service_protection_rule}
-\end{equation}
-
-只要上述标签中至少有一个成立，
-系统即可继续构造结构化意图。
-如果所有标签均不成立，
-则认为该输入不属于当前原型支持的业务范围。
-
-\subsubsection*{槽位和关系构造}
-
-系统根据匹配结果构造时间、地点、业务、目标和约束槽位，
-并进一步生成\texttt{assure}、
-\texttt{minimize}、
-\texttt{protect}、
-\texttt{temporal\_scope}和
-\texttt{spatial\_scope}等关系。
-
-槽位构造不是开放式语义生成，
-而是规则匹配结果到固定Schema字段的确定性映射：
-
-\begin{equation}
-E
-=
-g_{\mathrm{slot}}
-\left(
-M,\mathcal{D}_{\mathrm{domain}}
-\right),
-\label{eq:slot_construction}
+\label{eq:protection_intent_detection}
 \end{equation}
 
 其中，
-$\mathcal{D}_{\mathrm{domain}}$表示当前原型中的小型领域规范化词典。
+$m_{\mathrm{assure}}$、$m_{\mathrm{video}}$、
+$m_{\mathrm{uplink}}$、$m_{\mathrm{energy}}$、
+$m_{\mathrm{voice}}$和$m_{\mathrm{protect}}$
+表示对应规则是否命中。
 
-\subsubsection*{待解析项生成}
+若文本不能触发任何受支持的意图标签，
+系统不生成不确定结果，
+而是返回不支持的意图错误。
 
-系统根据Schema要求检查当前文本中仍无法确定的字段，
-并生成待解析项集合$U$。
+在完成槽位构造后，
+系统进一步生成以下语义关系：
 
-待解析项可以表示为：
+\begin{equation}
+\operatorname{Assure}
+\left(
+\texttt{video\_uplink\_experience}
+\right),
+\end{equation}
+
+\begin{equation}
+\operatorname{Minimize}
+\left(
+\texttt{ran\_energy}
+\right),
+\end{equation}
+
+\begin{equation}
+\operatorname{Protect}
+\left(
+\texttt{voice\_service}
+\right).
+\end{equation}
+
+时间和地点分别形成意图的时间范围和空间范围。
+同时，根据“尽量”“同时”和“不影响”等表达，
+构造主要目标、软优化目标和强制约束之间的关系：
+
+\begin{equation}
+\begin{aligned}
+R
+=
+\{
+&\operatorname{Primary}
+(\texttt{video\_uplink\_assurance}),
+\\
+&\operatorname{SoftObjective}
+(\texttt{ran\_energy\_optimization}),
+\\
+&\operatorname{HardConstraint}
+(\texttt{voice\_service\_protection})
+\}.
+\end{aligned}
+\label{eq:intent_logical_relationship}
+\end{equation}
+
+当前抽取过程是确定性的，
+不调用在线大语言模型或训练型自然语言处理模型。
+
+
+\subsection*{缺失信息检测}
+
+自然语言业务需求通常只描述业务方向，
+无法直接提供网络执行所需的全部字段。
+因此，本文采用Schema和规则检查，
+显式生成待解析项集合：
 
 \begin{equation}
 U
@@ -957,407 +647,65 @@ u_j
 \land
 \neg\operatorname{Resolved}(u_j)
 \right\}.
-\label{eq:unresolved_item_generation}
+\label{eq:unresolved_item_set}
 \end{equation}
 
-生成后按照待解析项编码去重，
-避免同一问题被多个规则重复加入。
-
-
-\subsection*{歧义与缺失信息检测}
-\label{subsec:intent_missing_information}
-
-自然语言业务需求通常只能表达业务方向，
-不能直接提供网络执行所需的全部数据。
-因此，系统不能根据不完整文本随意生成小区、门限或资源参数，
-而应显式输出待解析项。
-
-对于本文示例，
+对于演唱会业务需求，
 主要待解析项包括：
 
 \begin{itemize}
     \item \texttt{exact\_time\_period}：
     演唱会准确开始时间和结束时间；
     \item \texttt{ran\_scope}：
-    体育场对应的gNB、小区和载波范围；
+    体育场对应的目标小区和载波；
     \item \texttt{video\_service\_identification}：
-    视频用户或视频业务的RAN侧识别规则；
+    视频用户和视频业务的RAN侧识别规则；
     \item \texttt{uplink\_experience\_slo}：
     上行体验对应的吞吐率、时延和统计口径；
     \item \texttt{voice\_protection\_threshold}：
-    语音质量绝对门限和相对基线下降门限；
+    语音业务质量门限和允许下降幅度；
     \item \texttt{objective\_weights}：
-    业务保障、节能、资源和风险之间的具体评分权重。
+    业务、节能、资源和风险评分之间的权重。
 \end{itemize}
 
-其中，
-准确活动时间和RAN作用范围始终由后续转译阶段解析。
-即使原文中包含“今晚演唱会期间”和“体育场内”，
-意图抽取器也只保存其原始表达，
-不会自行计算具体日期或选择目标小区。
-
-待解析项可以按照严重程度划分为：
-
-\begin{itemize}
-    \item \textbf{阻断项：}
-    若未解析，则无法进入策略生成阶段；
-    \item \textbf{非阻断项：}
-    可以使用配置默认值，但必须保留来源和假设说明。
-\end{itemize}
-
-例如，活动准确时间、目标小区、视频SLO和语音保护门限属于阻断项；
-目标权重在当前原型中可以由配置文件提供，因此属于非阻断项。
-
-本文当前实现采用Schema必填项检查和规则判断生成待解析项，
-未实现统计置信度拒识、自动澄清对话和人工确认工作流。
-
-
-\subsection*{置信度与信息来源}
-\label{subsec:intent_confidence_source}
-
-为了支持字段追踪，
-结构化意图中的每个槽位均保存信息来源和置信度。
-
-信息来源主要用于区分：
-
-\begin{itemize}
-    \item 用户原始文本中的显式信息；
-    \item 由领域词典得到的规范化结果；
-    \item 由规则关系推导得到的结构化语义；
-    \item 由后续外部数据源补全的信息。
-\end{itemize}
-
-需要特别说明的是，
-当前原型中的置信度不是由机器学习模型计算得到的概率，
-而是从配置文件中按不同字段类型读取的固定仿真假设值。
-
-因此，当前置信度可以表示为：
-
-\begin{equation}
-q_j
-=
-q_j^{\mathrm{config}},
-\label{eq:configured_confidence}
-\end{equation}
-
-而不是：
-
-\begin{equation}
-q_j
-=
-P
-\left(
-e_j\mid x
-\right).
-\end{equation}
-
-该设计的主要目的是验证以下工程接口：
-
-\begin{itemize}
-    \item 字段级置信度能否随结构化结果一同传递；
-    \item 后续模块能否保留信息来源；
-    \item 是否能够区分显式输入与系统规范化结果。
-\end{itemize}
-
-因此，本文实验中的置信度不能解释为自然语言模型的真实预测可信度。
-
-
-\subsection*{结构化输出}
-\label{subsec:intent_structured_output}
-
-经过规则匹配、槽位构造、关系识别和缺失项检查后，
-系统输出统一的结构化意图对象。
-
-示例输出如下：
-
-\begin{lstlisting}[language={},caption={业务意图抽取结果示例},
-label={lst:structured_intent_example}]
-{
-  "schemaVersion": "1.0",
-  "intentId": "INTENT-CONCERT-UL-001",
-  "originalText": "今晚演唱会期间，保障体育场内视频用户的上行体验，尽量减少能耗，同时不影响语音业务。",
-  "extractionMethod": "rule_based_v1",
-
-  "intentTypes": [
-    {
-      "type": "service_assurance"
-    },
-    {
-      "type": "energy_optimization"
-    },
-    {
-      "type": "service_protection"
-    }
-  ],
-
-  "extractedSemantics": {
-    "timeExpression": {
-      "rawText": "今晚演唱会期间",
-      "normalizedValue": "concert_period",
-      "source": "explicit_text",
-      "confidence": 0.99
-    },
-
-    "locationExpression": {
-      "rawText": "体育场内",
-      "normalizedValue": "stadium",
-      "source": "explicit_text",
-      "confidence": 0.99
-    },
-
-    "targetObject": {
-      "rawText": "视频用户",
-      "normalizedValue": "video_users",
-      "source": "explicit_text",
-      "confidence": 0.97
-    },
-
-    "targetService": {
-      "rawText": "视频用户",
-      "normalizedValue": "uplink_video",
-      "source": "normalized_from_explicit_text",
-      "confidence": 0.95
-    },
-
-    "assuranceTarget": {
-      "rawText": "上行体验",
-      "normalizedValue": "uplink_experience",
-      "source": "explicit_text",
-      "confidence": 0.96
-    },
-
-    "optimizationGoal": {
-      "rawText": "尽量减少能耗",
-      "normalizedValue": "minimize_ran_energy",
-      "source": "explicit_text",
-      "confidence": 0.97
-    },
-
-    "protectedService": {
-      "rawText": "语音业务",
-      "normalizedValue": "voice_service",
-      "source": "explicit_text",
-      "confidence": 0.96
-    }
-  },
-
-  "semanticRelations": [
-    {
-      "relation": "assure",
-      "object": "video_uplink_experience"
-    },
-    {
-      "relation": "minimize",
-      "object": "ran_energy"
-    },
-    {
-      "relation": "protect",
-      "object": "voice_service"
-    },
-    {
-      "relation": "temporal_scope",
-      "object": "concert_period"
-    },
-    {
-      "relation": "spatial_scope",
-      "object": "stadium"
-    }
-  ],
-
-  "logicalRelations": {
-    "combination": "conjunction",
-    "energyOptimizationType": "soft_objective",
-    "voiceProtectionType": "hard_constraint"
-  },
-
-  "unresolvedItems": [
-    {
-      "code": "exact_time_period",
-      "severity": "blocking"
-    },
-    {
-      "code": "ran_scope",
-      "severity": "blocking"
-    },
-    {
-      "code": "video_service_identification",
-      "severity": "blocking"
-    },
-    {
-      "code": "uplink_experience_slo",
-      "severity": "blocking"
-    },
-    {
-      "code": "voice_protection_threshold",
-      "severity": "blocking"
-    },
-    {
-      "code": "objective_weights",
-      "severity": "non_blocking"
-    }
-  ]
-}
-\end{lstlisting}
-
-上述输出中：
-
-\begin{itemize}
-    \item \texttt{originalText}保留用户原始需求；
-    \item \texttt{intentTypes}描述复合意图标签；
-    \item \texttt{extractedSemantics}保存字段级槽位；
-    \item \texttt{semanticRelations}描述动作与对象关系；
-    \item \texttt{logicalRelations}描述主目标、软目标和硬约束；
-    \item \texttt{unresolvedItems}显式列出待补充信息；
-    \item \texttt{extractionMethod}记录当前采用的规则版本。
-\end{itemize}
-
-结构化输出需要通过数据模型验证，
-包括：
-
-\begin{itemize}
-    \item 原始文本不能为空；
-    \item 请求时间必须包含时区；
-    \item 意图标识不能为空；
-    \item 字段类型必须符合Schema；
-    \item 待解析项严重程度必须属于支持的枚举；
-    \item 输出应能够稳定序列化和反序列化。
-\end{itemize}
-
-
-\subsection*{异常处理与测试验证}
-\label{subsec:intent_extraction_validation}
-
-为保证意图抽取结果能够安全进入后续处理链路，
-当前原型对非法输入和不支持意图进行显式处理。
-
-主要异常情况包括：
-
-\begin{itemize}
-    \item 输入文本为空或仅包含空白字符；
-    \item 请求时间缺少时区；
-    \item 文本未匹配任何受支持的业务意图；
-    \item 输入字段类型或Schema不合法。
-\end{itemize}
-
-对于不支持的文本，
-系统明确抛出意图不支持错误，
-而不是生成空意图或自动猜测业务含义。
-
-当前测试主要覆盖：
-
-\begin{itemize}
-    \item 完整演唱会复合意图；
-    \item 缺少时间表达；
-    \item 缺少地点表达；
-    \item 不包含节能目标；
-    \item 不包含语音保护目标；
-    \item 空文本输入；
-    \item 不支持的文本；
-    \item 输入时区和字段约束；
-    \item 结构化意图序列化；
-    \item 意图抽取结果进入端到端流水线。
-\end{itemize}
-
-通过上述测试，
-可以验证规则抽取结果的确定性、
-字段完整性和异常处理一致性。
-
-
-\subsection*{能力边界}
-\label{subsec:intent_extraction_limitations}
-
-本文采用的规则驱动方法适合验证意图驱动决策的完整流程，
-但不能等同于通用业务意图理解系统。
-
-其主要局限包括：
-
-\begin{enumerate}[label=\arabic*)]
-    \item \textbf{词汇覆盖范围有限。}
-
-    当前关键词和正则主要面向演唱会视频上行保障场景，
-    对同义词、口语表达和跨领域业务需求的覆盖能力有限。
-
-    \item \textbf{句式泛化能力有限。}
-
-    当前方法不进行句法分析和上下文建模，
-    对长距离依赖、嵌套条件和复杂否定关系的处理能力较弱。
-
-    \item \textbf{不支持上下文推理。}
-
-    当前抽取器不会利用历史对话、
-    用户身份、业务工单和网络运行上下文进行联合判断。
-
-    \item \textbf{置信度不是真实预测概率。}
-
-    置信度来自配置文件，
-    只能用于验证数据接口，不能用于统计拒识或风险决策。
-
-    \item \textbf{不解析准确时间和网络对象。}
-
-    “今晚演唱会期间”和“体育场内”仅作为原始语义保存，
-    准确时间、场馆、小区和用户范围由后续转译阶段确定。
-
-    \item \textbf{不包含自动澄清机制。}
-
-    当前系统能够显式输出待解析项，
-    但尚未根据缺失项自动生成追问或触发人工确认。
-
-    \item \textbf{不具备持续学习能力。}
-
-    当前规则不会根据历史运行结果自动更新，
-    也没有利用新样本进行在线训练或词典扩展。
-\end{enumerate}
-
-未来可以在保留现有Schema和规则校验机制的基础上，
-逐步引入领域预训练语言模型、大语言模型、
-知识增强抽取和低置信度人工确认机制，
-提升复杂业务场景下的泛化能力。
+准确活动时间和RAN作用范围由下一阶段的业务意图转译模块解析。
+即使原文包含“今晚演唱会期间”和“体育场内”，
+意图抽取器也只保留其原始语义，
+不会自行计算具体时间或选择目标小区。
+
+待解析项分为阻断项和非阻断项。
+阻断项未解决时不能进入策略生成阶段；
+非阻断项可以由配置文件提供默认值，
+但需要保留其信息来源。
 
 \section{业务意图转译}
 \label{sec:business_intent_translation}
 
-业务意图抽取阶段已经从自然语言需求中识别出时间表达、
-空间表达、目标对象、目标业务、保障目标、节能目标和语音保护约束，
-并形成统一的结构化业务意图。
-但是，这些信息仍然停留在业务语义层，
-尚不能直接用于RAN候选策略生成。
+业务意图抽取阶段已经识别出时间表达、空间表达、
+目标对象、保障目标、节能目标和语音保护约束，
+但这些信息仍然属于业务语义，
+不能直接作为RAN策略生成模块的输入。
 
-例如，对于如下业务需求：
+例如，“今晚演唱会期间”尚未给出准确起止时间，
+“体育场内”尚未确定目标小区，
+“保障视频用户上行体验”也尚未转换为具体的吞吐率、
+时延和用户达标比例要求。
 
-\begin{quote}
-“今晚演唱会期间，保障体育场内视频用户的上行体验，
-尽量减少能耗，同时不影响语音业务。”
-\end{quote}
-
-业务意图抽取能够识别“今晚演唱会期间”“体育场内”
-“视频用户”“上行体验”“减少能耗”和“保护语音业务”等语义，
-但仍不能直接确定：
-
-\begin{itemize}
-    \item 演唱会准确的开始时间和结束时间；
-    \item 策略提前生效和活动结束后的恢复时间；
-    \item 体育场对应的gNB、小区和载波；
-    \item 视频用户和语音用户在RAN侧的识别规则；
-    \item “上行体验”对应的RAN性能指标；
-    \item 视频和语音业务需要满足的量化门限；
-    \item 视频保障、节能和语音保护之间的优先级关系。
-\end{itemize}
-
-因此，业务意图转译的目标是将结构化业务语义转换为
-RAN侧可识别、可计算和可约束的需求描述。
-其基本过程可表示为：
+因此，业务意图转译需要将结构化业务语义转换为
+RAN侧可识别和可计算的作用范围、网络目标和SLA约束。
+其处理过程可表示为：
 
 \begin{equation}
 I_{\mathrm{ext}}
-\xrightarrow{\mathrm{Scope\ Resolution}}
+\longrightarrow
 S_{\mathrm{RAN}}
-\xrightarrow{\mathrm{Objective\ Mapping}}
+\longrightarrow
 G_{\mathrm{RAN}}
-\xrightarrow{\mathrm{SLA\ Mapping}}
+\longrightarrow
 C_{\mathrm{SLA}}
-\xrightarrow{\mathrm{Readiness\ Check}}
+\longrightarrow
 I_{\mathrm{trans}}^{\mathrm{RAN}},
-\label{eq:intent_translation_process}
+\label{eq:intent_translation_reduced}
 \end{equation}
 
 其中，
@@ -1365,139 +713,42 @@ $I_{\mathrm{ext}}$表示业务意图抽取结果，
 $S_{\mathrm{RAN}}$表示RAN作用范围，
 $G_{\mathrm{RAN}}$表示RAN目标集合，
 $C_{\mathrm{SLA}}$表示SLA和无线资源约束，
-$I_{\mathrm{trans}}^{\mathrm{RAN}}$表示最终的RAN侧转译结果。
+$I_{\mathrm{trans}}^{\mathrm{RAN}}$表示转译后的RAN意图。
 
 
-\subsection*{问题定义与理论方法}
+\subsection*{RAN作用范围解析}
 
-业务意图转译处于业务语义层和网络控制层之间，
-其核心任务是回答以下问题：
-
-\begin{enumerate}[label=\arabic*)]
-    \item 业务意图在何时、在哪个RAN对象上生效；
-    \item 业务目标应映射为哪些RAN性能指标；
-    \item 各项性能指标需要达到什么门限；
-    \item 哪些目标属于主要目标、次级目标和硬约束；
-    \item 当前转译结果是否已经具备进入策略生成阶段的条件。
-\end{enumerate}
-
-从理论上看，
-业务意图转译可以综合采用时间语义解析、
-地理实体链接、GIS、网络资源清单、
-用户驻留关系查询、RAN知识图谱、SLA模板推理、
-历史KPI分析和QoE模型等技术。
-
-一般情况下，业务意图转译可以表示为：
+本文采用静态事件库和场馆—小区映射库，
+确定策略生效时间和目标RAN对象。
+具体映射过程为：
 
 \begin{equation}
-I_{\mathrm{trans}}^{\mathrm{RAN}}
-=
-f_{\mathrm{trans}}
-\left(
-I_{\mathrm{ext}},
-K_{\mathrm{domain}},
-D_{\mathrm{external}},
-X_{\mathrm{RAN}}
-\right),
-\label{eq:general_intent_translation}
-\end{equation}
-
-其中，
-$K_{\mathrm{domain}}$表示RAN领域知识，
-$D_{\mathrm{external}}$表示活动、场馆、用户和SLA等外部数据，
-$X_{\mathrm{RAN}}$表示当前网络运行状态。
-
-在完整工程系统中，
-系统可以根据动态GIS、用户驻留关系、测量报告和网络负载状态，
-实时修正目标小区和目标用户范围。
-也可以利用知识图谱建立业务目标、RAN指标、控制动作和资源对象之间的映射关系。
-
-本文当前重点是验证意图驱动决策链路的完整性和可复现性，
-因此采用：
-
-\begin{equation}
-\boxed{
-\text{静态事件库}
-+
-\text{场馆--小区映射库}
-+
-\text{SLA模板}
-+
-\text{确定性规则}
-}
-\label{eq:implemented_translation_method}
-\end{equation}
-
-完成面向单小区RAN的业务意图转译。
-
-当前转译模块不调用动态GIS、实时用户数据库、
-知识图谱、大语言模型或外部在线服务，
-也不包含随机性。
-
-
-\subsection*{RAN作用范围、目标与SLA映射}
-
-业务意图转译首先确定意图的具体作用范围，
-然后将业务目标转换为RAN目标，
-最后通过SLA模板为相关指标绑定量化门限。
-
-\subsubsection*{RAN作用范围解析}
-
-当前实现的范围解析链路为：
-
-\begin{equation}
-\text{Time/Location Semantics}
+\text{时间与活动语义}
 \rightarrow
-\text{Event Record}
+\text{事件记录}
 \rightarrow
-\text{Venue}
+\text{场馆}
 \rightarrow
-\text{Single RAN Cell}.
-\label{eq:implemented_scope_mapping}
+\text{目标小区}.
+\label{eq:scope_resolution_chain}
 \end{equation}
 
-业务意图抽取只保留“今晚演唱会期间”等原始时间表达，
-不直接计算准确日期和时刻。
-转译器根据文本中的“演唱会”等活动语义，
-选择静态事件类型：
-
-\begin{equation}
-EventType
-=
-\begin{cases}
-\texttt{concert},
-& \text{文本包含演唱会语义},\\
-\varnothing,
-& \text{无法识别受支持的活动类型}.
-\end{cases}
-\label{eq:event_type_detection}
-\end{equation}
-
-随后在事件库中执行唯一匹配。
-设满足查询条件的事件记录集合为
-$\mathcal{E}_{\mathrm{match}}$，
-只有当：
+首先，根据原始文本中的“演唱会”等活动语义，
+在静态事件库中查询对应活动记录。
+设匹配到的事件集合为$\mathcal{E}_{\mathrm{match}}$，
+本文要求事件记录唯一：
 
 \begin{equation}
 \left|
 \mathcal{E}_{\mathrm{match}}
 \right|
 =
-1
-\label{eq:unique_event_match}
+1.
+\label{eq:unique_event_requirement}
 \end{equation}
 
-时，系统才能确定准确的活动时间和场馆。
-
-若事件记录匹配数量为0，
-说明静态事件库中不存在对应活动；
-若匹配数量大于1，
-则无法唯一确定目标事件。
-在上述情况下，
-系统不会任意选择事件记录，
-而是保留相应待解析项。
-
-事件记录提供活动时间范围：
+当事件记录唯一匹配时，
+系统获得演唱会的准确开始时间和结束时间：
 
 \begin{equation}
 T_{\mathrm{event}}
@@ -1506,37 +757,36 @@ T_{\mathrm{event}}
 T_{\mathrm{start}},
 T_{\mathrm{end}}
 \right].
-\label{eq:event_time_window}
+\label{eq:event_time_scope}
 \end{equation}
 
-考虑策略预部署和活动结束后的观察恢复，
-本文配置策略前后生效窗口：
+为支持策略预部署和活动结束后的恢复，
+系统在活动时间基础上增加前后生效窗口：
 
 \begin{equation}
-T_{\mathrm{eff,start}}
+T_{\mathrm{effective,start}}
 =
 T_{\mathrm{start}}
 -
 \Delta T_{\mathrm{pre}},
-\label{eq:effective_start_time}
+\label{eq:policy_effective_start}
 \end{equation}
 
 \begin{equation}
-T_{\mathrm{eff,end}}
+T_{\mathrm{effective,end}}
 =
 T_{\mathrm{end}}
 +
 \Delta T_{\mathrm{post}},
-\label{eq:effective_end_time}
+\label{eq:policy_effective_end}
 \end{equation}
 
 其中，
-$\Delta T_{\mathrm{pre}}$表示活动开始前的策略预生效时间，
-$\Delta T_{\mathrm{post}}$表示活动结束后的观察和恢复时间。
-这两个参数均由配置文件提供，
-而不是写死在转译代码中。
+$\Delta T_{\mathrm{pre}}$表示策略提前生效时间，
+$\Delta T_{\mathrm{post}}$表示活动结束后的观察与恢复时间，
+二者均由配置文件提供。
 
-事件记录还提供场馆标识$VenueId$。
+事件记录同时包含场馆标识。
 系统根据场馆—小区映射库，
 将场馆映射为gNB、小区和载波：
 
@@ -1548,56 +798,25 @@ gNBId
 CellId
 \rightarrow
 CarrierId.
-\label{eq:venue_to_cell_mapping}
+\label{eq:venue_ran_mapping}
 \end{equation}
 
-RAN范围可以表示为：
-
-\begin{equation}
-S_{\mathrm{RAN}}
-=
-\left\{
-T_{\mathrm{event}},
-T_{\mathrm{effective}},
-V,
-\mathcal{G},
-\mathcal{C},
-\mathcal{K},
-U_{\mathrm{target}}
-\right\},
-\label{eq:ran_scope_model}
-\end{equation}
-
-其中，
-$V$表示场馆标识，
-$\mathcal{G}$表示gNB集合，
-$\mathcal{C}$表示小区集合，
-$\mathcal{K}$表示载波集合，
-$U_{\mathrm{target}}$表示目标用户规则。
-
-本文当前严格限定为单小区场景：
+本文当前限定为单小区RAN场景，因此要求：
 
 \begin{equation}
 \left|
-\mathcal{C}
+\mathcal{C}_{\mathrm{target}}
 \right|
 =
-1.
-\label{eq:single_cell_constraint}
+1,
+\label{eq:single_cell_scope}
 \end{equation}
 
-若场馆不存在对应小区，
-或者映射结果包含多个小区，
-当前模型将拒绝该结果，
-而不会进行动态小区筛选。
+其中，
+$\mathcal{C}_{\mathrm{target}}$表示目标小区集合。
 
-需要注意的是，
-地点槽位并不是当前静态仓库查询的直接主键。
-实际场馆由唯一事件记录确定，
-再根据事件记录中的$VenueId$查询目标RAN对象。
-
-对于目标用户范围，
-当前实现根据意图槽位生成两类结构化业务规则：
+根据意图抽取阶段得到的视频业务和语音业务槽位，
+系统进一步生成目标用户规则：
 
 \begin{equation}
 Rule_{\mathrm{video}}
@@ -1607,38 +826,31 @@ Rule_{\mathrm{video}}
 Rule_{\mathrm{voice}}
 =
 \texttt{voice}.
-\label{eq:target_service_rules}
+\label{eq:translated_user_rules}
 \end{equation}
 
-目标用户集合可以抽象表示为：
+因此，RAN作用范围可表示为：
 
 \begin{equation}
-U_{\mathrm{target}}
+S_{\mathrm{RAN}}
 =
 \left\{
-u
-\mid
-Cell(u)=C_{\mathrm{target}},
-\;
-Service(u)
-\in
-\left\{
-\texttt{uplink\_video},
-\texttt{voice}
-\right\}
+T_{\mathrm{effective}},
+VenueId,
+gNBId,
+CellId,
+CarrierId,
+Rule_{\mathrm{video}},
+Rule_{\mathrm{voice}}
 \right\}.
-\label{eq:target_user_scope}
+\label{eq:ran_scope_result}
 \end{equation}
 
-当前原型只生成目标用户和业务规则，
-并不实际查询UE标识、QoS Flow、5QI、
-S-NSSAI、DRB或业务流分类结果。
 
-\subsubsection*{RAN目标与优先级映射}
+\subsection*{RAN目标与SLA约束映射}
 
-业务意图中的“保障上行体验”“尽量减少能耗”
-和“不影响语音业务”属于业务语言层目标，
-需要进一步转换为RAN侧的目标集合：
+根据结构化意图中的三类意图标签，
+本文生成视频业务保障、RAN节能和语音业务保护三类目标：
 
 \begin{equation}
 G_{\mathrm{RAN}}
@@ -1648,95 +860,33 @@ G_{\mathrm{video}},
 G_{\mathrm{energy}},
 G_{\mathrm{voice}}
 \right\}.
-\label{eq:ran_objective_set}
+\label{eq:translated_ran_objectives}
 \end{equation}
 
-若结构化意图包含业务保障标签，
-则生成视频上行保障目标：
+其中：
 
 \begin{equation}
 G_{\mathrm{video}}
 =
-\texttt{video\_uplink\_assurance}.
-\label{eq:video_assurance_goal}
+\texttt{video\_uplink\_assurance},
+\label{eq:video_assurance_objective}
 \end{equation}
-
-该目标主要关注：
-
-\begin{itemize}
-    \item 目标视频用户达标比例；
-    \item 视频用户低分位上行吞吐率；
-    \item 视频上行时延高分位值；
-    \item 视频用户平均BLER。
-\end{itemize}
-
-视频上行保障被标记为主要目标：
-
-\begin{equation}
-Priority
-\left(
-G_{\mathrm{video}}
-\right)
-=
-\texttt{primary}.
-\label{eq:video_goal_priority}
-\end{equation}
-
-若结构化意图包含节能优化标签，
-则生成RAN节能目标：
 
 \begin{equation}
 G_{\mathrm{energy}}
 =
 \texttt{ran\_energy\_optimization},
-\label{eq:ran_energy_goal}
+\label{eq:energy_optimization_objective}
 \end{equation}
-
-其优化方向为：
-
-\begin{equation}
-\min E_{\mathrm{RAN}}.
-\label{eq:minimize_ran_energy}
-\end{equation}
-
-节能属于次级目标：
-
-\begin{equation}
-Priority
-\left(
-G_{\mathrm{energy}}
-\right)
-=
-\texttt{secondary}.
-\label{eq:energy_goal_priority}
-\end{equation}
-
-这意味着系统只能在视频SLA、语音保护和无线资源约束满足的前提下，
-尽可能降低RAN能耗。
-
-若结构化意图包含业务保护标签，
-则生成语音业务保护目标：
 
 \begin{equation}
 G_{\mathrm{voice}}
 =
 \texttt{voice\_service\_protection}.
-\label{eq:voice_protection_goal}
+\label{eq:voice_protection_objective}
 \end{equation}
 
-语音保护被标记为强制约束：
-
-\begin{equation}
-Priority
-\left(
-G_{\mathrm{voice}}
-\right)
-=
-\texttt{mandatory}.
-\label{eq:voice_goal_priority}
-\end{equation}
-
-因此，当前场景中的目标关系为：
+三类目标的优先级关系为：
 
 \begin{equation}
 \begin{aligned}
@@ -1744,33 +894,26 @@ P_{\mathrm{priority}}
 =
 \{
 &\operatorname{Primary}
-(\texttt{video\_uplink\_assurance}),
+(G_{\mathrm{video}}),
 \\
 &\operatorname{Secondary}
-(\texttt{ran\_energy\_optimization}),
+(G_{\mathrm{energy}}),
 \\
 &\operatorname{Mandatory}
-(\texttt{voice\_service\_protection})
+(G_{\mathrm{voice}})
 \}.
 \end{aligned}
-\label{eq:objective_priority_relationship}
+\label{eq:translated_objective_priority}
 \end{equation}
 
-\subsubsection*{SLA约束映射}
+其中，视频上行保障为主要目标，
+降低RAN能耗为次级优化目标，
+语音业务保护为必须满足的约束。
+因此，节能优化不能以违反视频SLA或降低语音业务质量为代价。
 
-RAN目标映射解决的是“关注哪些网络指标”，
-SLA约束映射进一步回答“这些指标需要达到什么程度”。
-
-本文当前使用版本化SLA模板，
-并通过配置引用读取具体门限。
-门限数值既不是由自然语言抽取器生成，
-也不是由转译器直接硬编码。
-
-对于目标视频用户集合
-$U_{\mathrm{video}}$，
-首先定义单用户上行吞吐率门限
-$R_{\mathrm{th}}$。
-单用户是否达标可表示为：
+本文采用固定的演唱会上行保障SLA模板，
+并通过配置引用获取具体门限。
+视频用户是否满足吞吐率要求定义为：
 
 \begin{equation}
 \mathbb{I}_u
@@ -1780,9 +923,13 @@ $R_{\mathrm{th}}$。
 R_u^{\mathrm{UL}}
 \geq
 R_{\mathrm{th}}
-\right].
-\label{eq:single_video_user_satisfaction}
+\right],
+\label{eq:video_user_threshold_indicator}
 \end{equation}
+
+其中，
+$R_u^{\mathrm{UL}}$表示视频用户$u$的上行吞吐率，
+$R_{\mathrm{th}}$表示单用户吞吐率门限。
 
 目标视频用户达标比例为：
 
@@ -1793,26 +940,26 @@ R_{\mathrm{th}}
 {\left|U_{\mathrm{video}}\right|}
 \sum_{u\in U_{\mathrm{video}}}
 \mathbb{I}_u.
-\label{eq:video_satisfaction_ratio}
+\label{eq:translated_video_satisfaction_ratio}
 \end{equation}
 
-当前视频用户达标约束为：
+本文配置要求：
 
 \begin{equation}
-\rho_{\mathrm{video}}
-\geq
-0.95,
-\qquad
 R_{\mathrm{th}}
 =
-20~\mathrm{Mbps}.
-\label{eq:video_satisfaction_constraint}
+20~\mathrm{Mbps},
+\qquad
+\rho_{\mathrm{video}}
+\geq
+0.95.
+\label{eq:translated_video_throughput_sla}
 \end{equation}
 
-即至少95\%的目标视频用户上行吞吐率达到20 Mbps。
+即至少95\%的目标视频用户上行吞吐率不低于20 Mbps。
 
 对于视频上行时延，
-系统采用用户级P95统计值：
+采用用户级P95统计值：
 
 \begin{equation}
 D_{\mathrm{video}}^{P95}
@@ -1825,7 +972,7 @@ D_u^{\mathrm{UL}}
 u\in U_{\mathrm{video}}
 \right\}
 \right),
-\label{eq:video_delay_p95}
+\label{eq:translated_video_delay_p95}
 \end{equation}
 
 并要求：
@@ -1834,22 +981,20 @@ u\in U_{\mathrm{video}}
 D_{\mathrm{video}}^{P95}
 \leq
 30~\mathrm{ms}.
-\label{eq:video_delay_constraint}
+\label{eq:translated_video_delay_sla}
 \end{equation}
 
 对于语音业务，
-系统同时检查绝对质量和相对质量下降。
-
-语音绝对质量约束为：
+首先要求策略实施后的语音质量满足：
 
 \begin{equation}
 Q_{\mathrm{voice}}
 \geq
 0.95.
-\label{eq:voice_absolute_constraint}
+\label{eq:translated_voice_quality_sla}
 \end{equation}
 
-定义策略实施后的语音质量下降为：
+同时定义语音质量相对于基线的下降量：
 
 \begin{equation}
 \Delta Q_{\mathrm{voice}}
@@ -1861,32 +1006,32 @@ Q_{\mathrm{voice}}^{0}
 -
 Q_{\mathrm{voice}}
 \right),
-\label{eq:voice_quality_degradation}
+\label{eq:translated_voice_degradation}
 \end{equation}
 
 其中，
-$Q_{\mathrm{voice}}^{0}$表示策略实施前的语音基线质量。
+$Q_{\mathrm{voice}}^{0}$表示策略实施前的语音质量基线。
 
-相对下降约束为：
+语音质量下降需要满足：
 
 \begin{equation}
 \Delta Q_{\mathrm{voice}}
 \leq
 0.02.
-\label{eq:voice_relative_constraint}
+\label{eq:translated_voice_degradation_sla}
 \end{equation}
 
-此外，为避免候选策略过度占用无线资源，
-策略实施后的PRB利用率需要满足：
+为避免策略过度占用无线资源，
+策略实施后的PRB利用率还需要满足：
 
 \begin{equation}
 \rho_{\mathrm{PRB}}
 \leq
 0.90.
-\label{eq:prb_utilization_constraint}
+\label{eq:translated_prb_sla}
 \end{equation}
 
-因此，本文当前形成的硬约束集合为：
+因此，本文业务意图转译形成的硬约束集合为：
 
 \begin{equation}
 C_{\mathrm{SLA}}
@@ -1900,213 +1045,132 @@ C_{\mathrm{SLA}}
 &\rho_{\mathrm{PRB}}\leq0.90.
 \end{aligned}
 \right.
-\label{eq:implemented_sla_constraint_set}
+\label{eq:translated_sla_set}
 \end{equation}
 
-需要强调的是，
-上述门限均为本文仿真配置中的研究假设，
-不来源于3GPP、ETSI或运营商现网规范，
-不能解释为通用业务保障标准或实网部署建议。
+上述门限由仿真配置提供，
+用于验证策略生成和策略评估流程。
 
 
-\subsection*{本文的静态知识驱动转译方法}
+\subsection*{静态知识驱动的意图转译}
 
-本文转译器的实际处理流程可以表示为：
+本文业务意图转译模块的实际处理流程为：
 
 \begin{equation}
 \begin{aligned}
 I_{\mathrm{ext}}
-&\xrightarrow{\mathrm{Intent\ Label\ Check}}
-G_{\mathrm{candidate}}
+&\xrightarrow{\mathrm{Intent\ Check}}
+G_{\mathrm{RAN}}
 \xrightarrow{\mathrm{Event\ Lookup}}
-T_{\mathrm{event}},V
+T_{\mathrm{event}},VenueId
 \\
 &\xrightarrow{\mathrm{Venue\ Mapping}}
-S_{\mathrm{cell}}
-\xrightarrow{\mathrm{User\ Rule}}
-U_{\mathrm{target}}
-\\
-&\xrightarrow{\mathrm{SLA\ Template}}
+S_{\mathrm{RAN}}
+\xrightarrow{\mathrm{SLA\ Template}}
 C_{\mathrm{SLA}}
-\xrightarrow{\mathrm{Blocking\ Check}}
+\\
+&\xrightarrow{\mathrm{Blocking\ Check}}
 I_{\mathrm{trans}}^{\mathrm{RAN}}.
 \end{aligned}
-\label{eq:implemented_static_translation_flow}
+\label{eq:static_translation_flow_reduced}
 \end{equation}
 
-当前实现主要依赖表
-\ref{tab:translation_data_sources}
-所示的数据和配置。
+当前转译使用的数据和配置如表
+\ref{tab:translation_data_source_reduced}
+所示。
 
 \begin{table}[H]
     \centering
     \caption{业务意图转译的数据与配置来源}
-    \label{tab:translation_data_sources}
+    \label{tab:translation_data_source_reduced}
     \small
     \renewcommand{\arraystretch}{1.25}
     \begin{tabularx}{\textwidth}{
-        >{\raggedright\arraybackslash}p{0.27\textwidth}
+        >{\raggedright\arraybackslash}p{0.29\textwidth}
         >{\raggedright\arraybackslash}p{0.30\textwidth}
         >{\raggedright\arraybackslash}X
     }
         \toprule
-        转译内容 & 数据或配置来源 & 当前处理方法 \\
+        转译内容 & 数据或配置来源 & 处理方式 \\
         \midrule
 
-        活动类型和准确时间
+        活动时间与场馆
         & \texttt{event\_database.json}
-        & 根据活动语义执行唯一事件匹配
+        & 根据演唱会语义执行唯一事件匹配
         \\
 
         策略前后生效窗口
         & \texttt{simulation\_config.yaml}
-        & 在事件开始和结束时间基础上增加配置偏移
+        & 在事件时间基础上增加前后偏移
         \\
 
         场馆到RAN对象映射
         & \texttt{venue\_cell\_mapping.json}
-        & 将场馆静态映射到唯一gNB、小区和载波
+        & 将场馆映射到唯一gNB、小区和载波
         \\
 
-        视频、语音目标用户规则
+        视频与语音用户规则
         & 结构化意图槽位
-        & 生成\texttt{uplink\_video}和\texttt{voice}业务规则
+        & 生成\texttt{uplink\_video}和\texttt{voice}规则
         \\
 
         RAN目标与优先级
         & 结构化意图标签
-        & 通过确定性规则生成主要、次级和强制目标
+        & 生成主要目标、次级目标和强制约束
         \\
 
-        SLA约束定义
+        SLA约束
         & \texttt{sla\_templates.json}
-        & 选择演唱会上行保障模板并裁剪所需约束
+        & 选择演唱会上行保障模板
         \\
 
         SLA具体门限
         & \texttt{simulation\_config.yaml}
-        & 通过\texttt{thresholdRef}延迟解析
+        & 通过门限引用读取具体数值
         \\
 
         \bottomrule
     \end{tabularx}
 \end{table}
 
-转译器首先根据结构化意图中的多标签，
-判断是否存在视频保障、RAN节能和语音保护目标。
-不同意图标签决定：
+转译器首先根据意图标签，
+生成视频保障、节能优化和语音保护目标。
+随后，根据演唱会语义在事件库中查找唯一事件，
+获得活动准确时间和场馆标识。
 
-\begin{itemize}
-    \item 需要生成哪些RAN目标；
-    \item SLA模板中需要保留哪些约束；
-    \item 不同目标采用什么优先级。
-\end{itemize}
-
-当存在时间槽位时，
-系统根据原始文本中的演唱会语义查询事件库，
-并要求返回唯一事件记录。
-事件记录提供准确活动时间和场馆标识。
-
-随后，
-系统利用场馆标识查询场馆—小区映射库，
+在确定场馆后，
+系统查询场馆—小区映射库，
 获得唯一目标小区及相关gNB和载波。
-当前模型和静态仓库均要求单小区映射，
-多小区结果直接拒绝。
 
-在SLA映射阶段，
-当前实现固定选择：
+SLA映射阶段固定选择：
 
 \begin{equation}
 Template
 =
 \texttt{concert\_uplink\_assurance}.
-\label{eq:fixed_sla_template}
+\label{eq:concert_sla_template_reduced}
 \end{equation}
 
-随后根据意图内容裁剪模板中的约束：
+并根据意图内容保留相应约束：
 
 \begin{itemize}
-    \item 存在视频保障时，保留视频用户达标比例和P95时延约束；
-    \item 存在语音保护时，保留语音绝对质量和相对下降约束；
-    \item PRB利用率上限始终保留。
+    \item 存在视频保障目标时，
+    保留视频用户达标比例和P95时延约束；
+    \item 存在语音保护目标时，
+    保留语音绝对质量和相对下降约束；
+    \item PRB利用率上限约束始终保留。
 \end{itemize}
 
-单个SLA约束可以表示为：
+意图抽取阶段生成的待解析项，
+在转译过程中根据外部数据补全情况进行更新。
+例如，事件记录匹配成功后，
+可以消除准确活动时间待解析项；
+场馆映射成功后，
+可以消除RAN作用范围待解析项；
+SLA模板解析成功后，
+可以消除业务门限待解析项。
 
-\begin{equation}
-c_j
-=
-\left(
-m_j,
-o_j,
-r_j,
-s_j
-\right),
-\label{eq:sla_constraint_model}
-\end{equation}
-
-其中，
-$m_j$表示指标名称，
-$o_j$表示比较运算符，
-$r_j$表示门限配置引用，
-$s_j$表示数据来源。
-
-例如，视频达标比例约束可表示为：
-
-\begin{equation}
-c_{\mathrm{video}}
-=
-\left(
-\texttt{videoUserSatisfactionRatio},
-\geq,
-\texttt{sla.video.satisfaction\_ratio},
-\texttt{sla\_template}
-\right).
-\end{equation}
-
-采用门限引用而不是在转译器中直接保存数值，
-可以避免SLA配置散落在算法代码中，
-也便于不同实验之间进行配置版本追踪。
-
-转译过程中，
-系统还会更新意图抽取阶段的待解析项。
-例如，当事件库和场馆映射成功后，
-可以清除：
-
-\begin{itemize}
-    \item 准确活动时间；
-    \item 场馆及目标小区范围；
-    \item SLA门限；
-    \item 目标优先级。
-\end{itemize}
-
-若仍有无法解决的信息，
-则继续保留在转译输出中。
-
-
-\subsection*{转译输出、准入控制与能力边界}
-
-完成作用范围、目标和约束映射后，
-系统输出统一的RAN侧转译结果：
-
-\begin{equation}
-I_{\mathrm{trans}}^{\mathrm{RAN}}
-=
-\left\{
-S_{\mathrm{RAN}},
-G_{\mathrm{RAN}},
-C_{\mathrm{SLA}},
-P_{\mathrm{priority}},
-U_{\mathrm{unresolved}},
-Z_{\mathrm{status}}
-\right\}.
-\label{eq:translated_ran_intent_model}
-\end{equation}
-
-其中，
-$Z_{\mathrm{status}}$表示转译状态。
-
-设转译完成后的阻断项集合为：
+设转译后仍未解决的阻断项集合为：
 
 \begin{equation}
 U_{\mathrm{blocking}}
@@ -2116,9 +1180,11 @@ u
 \in
 U_{\mathrm{unresolved}}
 \mid
-Severity(u)=\texttt{blocking}
+Severity(u)
+=
+\texttt{blocking}
 \right\}.
-\label{eq:blocking_unresolved_set}
+\label{eq:translation_blocking_items_reduced}
 \end{equation}
 
 转译状态定义为：
@@ -2139,7 +1205,7 @@ U_{\mathrm{blocking}}
 \neq
 \varnothing.
 \end{cases}
-\label{eq:translation_status}
+\label{eq:translation_status_reduced}
 \end{equation}
 
 只有当：
@@ -2148,164 +1214,14 @@ U_{\mathrm{blocking}}
 Z_{\mathrm{status}}
 =
 \texttt{ready}
-\label{eq:translation_ready_condition}
+\label{eq:translation_ready_reduced}
 \end{equation}
 
-时，转译结果才允许进入候选策略生成模块。
+时，
+转译结果才允许进入网络策略生成阶段。
 
-若状态为\texttt{blocked}，
-系统不会使用默认值掩盖关键字段缺失，
-而是终止当前流水线，
-并返回明确的阻断原因。
-
-一个简化的转译输出示例如下：
-
-\begin{lstlisting}[language={},
-caption={业务意图转译结果示例},
-label={lst:translated_ran_intent_example}]
-{
-  "schemaVersion": "1.0",
-  "intentId": "INTENT-CONCERT-UL-001",
-
-  "scope": {
-    "eventTime": {
-      "startTime": "2026-07-29T19:30:00+08:00",
-      "endTime": "2026-07-29T22:30:00+08:00",
-      "source": "event_database"
-    },
-
-    "effectiveTime": {
-      "startTime": "2026-07-29T19:15:00+08:00",
-      "endTime": "2026-07-29T22:45:00+08:00",
-      "source": "event_database+simulation_config"
-    },
-
-    "venueId": "STADIUM-001",
-
-    "ranObjects": {
-      "gnbIds": [
-        "GNB-001"
-      ],
-      "cellId": "CELL-101",
-      "carrierIds": [
-        "NR-CARRIER-01"
-      ],
-      "source": "venue_cell_mapping"
-    },
-
-    "targetUsers": [
-      {
-        "serviceType": "uplink_video",
-        "scope": "target_cell"
-      },
-      {
-        "serviceType": "voice",
-        "scope": "target_cell"
-      }
-    ]
-  },
-
-  "ranObjectives": [
-    {
-      "name": "video_uplink_assurance",
-      "priority": "primary"
-    },
-    {
-      "name": "ran_energy_optimization",
-      "priority": "secondary"
-    },
-    {
-      "name": "voice_service_protection",
-      "priority": "mandatory"
-    }
-  ],
-
-  "slaConstraints": [
-    {
-      "metric": "videoUserSatisfactionRatio",
-      "operator": ">=",
-      "thresholdRef": "sla.video.satisfaction_ratio",
-      "source": "sla_template:concert_uplink_assurance"
-    },
-    {
-      "metric": "videoDelayP95Ms",
-      "operator": "<=",
-      "thresholdRef": "sla.video.delay_p95_ms",
-      "source": "sla_template:concert_uplink_assurance"
-    },
-    {
-      "metric": "voiceQualityScore",
-      "operator": ">=",
-      "thresholdRef": "sla.voice.quality_min",
-      "source": "sla_template:concert_uplink_assurance"
-    },
-    {
-      "metric": "voiceQualityDegradation",
-      "operator": "<=",
-      "thresholdRef": "sla.voice.maximum_degradation",
-      "source": "sla_template:concert_uplink_assurance"
-    },
-    {
-      "metric": "prbUtilization",
-      "operator": "<=",
-      "thresholdRef": "resources.maximum_prb_utilization",
-      "source": "sla_template:concert_uplink_assurance"
-    }
-  ],
-
-  "objectiveRelationship": {
-    "primaryObjective": "video_uplink_assurance",
-    "secondaryObjective": "ran_energy_optimization",
-    "mandatoryConstraints": [
-      "video_sla_satisfied",
-      "voice_sla_not_degraded",
-      "prb_limit_satisfied"
-    ]
-  },
-
-  "unresolvedItems": [],
-  "translationStatus": "ready"
-}
-\end{lstlisting}
-
-上述输出中，
-活动时间来源于事件库，
-生效窗口来源于事件时间和配置偏移，
-目标小区和载波来源于场馆映射库，
-业务目标来源于结构化意图，
-SLA约束来源于版本化模板，
-具体门限通过配置引用解析。
-
-当前静态知识驱动方法的主要优点是：
-
-\begin{itemize}
-    \item 转译过程确定，便于复现和测试；
-    \item 每个字段均可记录来源；
-    \item SLA门限与算法代码解耦；
-    \item 阻断项和准入条件清晰；
-    \item 输出可以直接作为后续策略生成模块的输入。
-\end{itemize}
-
-但该方法也存在以下局限：
-
-\begin{enumerate}[label=\arabic*)]
-    \item 只支持静态演唱会场景和固定事件类型；
-    \item 不支持通用自然语言相对时间解析；
-    \item 地点槽位不直接作为GIS或地理实体查询键；
-    \item 严格限定单小区，不支持多小区和邻区协同；
-    \item 不使用用户测量报告、驻留关系和实时负载修正范围；
-    \item 只生成业务规则，不执行真实UE或QoS Flow识别；
-    \item 固定使用演唱会上行保障SLA模板；
-    \item 不使用知识图谱、学习模型或动态SLA推理；
-    \item 不读取实时RAN状态。
-\end{enumerate}
-
-需要特别说明的是，
-当前转译阶段只负责形成RAN作用范围、目标和约束，
-实时RAN状态在后续候选策略性能评估阶段进入处理链路。
-
-经过业务意图转译，
-系统完成了：
+经过业务意图转译后，
+系统完成：
 
 \begin{equation}
 \text{结构化业务语义}
@@ -2315,49 +1231,20 @@ SLA约束来源于版本化模板，
 \text{RAN目标}
 \longrightarrow
 \text{SLA与资源约束}.
-\label{eq:intent_to_ran_requirement}
+\label{eq:structured_intent_to_ran_requirement}
 \end{equation}
-
-此时，系统已经明确了“何时、在哪个小区、
-针对哪些用户、需要满足哪些目标和约束”，
-但尚未确定具体采用哪些RAN动作及其参数。
 
 \section{网络策略生成}
 \label{sec:network_policy_generation}
 
 业务意图转译完成后，
 系统已经获得策略生效时间、目标小区、目标用户规则、
-RAN业务目标、SLA约束和目标优先级。
-但是，这些信息仍然只描述了网络需要达到的目标，
-尚未明确RAN侧应执行哪些控制动作以及动作参数如何取值。
+RAN目标、SLA约束及其优先级关系。
+网络策略生成的任务是将上述RAN需求转换为
+多个动作组合和参数配置不同的候选策略，
+为后续性能评估和策略排序提供输入。
 
-网络策略生成的任务是将RAN侧目标和约束转换为
-多个结构化候选策略，
-为后续性能评估、硬约束检查和策略排序提供输入。
-
-对于演唱会视频上行保障场景，
-业务意图转译结果已经明确：
-
-\begin{itemize}
-    \item 目标小区和策略生效时间；
-    \item 目标视频用户和语音业务规则；
-    \item 视频上行保障为主要目标；
-    \item RAN节能为次级优化目标；
-    \item 语音业务保护和PRB利用率上限为硬约束。
-\end{itemize}
-
-网络策略生成需要进一步确定：
-
-\begin{itemize}
-    \item 采用上行PRB预留还是调度权重调整；
-    \item 是否同时使用多个业务保障动作；
-    \item 是否加入语音业务资源保护；
-    \item 是否加入RAN节能动作；
-    \item 不同动作参数采用哪些离散取值；
-    \item 哪些动作组合违反能力、冲突或静态资源约束。
-\end{itemize}
-
-本文当前的初始策略生成过程可以表示为：
+本文当前的初始策略生成过程可表示为：
 
 \begin{equation}
 I_{\mathrm{trans}}^{\mathrm{RAN}}
@@ -2369,98 +1256,25 @@ I_{\mathrm{trans}}^{\mathrm{RAN}}
 \mathcal{C}_{\mathrm{static}}
 \longrightarrow
 \mathcal{P}^{(0)},
-\label{eq:initial_policy_generation_process}
+\label{eq:initial_policy_generation_reduced}
 \end{equation}
 
-其中：
-
-\begin{itemize}
-    \item $I_{\mathrm{trans}}^{\mathrm{RAN}}$表示业务意图转译结果；
-    \item $\mathcal{T}$表示策略模板集合；
-    \item $\boldsymbol{\Theta}$表示动作参数离散空间；
-    \item $\mathcal{C}_{\mathrm{static}}$表示静态能力和冲突约束；
-    \item $\mathcal{P}^{(0)}$表示第0轮初始候选策略集合。
-\end{itemize}
+其中，
+$I_{\mathrm{trans}}^{\mathrm{RAN}}$表示业务意图转译结果，
+$\mathcal{T}$表示策略模板集合，
+$\boldsymbol{\Theta}$表示离散动作参数空间，
+$\mathcal{C}_{\mathrm{static}}$表示静态能力、冲突和资源约束，
+$\mathcal{P}^{(0)}$表示初始候选策略集合。
 
 需要说明的是，
-当前代码中的初始策略生成器仅接收业务意图转译结果，
-不直接接收或读取实时RAN状态。
-当前网络负载、用户吞吐率、时延、语音质量和能耗等状态，
-将在下一节的候选策略性能评估阶段进入处理链路。
-
-
-\subsection*{问题定义与理论方法}
-
-从理论上看，
-网络策略生成可以采用规则规划、案例推理、
-组合搜索、数学规划、贝叶斯优化、
-强化学习和大语言模型辅助生成等方法。
-
-一般情况下，
-候选策略生成可以抽象表示为：
-
-\begin{equation}
-\mathcal{P}_{\mathrm{candidate}}
-=
-f_{\mathrm{policy}}
-\left(
-I_{\mathrm{trans}}^{\mathrm{RAN}},
-X_{\mathrm{RAN}},
-\mathcal{A}_{\mathrm{RAN}},
-K_{\mathrm{policy}}
-\right),
-\label{eq:general_policy_generation}
-\end{equation}
-
-其中：
-
-\begin{itemize}
-    \item $X_{\mathrm{RAN}}$表示当前RAN状态；
-    \item $\mathcal{A}_{\mathrm{RAN}}$表示可用RAN动作集合；
-    \item $K_{\mathrm{policy}}$表示目标、动作和约束之间的策略知识。
-\end{itemize}
-
-在更复杂的系统中，
-可以根据当前负载、性能差距和历史经验动态选择动作，
-也可以通过优化求解器或强化学习搜索连续动作空间。
-
-本文当前重点是验证从RAN目标到候选策略评估的完整链路，
-并保证候选生成过程可解释、确定和可复现。
-因此采用：
-
-\begin{equation}
-\boxed{
-\text{规则映射}
-+
-\text{策略模板}
-+
-\text{离散参数笛卡尔积}
-+
-\text{静态约束过滤}
-}
-\label{eq:implemented_policy_generation_method}
-\end{equation}
-
-生成候选RAN策略。
-
-当前生成过程不使用：
-
-\begin{itemize}
-    \item 遗传算法；
-    \item 贝叶斯优化；
-    \item 强化学习；
-    \item 整数规划或非线性规划；
-    \item 大语言模型；
-    \item 随机采样。
-\end{itemize}
+当前初始策略生成器不直接读取RAN运行状态。
+当前小区负载、用户吞吐率、时延、语音质量和能耗等状态，
+将在后续候选策略评估阶段用于计算策略实施效果。
 
 
 \subsection*{RAN动作原语与策略模板}
 
-候选策略由一个或多个RAN动作原语组成。
-动作原语用于描述控制方向、控制对象和动作参数，
-但不直接对应特定厂商设备命令。
-
+本文将RAN控制措施抽象为标准化动作原语。
 单个动作可表示为：
 
 \begin{equation}
@@ -2471,34 +1285,31 @@ Type_j,
 Target_j,
 Parameter_j
 \right),
-\label{eq:ran_action_model}
+\label{eq:ran_action_primitive_reduced}
 \end{equation}
 
-其中：
+其中，
+$Type_j$表示动作类型，
+$Target_j$表示动作作用对象，
+$Parameter_j$表示动作参数。
 
-\begin{itemize}
-    \item $Type_j$表示动作类型；
-    \item $Target_j$表示目标小区、视频用户或语音用户；
-    \item $Parameter_j$表示具体动作参数。
-\end{itemize}
-
-当前原型实际实现表
-\ref{tab:implemented_ran_actions}
-所示的四类RAN动作。
+当前原型实现表
+\ref{tab:ran_action_primitives_reduced}
+所示的四类动作。
 
 \begin{table}[H]
     \centering
-    \caption{RAN动作原语}
-    \label{tab:implemented_ran_actions}
+    \caption{当前实现的RAN动作原语}
+    \label{tab:ran_action_primitives_reduced}
     \small
     \renewcommand{\arraystretch}{1.25}
     \begin{tabularx}{\textwidth}{
-        >{\raggedright\arraybackslash}p{0.32\textwidth}
+        >{\raggedright\arraybackslash}p{0.34\textwidth}
         >{\raggedright\arraybackslash}p{0.27\textwidth}
         >{\raggedright\arraybackslash}X
     }
         \toprule
-        动作类型 & 参数 & 主要作用 \\
+        动作类型 & 动作参数 & 主要作用 \\
         \midrule
 
         \texttt{UL\_RESOURCE\_RESERVE}
@@ -2513,7 +1324,7 @@ Parameter_j
 
         \texttt{VOICE\_RESOURCE\_PROTECT}
         & \texttt{minimumVoicePrbRatio}
-        & 为语音业务设置最低资源保护比例
+        & 为语音业务设置最低PRB保护比例
         \\
 
         \texttt{RAN\_ENERGY\_SAVING}
@@ -2525,16 +1336,8 @@ Parameter_j
     \end{tabularx}
 \end{table}
 
-当前代码未实现上行功率控制、负载均衡、
-载波休眠、多小区协调和切换参数调整等动作。
-这些动作可以作为后续扩展，
-但不属于本文当前仿真实现。
-
 在动作原语基础上，
-系统根据业务意图转译结果选择策略模板。
-策略模板描述一类候选策略包含哪些动作，
-但不直接确定动作参数。
-
+系统根据业务意图转译结果选择相应的策略模板。
 当前模板主要包括：
 
 \begin{itemize}
@@ -2544,21 +1347,19 @@ Parameter_j
     \item 联合保障模板；
     \item 语音保护模板；
     \item 带节能动作的保障模板；
-    \item 独立节能优化模板。
+    \item 独立节能模板。
 \end{itemize}
 
-基线模板不包含主动控制动作，
-用于表示不增加业务保障和节能控制的参考策略：
+基线模板不包含主动控制动作：
 
 \begin{equation}
 A_{\mathrm{baseline}}
 =
 \varnothing.
-\label{eq:baseline_action_set}
+\label{eq:baseline_template_reduced}
 \end{equation}
 
-当存在视频上行保障目标时，
-系统生成调度保障模板：
+调度保障模板包含视频调度权重调整动作：
 
 \begin{equation}
 A_{\mathrm{scheduling}}
@@ -2566,47 +1367,21 @@ A_{\mathrm{scheduling}}
 \left\{
 a_{\mathrm{schedule}}
 \right\}.
-\label{eq:scheduling_template}
+\label{eq:scheduling_template_reduced}
 \end{equation}
 
-若同时存在语音保护目标，
-则模板中加入语音保护动作：
-
-\begin{equation}
-A_{\mathrm{scheduling+voice}}
-=
-\left\{
-a_{\mathrm{schedule}},
-a_{\mathrm{voice}}
-\right\}.
-\label{eq:scheduling_voice_template}
-\end{equation}
-
-资源保障模板表示：
+资源保障模板包含视频上行PRB预留动作：
 
 \begin{equation}
 A_{\mathrm{resource}}
 =
 \left\{
 a_{\mathrm{resource}}
-\right\},
-\label{eq:resource_template}
-\end{equation}
-
-若需要保护语音业务，
-则表示为：
-
-\begin{equation}
-A_{\mathrm{resource+voice}}
-=
-\left\{
-a_{\mathrm{resource}},
-a_{\mathrm{voice}}
 \right\}.
-\label{eq:resource_voice_template}
+\label{eq:resource_template_reduced}
 \end{equation}
 
-联合保障模板同时包含PRB资源预留和视频调度权重调整：
+联合保障模板同时包含资源预留和调度权重调整：
 
 \begin{equation}
 A_{\mathrm{joint}}
@@ -2615,25 +1390,25 @@ A_{\mathrm{joint}}
 a_{\mathrm{resource}},
 a_{\mathrm{schedule}}
 \right\}.
-\label{eq:joint_assurance_template}
+\label{eq:joint_template_reduced}
 \end{equation}
 
-存在语音保护要求时，
-联合保障模板扩展为：
+当意图中包含语音业务保护目标时，
+系统在相应模板中加入语音资源保护动作：
 
 \begin{equation}
-A_{\mathrm{joint+voice}}
+A_{\mathrm{assurance+voice}}
 =
+A_{\mathrm{assurance}}
+\cup
 \left\{
-a_{\mathrm{resource}},
-a_{\mathrm{schedule}},
 a_{\mathrm{voice}}
 \right\}.
-\label{eq:joint_voice_template}
+\label{eq:voice_protection_template_reduced}
 \end{equation}
 
 当意图中包含RAN节能目标时，
-系统还会生成带节能动作的扩展模板：
+系统在业务保障模板基础上增加节能动作：
 
 \begin{equation}
 A_{\mathrm{assurance+energy}}
@@ -2643,42 +1418,34 @@ A_{\mathrm{assurance}}
 \left\{
 a_{\mathrm{energy}}
 \right\}.
-\label{eq:assurance_energy_template}
+\label{eq:energy_template_reduced}
 \end{equation}
 
-因此，策略模板实现了：
+因此，策略模板完成的是：
 
 \begin{equation}
 \text{RAN目标}
 \longrightarrow
 \text{动作组合结构}.
-\label{eq:goal_to_template_mapping}
+\label{eq:objective_to_policy_template}
 \end{equation}
 
-该过程只决定动作组合，
-不判断策略实施后是否满足SLA。
 
+\subsection*{离散参数组合}
 
-\subsection*{离散参数组合与静态过滤}
-
-策略模板确定动作结构后，
+策略模板只确定候选策略包含哪些动作，
 还需要为每个动作赋予具体参数。
-
-当前系统从动作库读取动作定义，
-再根据动作参数中的
-\texttt{valueSetRef}
-查询配置文件中的离散取值集合。
 
 设：
 
 \begin{itemize}
-    \item $\Theta_r$表示PRB预留比例集合；
+    \item $\Theta_r$表示视频PRB预留比例集合；
     \item $\Theta_w$表示视频调度权重集合；
-    \item $\Theta_v$表示语音最低资源比例集合；
+    \item $\Theta_v$表示语音最低PRB比例集合；
     \item $\Theta_e$表示节能强度集合。
 \end{itemize}
 
-则完整离散参数空间可以表示为：
+完整离散动作空间可表示为：
 
 \begin{equation}
 \boldsymbol{\Theta}
@@ -2690,16 +1457,23 @@ a_{\mathrm{energy}}
 \Theta_v
 \times
 \Theta_e.
-\label{eq:full_discrete_action_space}
+\label{eq:discrete_policy_parameter_space}
 \end{equation}
 
-对于某个只包含部分动作的模板，
-系统仅对该模板实际包含的动作参数执行组合。
+对于某个具体策略模板，
+系统只对该模板包含的动作参数执行笛卡尔积组合。
 
-若模板$T_k$包含$J_k$个动作，
-每个动作的参数值集合分别为
-$\Theta_{k,1},\Theta_{k,2},\ldots,\Theta_{k,J_k}$，
-则候选参数组合为：
+设模板$T_k$包含$J_k$个动作，
+对应参数集合为：
+
+\begin{equation}
+\Theta_{k,1},
+\Theta_{k,2},
+\ldots,
+\Theta_{k,J_k},
+\end{equation}
+
+则该模板的候选参数组合为：
 
 \begin{equation}
 \Omega_k
@@ -2711,44 +1485,26 @@ $\Theta_{k,1},\Theta_{k,2},\ldots,\Theta_{k,J_k}$，
 \cdots
 \times
 \Theta_{k,J_k}.
-\label{eq:template_cartesian_product}
+\label{eq:template_parameter_cartesian_product}
 \end{equation}
 
-当前代码通过笛卡尔积穷举模板内的全部离散参数组合：
+例如，联合保障与语音保护模板的参数空间为：
 
 \begin{equation}
-\Omega_k
-=
-\operatorname{CartesianProduct}
-\left(
-\Theta_{k,1},
-\Theta_{k,2},
-\ldots,
-\Theta_{k,J_k}
-\right).
-\label{eq:cartesian_product_generation}
-\end{equation}
-
-例如，
-当联合保障模板包含PRB预留、调度权重和语音保护时，
-其参数组合可表示为：
-
-\begin{equation}
-\Omega_{\mathrm{joint}}
+\Omega_{\mathrm{joint+voice}}
 =
 \Theta_r
 \times
 \Theta_w
 \times
 \Theta_v.
-\label{eq:joint_parameter_space}
+\label{eq:joint_voice_parameter_space}
 \end{equation}
 
-加入节能动作后，
-参数空间扩展为：
+若同时加入节能动作，则参数空间扩展为：
 
 \begin{equation}
-\Omega_{\mathrm{joint+energy}}
+\Omega_{\mathrm{joint+voice+energy}}
 =
 \Theta_r
 \times
@@ -2757,68 +1513,66 @@ $\Theta_{k,1},\Theta_{k,2},\ldots,\Theta_{k,J_k}$，
 \Theta_v
 \times
 \Theta_e.
-\label{eq:joint_energy_parameter_space}
+\label{eq:joint_voice_energy_parameter_space}
 \end{equation}
 
-笛卡尔积能够完整覆盖当前离散动作空间，
-但候选数量会随动作数和参数档位快速增加。
-因此，系统在生成过程中执行静态约束过滤、
-内容去重和候选数量限制。
+当前实现通过离散笛卡尔积穷举模板内的参数组合，
+生成不同参数配置的候选策略。
+该过程不使用随机采样，
+同一输入和同一配置下生成结果保持一致。
 
-静态约束过滤主要包括：
+
+\subsection*{静态约束过滤与候选控制}
+
+笛卡尔积生成的动作组合中，
+可能存在参数非法、动作冲突或资源明显超限的策略。
+因此，候选策略进入性能评估前，
+需要执行静态约束过滤。
+
+当前过滤内容包括：
 
 \begin{enumerate}[label=\arabic*)]
     \item 动作类型不能重复；
     \item 动作必须存在于当前动作库；
-    \item 动作参数Schema必须完整匹配；
-    \item 参数值必须属于配置允许的离散空间；
-    \item 动作目标必须与当前单小区范围一致；
-    \item 动作之间不能存在明确冲突；
-    \item 资源预留比例不能明显超过静态资源上限。
+    \item 动作参数必须满足预定义Schema；
+    \item 参数值必须属于配置允许的离散集合；
+    \item 动作作用对象必须与当前目标小区和用户规则一致；
+    \item 同一策略中不能存在预定义冲突动作；
+    \item 视频和语音资源比例不能明显超过静态资源上限。
 \end{enumerate}
 
-对于PRB资源预留和语音资源保护，
+对于视频PRB预留比例$r$
+和语音最低PRB保护比例$v$，
 当前采用以下静态资源约束：
 
 \begin{equation}
 r+v
 \leq
 \rho_{\mathrm{PRB}}^{\max},
-\label{eq:static_prb_resource_constraint}
+\label{eq:static_prb_constraint_reduced}
 \end{equation}
 
-其中：
+其中，
+$\rho_{\mathrm{PRB}}^{\max}$为配置中的最大PRB利用率。
 
-\begin{itemize}
-    \item $r$表示视频业务PRB预留比例；
-    \item $v$表示语音业务最低PRB比例；
-    \item $\rho_{\mathrm{PRB}}^{\max}$表示配置中的最大PRB利用率。
-\end{itemize}
+该约束只用于生成阶段的静态检查，
+并不表示策略实施后的实际PRB利用率一定满足要求。
+策略后的实际PRB利用率需要在候选策略评估阶段，
+结合当前RAN状态重新计算。
 
-需要区分的是，
-式\eqref{eq:static_prb_resource_constraint}
-只是生成阶段的静态资源检查，
-并不代表策略实施后的实际PRB利用率一定满足约束。
-策略后的实际PRB利用率需要由性能评估模型结合当前RAN状态计算。
-
-当前实现还定义了部分语义冲突规则。
+当前还设置了部分动作冲突规则。
 例如：
 
 \begin{itemize}
     \item 存在语音保护目标时，
-    若采用较高视频调度权重却不包含语音保护动作，
-    则该组合被视为冲突；
-    \item 最大PRB预留比例与最大节能强度同时出现时，
-    该动作组合被视为不协调。
+    高视频调度权重策略需要同时包含语音保护动作；
+    \item 最大PRB预留比例和最大节能强度不能同时使用。
 \end{itemize}
 
-这些规则属于当前仿真假设，
-主要用于验证策略冲突检查机制。
+上述规则用于提前删除明显不协调的动作组合。
 
-通过静态检查的策略还需要进行内容去重。
-设候选策略$P_i$的动作集合为$A_i$，
-系统对每个动作的类型、目标和参数进行规范化排序，
-构造内容签名：
+通过静态检查的候选策略还需要进行内容去重。
+系统根据动作类型、作用对象和参数构造规范化策略签名：
 
 \begin{equation}
 Signature(P_i)
@@ -2827,26 +1581,22 @@ Signature(P_i)
 \left(
 A_i
 \right).
-\label{eq:policy_deduplication_signature}
+\label{eq:policy_signature_reduced}
 \end{equation}
 
-若两个模板产生完全相同的动作类型、目标和参数，
-则：
+若两个候选策略具有相同动作类型、目标和参数，则：
 
 \begin{equation}
 Signature(P_i)
 =
 Signature(P_j),
-\label{eq:duplicate_policy_condition}
+\label{eq:duplicate_policy_reduced}
 \end{equation}
 
-系统只保留稳定排序中首次出现的策略。
+系统只保留稳定顺序中首次出现的策略。
 
-去重键不包含模板名称和策略标识，
-因此不同模板生成相同策略内容时不会产生重复候选。
-
-候选策略按照模板优先级、模板标识和参数顺序稳定排序。
-策略标识按最终保留顺序生成：
+候选策略按照模板优先级、模板标识和参数顺序进行稳定排序，
+并按最终顺序生成策略标识：
 
 \begin{equation}
 PolicyId_i
@@ -2856,34 +1606,26 @@ PolicyId_i
 \Vert
 \texttt{-}
 \Vert i,
-\label{eq:policy_id_generation}
+\label{eq:policy_identifier_reduced}
 \end{equation}
 
 其中，
 $n$表示生成轮次，
-$i$表示当前轮中的稳定序号。
+$i$表示当前轮中的候选序号。
 
-对于初始策略生成，
-$n=0$。
-
-为控制单轮候选数量，
-系统设置：
+为控制单轮计算规模，
+系统设置最大候选数量：
 
 \begin{equation}
 \left|
 \mathcal{P}^{(n)}
 \right|
 \leq
-N_{\max},
-\label{eq:maximum_candidates_constraint}
+N_{\max}.
+\label{eq:maximum_policy_count_reduced}
 \end{equation}
 
-其中，
-$N_{\max}$由配置项
-\texttt{maximum\_candidates\_per\_round}
-给出。
-
-当候选数超过上限时，
+当通过过滤的候选数超过上限时，
 当前实现按照稳定顺序保留前$N_{\max}$个策略：
 
 \begin{equation}
@@ -2894,18 +1636,10 @@ $N_{\max}$由配置项
 \mathcal{P}_{\mathrm{valid}},
 N_{\max}
 \right).
-\label{eq:stable_prefix_truncation}
+\label{eq:policy_prefix_truncation_reduced}
 \end{equation}
 
-当前实现不是随机抽样，
-也没有根据性能差距、参数覆盖性或历史成功率重新选择候选。
-
-
-\subsection*{策略输出与能力边界}
-
-经过模板选择、离散参数组合、静态过滤、
-内容去重和数量限制后，
-系统输出候选RAN策略集合：
+最终得到初始候选策略集合：
 
 \begin{equation}
 \mathcal{P}^{(0)}
@@ -2916,184 +1650,11 @@ P_2^{(0)},
 \ldots,
 P_M^{(0)}
 \right\}.
-\label{eq:initial_candidate_policy_set}
+\label{eq:initial_policy_set_reduced}
 \end{equation}
 
-单个候选策略可以表示为：
-
-\begin{equation}
-P_i
-=
-\left\{
-ID_i,
-Scope_i,
-A_i,
-\Theta_i,
-G_i,
-C_i,
-Trigger_i,
-Rollback_i,
-Meta_i
-\right\},
-\label{eq:candidate_policy_model}
-\end{equation}
-
-其中：
-
-\begin{itemize}
-    \item $ID_i$表示策略标识；
-    \item $Scope_i$表示生效时间、目标小区和目标用户规则；
-    \item $A_i$表示动作集合；
-    \item $\Theta_i$表示动作参数；
-    \item $G_i$表示策略对应的RAN目标；
-    \item $C_i$表示策略需要满足的硬约束；
-    \item $Trigger_i$表示策略触发条件；
-    \item $Rollback_i$表示回退条件；
-    \item $Meta_i$表示生成轮次、父策略和生成原因等元数据。
-\end{itemize}
-
-一个简化的候选策略输出示例如下：
-
-\begin{lstlisting}[language={},
-caption={候选RAN策略示例},
-label={lst:candidate_policy_example}]
-{
-  "policyId": "RAN-POLICY-R0-0016",
-  "intentId": "INTENT-CONCERT-UL-001",
-  "generationRound": 0,
-  "parentPolicyId": null,
-
-  "scope": {
-    "cellId": "CELL-101",
-    "startTime": "2026-07-29T19:15:00+08:00",
-    "endTime": "2026-07-29T22:45:00+08:00",
-    "targetUserRules": [
-      "uplink_video",
-      "voice"
-    ]
-  },
-
-  "objectives": [
-    "video_uplink_assurance",
-    "ran_energy_optimization",
-    "voice_service_protection"
-  ],
-
-  "actions": [
-    {
-      "type": "UL_RESOURCE_RESERVE",
-      "target": "target_video_users",
-      "parameters": {
-        "reservedPrbRatio": 0.20
-      }
-    },
-    {
-      "type": "SCHEDULING_WEIGHT_ADJUST",
-      "target": "target_video_users",
-      "parameters": {
-        "videoSchedulingWeight": 1.50
-      }
-    },
-    {
-      "type": "VOICE_RESOURCE_PROTECT",
-      "target": "voice_users",
-      "parameters": {
-        "minimumVoicePrbRatio": 0.15
-      }
-    },
-    {
-      "type": "RAN_ENERGY_SAVING",
-      "target": "target_cell",
-      "parameters": {
-        "energySavingIntensity": 0.10
-      }
-    }
-  ],
-
-  "hardConstraints": [
-    "videoUserSatisfactionRatio >= 0.95",
-    "videoDelayP95Ms <= 30",
-    "voiceQualityScore >= 0.95",
-    "voiceQualityDegradation <= 0.02",
-    "prbUtilization <= 0.90"
-  ],
-
-  "triggerConditions": [
-    "effective_time_reached"
-  ],
-
-  "rollbackConditions": [
-    "voice_sla_violation",
-    "prb_overload",
-    "effective_time_ended"
-  ],
-
-  "generationReason": "initial_template_grid",
-  "status": "pending_evaluation"
-}
-\end{lstlisting}
-
-需要说明的是，
-上述数值只是结构示例，
-实际参数值由当前配置中的离散动作空间决定。
-
-当前策略生成方法具有以下优点：
-
-\begin{itemize}
-    \item 模板和动作含义清晰，生成结果可解释；
-    \item 参数全部来自版本化配置，便于实验复现；
-    \item 笛卡尔积能够覆盖当前离散动作空间；
-    \item 静态过滤能够提前删除明显非法组合；
-    \item 内容签名保证候选去重和稳定标识；
-    \item 整个过程确定，不受随机种子影响。
-\end{itemize}
-
-但当前实现也存在以下能力边界：
-
-\begin{enumerate}[label=\arabic*)]
-    \item \textbf{初始生成不使用实时RAN状态。}
-
-    当前生成器不根据网络负载、
-    当前吞吐率和时延进行模板选择或参数剪枝。
-    同一转译结果在不同网络状态下生成相同的初始候选集合。
-
-    \item \textbf{动作类型有限。}
-
-    当前只实现PRB预留、调度权重、
-    语音资源保护和抽象节能四类动作，
-    不包含功率控制、负载均衡、载波休眠和多小区协同。
-
-    \item \textbf{采用离散穷举。}
-
-    当前只搜索预定义参数档位，
-    不能优化连续参数，
-    也不能保证获得连续空间中的全局最优解。
-
-    \item \textbf{候选数量采用稳定前缀截断。}
-
-    超过数量上限时，
-    当前实现只保留排序后的前$N_{\max}$个候选，
-    未根据性能差距和参数覆盖性进行代表性采样。
-
-    \item \textbf{不包含经验学习。}
-
-    当前模板优先级和参数空间不会根据历史评估结果自动更新。
-
-    \item \textbf{不在生成阶段判断SLA。}
-
-    静态过滤只检查能力、参数、冲突和显式资源上限，
-    不预测吞吐率、时延、语音质量和能耗。
-
-    \item \textbf{初始生成与反馈生成相互独立。}
-
-    初始候选由网格生成器产生，
-    后续反馈候选由独立的局部反馈优化器生成，
-    当前尚未形成统一的
-    \texttt{SearchSpace}和
-    \texttt{PolicyFeedback[]}生成接口。
-\end{enumerate}
-
-因此，网络策略生成完成的是：
+经过网络策略生成，
+系统完成：
 
 \begin{equation}
 \text{RAN目标与约束}
@@ -3103,31 +1664,20 @@ label={lst:candidate_policy_example}]
 \text{离散参数组合}
 \longrightarrow
 \text{静态可用候选策略}.
-\label{eq:ran_requirement_to_candidate_policy}
+\label{eq:ran_requirement_to_candidate_policies}
 \end{equation}
-
-候选策略生成阶段只能说明策略在动作能力和静态规则层面可用，
-不能说明策略实施后一定能够满足视频、语音和无线资源约束。
 
 \section{候选策略评估}
 \label{sec:candidate_policy_evaluation}
 
-网络策略生成阶段根据业务意图转译结果、
-RAN动作模板和离散参数空间，
-生成了多个动作组合和参数配置不同的候选策略。
-这些候选策略在业务保障效果、无线资源占用、
-RAN能耗和潜在风险等方面可能存在明显差异，
-因此不能直接将生成顺序靠前的策略作为最终推荐结果。
+网络策略生成阶段得到多个动作组合和参数配置不同的候选策略。
+这些候选策略在视频业务保障效果、语音业务影响、
+无线资源占用、RAN能耗和潜在风险等方面存在差异，
+因此需要结合当前RAN状态进行统一评估。
 
-候选策略评估的任务是结合当前RAN状态，
-计算每个候选策略实施后的网络性能，
-检查其是否满足视频业务、语音业务和无线资源硬约束，
-并在可行策略之间进行多目标评分和确定性排序。
-对于未达到要求的策略，
-系统还需要根据具体违约原因调整动作参数或动作组合，
-形成新一轮局部候选策略。
-
-候选策略评估过程可表示为：
+本文候选策略评估过程包括性能计算、
+硬约束检查、多目标评分、策略排序和反馈优化，
+其总体过程可表示为：
 
 \begin{equation}
 \left(
@@ -3142,122 +1692,25 @@ H_i
 S_i
 \xrightarrow{\mathrm{Feedback}}
 \mathcal{N}(P_i),
-\label{eq:candidate_policy_evaluation_process}
-\end{equation}
-
-其中：
-
-\begin{itemize}
-    \item $X_{\mathrm{RAN}}$表示当前单小区RAN状态；
-    \item $P_i$表示第$i$个候选策略；
-    \item $Z_i$表示策略实施后的性能评估结果；
-    \item $H_i$表示硬约束检查结果；
-    \item $S_i$表示多目标综合评分；
-    \item $\mathcal{N}(P_i)$表示根据评估反馈生成的局部策略邻域。
-\end{itemize}
-
-与策略生成阶段只进行静态能力和冲突检查不同，
-候选策略评估需要回答以下问题：
-
-\begin{enumerate}[label=\arabic*)]
-    \item 策略实施后，目标视频用户的吞吐率和时延是否满足要求；
-    \item 语音业务质量是否保持在允许范围内；
-    \item PRB利用率是否超过资源上限；
-    \item 策略对RAN能耗、普通用户和系统风险产生什么影响；
-    \item 哪些候选策略满足全部硬约束；
-    \item 可行策略之间应如何评分和排序；
-    \item 当策略不可行或仍有优化空间时，应如何生成下一轮候选策略。
-\end{enumerate}
-
-
-\subsection*{问题定义与总体方法}
-
-从理论上看，
-候选策略效果可以通过多种方式获得，例如：
-
-\begin{itemize}
-    \item 基于协议和无线传播模型的链路级仿真；
-    \item 面向小区和多用户调度的系统级仿真；
-    \item 基于历史数据训练的性能预测模型；
-    \item 采用代理模型的快速策略评估；
-    \item 在网络数字孪生环境中进行动态策略推演；
-    \item 在真实网络沙箱或试验网中进行验证。
-\end{itemize}
-
-若采用通用性能评估器，
-候选策略的性能结果可表示为：
-
-\begin{equation}
-Z_i
-=
-f_{\mathrm{eval}}
-\left(
-X_{\mathrm{RAN}},
-P_i,
-\boldsymbol{\theta}_{\mathrm{model}}
-\right),
-\label{eq:general_policy_evaluator}
+\label{eq:policy_evaluation_flow_reduced}
 \end{equation}
 
 其中，
-$\boldsymbol{\theta}_{\mathrm{model}}$
-表示性能评估模型的参数。
-
-理论上的高精度评估器需要考虑：
-
-\begin{itemize}
-    \item 无线传播和信道质量；
-    \item 小区内多用户调度过程；
-    \item PRB分配和缓存队列；
-    \item HARQ、BLER和重传；
-    \item 用户移动和小区间干扰；
-    \item 业务流到达过程；
-    \item 语音和视频业务模型；
-    \item 基站射频、基带和载波能耗。
-\end{itemize}
-
-本文当前研究重点是验证从候选策略到评分、
-排序和反馈优化的完整闭环，
-尚未构建高精度网络数字孪生或协议级仿真环境。
-因此，当前原型采用：
-
-\begin{equation}
-\boxed{
-\text{简化RAN解析性能模型}
-+
-\text{硬约束检查}
-+
-\text{多目标加权评分}
-+
-\text{局部邻域反馈}
-}
-\label{eq:implemented_policy_evaluation_method}
-\end{equation}
-
-实现候选策略评估。
-
-当前性能评估模型版本为：
-
-\begin{equation}
-ModelVersion
-=
-\texttt{simplified-ran-v1}.
-\label{eq:performance_model_version}
-\end{equation}
-
-该模型通过参数化代数关系描述策略动作对吞吐率、
-时延、BLER、语音质量、PRB利用率、
-RAN能耗、普通用户性能和风险的相对影响。
-
-需要说明的是，
-该模型不包含真实协议栈、无线传播、队列调度和干扰过程，
-只能用于验证相对趋势和决策链路，
-不能解释为真实RAN性能预测。
+$X_{\mathrm{RAN}}$表示当前RAN状态，
+$P_i$表示第$i$个候选策略，
+$Z_i$表示策略实施后的性能结果，
+$H_i$表示硬约束检查结果，
+$S_i$表示多目标评分结果，
+$\mathcal{N}(P_i)$表示反馈生成的局部策略邻域。
 
 
 \subsection*{简化RAN性能评估模型}
 
-设候选策略的四个主要动作参数为：
+本文采用版本化的简化RAN解析模型
+\texttt{simplified-ran-v1}
+评估候选策略实施后的性能。
+
+设候选策略包含的主要动作参数为：
 
 \begin{equation}
 \boldsymbol{\theta}_i
@@ -3268,7 +1721,7 @@ w_i,
 v_i,
 e_i
 \right],
-\label{eq:policy_action_parameter_vector}
+\label{eq:policy_parameter_vector_reduced}
 \end{equation}
 
 其中：
@@ -3280,8 +1733,8 @@ e_i
     \item $e_i$表示RAN节能控制强度。
 \end{itemize}
 
-若某个候选策略不包含对应动作，
-性能模型使用配置中的中性参数：
+当候选策略不包含某类动作时，
+相应参数采用中性值：
 
 \begin{equation}
 r=0,
@@ -3291,13 +1744,10 @@ w=1,
 v=0,
 \qquad
 e=0.
-\label{eq:neutral_action_parameters}
+\label{eq:neutral_policy_parameters_reduced}
 \end{equation}
 
-这样可以在统一公式中同时评估基线策略、
-单动作策略和多动作联合策略。
-
-当前RAN状态可以抽象表示为：
+当前RAN状态表示为：
 
 \begin{equation}
 X_{\mathrm{RAN}}
@@ -3313,42 +1763,34 @@ B_u^0,
 \gamma_u
 \right)_{u\in U_{\mathrm{video}}}
 \right\},
-\label{eq:ran_state_for_evaluation}
+\label{eq:ran_state_reduced}
 \end{equation}
 
-其中：
-
-\begin{itemize}
-    \item $u_0$表示基线PRB利用率；
-    \item $E_0$表示基线RAN能耗；
-    \item $Q_0$表示基线语音质量；
-    \item $T_u^0$表示视频用户$u$的基线上行吞吐率；
-    \item $D_u^0$表示视频用户$u$的基线上行时延；
-    \item $B_u^0$表示视频用户$u$的基线BLER；
-    \item $\gamma_u$表示视频用户$u$的SINR或信道质量输入。
-\end{itemize}
+其中，
+$u_0$表示基线PRB利用率，
+$E_0$表示基线RAN能耗，
+$Q_0$表示基线语音质量，
+$T_u^0$、$D_u^0$和$B_u^0$
+分别表示视频用户$u$的基线吞吐率、时延和BLER，
+$\gamma_u$表示用户信道质量输入。
 
 
-\subsubsection*{有效容量与PRB利用率}
+\subsubsection*{PRB利用率}
 
-节能动作可能降低可用系统容量。
-当前模型定义有效容量因子：
+节能动作可能降低可用系统容量，
+因此定义有效容量因子：
 
 \begin{equation}
 \phi
 =
 \operatorname{clip}
 \left(
-1-k_E e,
+1-k_Ee,
 \phi_{\min},
 1
-\right),
-\label{eq:effective_capacity_factor}
+\right).
+\label{eq:effective_capacity_reduced}
 \end{equation}
-
-其中，
-$k_E$表示节能强度对有效容量的影响系数，
-$\phi_{\min}$表示容量下界。
 
 策略实施后的PRB利用率为：
 
@@ -3358,25 +1800,21 @@ u'
 \operatorname{clip}
 \left(
 \frac{
-u_0+k_r r+k_v v
+u_0+k_rr+k_vv
 }{
 \phi
 },
 0,
 1
 \right),
-\label{eq:post_policy_prb_utilization}
+\label{eq:post_policy_prb_reduced}
 \end{equation}
 
-其中：
+其中，
+$k_r$和$k_v$分别表示视频PRB预留和语音资源保护
+对资源利用率的影响系数。
 
-\begin{itemize}
-    \item $k_r$描述视频PRB预留对资源利用率的影响；
-    \item $k_v$描述语音资源保护对资源利用率的影响。
-\end{itemize}
-
-当策略后利用率超过拥塞门限
-$u_{\mathrm{cong}}$时，
+当策略后PRB利用率超过拥塞门限时，
 定义拥塞量：
 
 \begin{equation}
@@ -3387,38 +1825,13 @@ o
 0,
 u'-u_{\mathrm{cong}}
 \right).
-\label{eq:congestion_amount}
+\label{eq:congestion_reduced}
 \end{equation}
 
-拥塞量将进一步影响视频吞吐率、
-时延、BLER、语音质量和风险。
 
+\subsubsection*{视频吞吐率、时延与BLER}
 
-\subsubsection*{视频用户吞吐率}
-
-模型首先根据用户SINR计算信道质量影响因子：
-
-\begin{equation}
-f_u^{\mathrm{SINR}}
-=
-\operatorname{clip}
-\left(
-1+
-k_s
-\left(
-\gamma_u-\gamma_{\mathrm{ref}}
-\right),
-f_{\min},
-f_{\max}
-\right),
-\label{eq:sinr_factor}
-\end{equation}
-
-其中，
-$\gamma_{\mathrm{ref}}$表示参考SINR，
-$k_s$表示SINR变化对吞吐率的线性影响系数。
-
-视频用户$u$策略后的上行吞吐率为：
+视频用户$u$策略后的上行吞吐率表示为：
 
 \begin{equation}
 T_u'
@@ -3427,35 +1840,24 @@ T_u'
 \left[
 T_u^0
 \left(
-1+\alpha_r r+\alpha_w(w-1)
+1+\alpha_rr+\alpha_w(w-1)
 \right)
 \phi
 \frac{
 f_u^{\mathrm{SINR}}
 }{
-1+\alpha_c o
+1+\alpha_co
 },
 T_{\min},
 T_{\max}
 \right],
-\label{eq:post_policy_video_throughput}
+\label{eq:video_throughput_reduced}
 \end{equation}
 
-其中：
-
-\begin{itemize}
-    \item $\alpha_r$表示PRB预留的吞吐率增益系数；
-    \item $\alpha_w$表示调度权重的吞吐率增益系数；
-    \item $\alpha_c$表示拥塞对吞吐率的抑制系数；
-    \item $T_{\min}$和$T_{\max}$表示吞吐率输出边界。
-\end{itemize}
-
-从式\eqref{eq:post_policy_video_throughput}可以看出，
-PRB预留和调度权重能够提高视频吞吐率，
-节能容量折减和系统拥塞则会降低吞吐率。
-
-
-\subsubsection*{视频用户时延}
+其中，
+$f_u^{\mathrm{SINR}}$表示信道质量影响因子，
+$\alpha_r$和$\alpha_w$分别表示PRB预留和调度权重的吞吐率增益，
+$\alpha_c$表示拥塞抑制系数。
 
 视频用户$u$策略后的上行时延为：
 
@@ -3467,39 +1869,26 @@ D_u'
 D_u^0
 \frac{
 1+
-\beta_u
-\max(0,u'-u_0)
+\beta_u\max(0,u'-u_0)
 +
-\beta_e e
+\beta_ee
 }{
 1+
-\beta_r r+
+\beta_rr+
 \beta_w(w-1)
 },
 D_{\min},
 D_{\max}
 \right],
-\label{eq:post_policy_video_delay}
+\label{eq:video_delay_reduced}
 \end{equation}
 
-其中：
+其中，
+$\beta_u$和$\beta_e$分别表示资源利用率增加和节能动作
+对时延的恶化影响，
+$\beta_r$和$\beta_w$表示资源保障和调度权重带来的改善。
 
-\begin{itemize}
-    \item $\beta_u$表示资源利用率增长对时延的影响；
-    \item $\beta_e$表示节能动作对时延的影响；
-    \item $\beta_r$表示PRB预留的时延改善系数；
-    \item $\beta_w$表示调度权重的时延改善系数；
-    \item $D_{\min}$和$D_{\max}$表示时延输出边界。
-\end{itemize}
-
-式\eqref{eq:post_policy_video_delay}表明，
-PRB预留和调度权重能够降低视频时延，
-而资源利用率增加和节能动作可能提高时延。
-
-
-\subsubsection*{视频用户BLER}
-
-策略后的用户级BLER为：
+视频用户$u$策略后的BLER为：
 
 \begin{equation}
 B_u'
@@ -3508,106 +1897,19 @@ B_u'
 \left[
 B_u^0
 +
-\chi_u o
+\chi_uo
 -
-\chi_r r
+\chi_rr
 -
 \chi_w(w-1),
 0,
 1
-\right],
-\label{eq:post_policy_video_bler}
+\right].
+\label{eq:video_bler_reduced}
 \end{equation}
 
-其中：
-
-\begin{itemize}
-    \item $\chi_u$表示拥塞对BLER的恶化作用；
-    \item $\chi_r$表示PRB预留对BLER的改善作用；
-    \item $\chi_w$表示调度权重对BLER的改善作用。
-\end{itemize}
-
-当前模型将BLER作为软风险和业务评分指标，
-而不是独立硬约束。
-
-
-\subsubsection*{用户级指标聚合}
-
-对所有目标视频用户，
-系统计算以下聚合指标：
-
-\begin{itemize}
-    \item 平均上行吞吐率；
-    \item 低分位上行吞吐率；
-    \item 平均上行时延；
-    \item 高分位上行时延；
-    \item 平均BLER；
-    \item 满足单用户吞吐率门限的用户比例。
-\end{itemize}
-
-平均吞吐率为：
-
-\begin{equation}
-\overline{T}
-=
-\frac{1}
-{|U_{\mathrm{video}}|}
-\sum_{u\in U_{\mathrm{video}}}
-T_u'.
-\label{eq:average_video_throughput}
-\end{equation}
-
-低分位吞吐率为：
-
-\begin{equation}
-T_{\mathrm{low}}
-=
-Q_{q_T}
-\left(
-\left\{
-T_u'
-\mid
-u\in U_{\mathrm{video}}
-\right\}
-\right),
-\label{eq:low_quantile_video_throughput}
-\end{equation}
-
-其中，
-$q_T$由配置文件给出，
-当前正式实验中对应P05统计值。
-
-高分位时延为：
-
-\begin{equation}
-D_{\mathrm{high}}
-=
-Q_{q_D}
-\left(
-\left\{
-D_u'
-\mid
-u\in U_{\mathrm{video}}
-\right\}
-\right),
-\label{eq:high_quantile_video_delay}
-\end{equation}
-
-其中，
-$q_D$由配置文件给出，
-当前正式实验中对应P95统计值。
-
-平均BLER为：
-
-\begin{equation}
-\overline{B}
-=
-\frac{1}
-{|U_{\mathrm{video}}|}
-\sum_{u\in U_{\mathrm{video}}}
-B_u'.
-\label{eq:average_video_bler}
-\end{equation}
+系统对目标视频用户计算平均吞吐率、
+P05吞吐率、P95时延、平均BLER和用户达标比例。
 
 视频用户达标比例为：
 
@@ -3621,15 +1923,47 @@ B_u'.
 T_u'\geq T_{\mathrm{th}}
 \right]
 }{
-|U_{\mathrm{video}}|
+\left|
+U_{\mathrm{video}}
+\right|
 }.
-\label{eq:video_user_satisfaction_ratio_eval}
+\label{eq:video_satisfaction_eval_reduced}
+\end{equation}
+
+视频P05吞吐率和P95时延分别为：
+
+\begin{equation}
+T_{P05}
+=
+Q_{0.05}
+\left(
+\left\{
+T_u'
+\mid
+u\in U_{\mathrm{video}}
+\right\}
+\right),
+\label{eq:video_p05_reduced}
+\end{equation}
+
+\begin{equation}
+D_{P95}
+=
+Q_{0.95}
+\left(
+\left\{
+D_u'
+\mid
+u\in U_{\mathrm{video}}
+\right\}
+\right).
+\label{eq:video_p95_reduced}
 \end{equation}
 
 
-\subsubsection*{语音质量}
+\subsubsection*{语音质量与RAN能耗}
 
-策略实施后的语音质量定义为：
+策略实施后的语音质量为：
 
 \begin{equation}
 Q'
@@ -3638,50 +1972,38 @@ Q'
 \left(
 Q_0
 +
-\delta_v v
+\delta_vv
 -
-\delta_r r
+\delta_rr
 -
-\delta_e e
+\delta_ee
 -
-\delta_u o,
+\delta_uo,
 0,
 1
 \right),
-\label{eq:post_policy_voice_quality}
+\label{eq:voice_quality_reduced}
 \end{equation}
 
-其中：
+其中，
+$\delta_v$表示语音资源保护带来的质量增益，
+$\delta_r$、$\delta_e$和$\delta_u$
+分别表示视频资源预留、节能和拥塞对语音质量的影响。
 
-\begin{itemize}
-    \item $\delta_v$表示语音资源保护带来的质量增益；
-    \item $\delta_r$表示视频PRB预留对语音资源竞争的影响；
-    \item $\delta_e$表示节能动作对语音质量的影响；
-    \item $\delta_u$表示拥塞对语音质量的影响。
-\end{itemize}
-
-语音质量相对基线的下降为：
+语音质量相对于基线的下降为：
 
 \begin{equation}
 \Delta Q_{\mathrm{voice}}
 =
-\operatorname{clip}
-\left(
 \max
 \left(
 0,
 Q_0-Q'
-\right),
-0,
-1
 \right).
-\label{eq:voice_quality_degradation_eval}
+\label{eq:voice_degradation_eval_reduced}
 \end{equation}
 
-
-\subsubsection*{RAN能耗}
-
-策略后的RAN能耗为：
+策略实施后的RAN能耗为：
 
 \begin{equation}
 E'
@@ -3690,282 +2012,99 @@ E'
 \left[
 E_0
 \left(
-1-\eta_e e
+1-\eta_ee
 +
-\eta_u
-\max(0,u'-u_0)
+\eta_u\max(0,u'-u_0)
 +
-\eta_a
-N_{\mathrm{highcost}}
+\eta_aN_{\mathrm{highcost}}
 \right),
 E_{\min},
 E_{\max}
 \right],
-\label{eq:post_policy_ran_energy}
-\end{equation}
-
-其中：
-
-\begin{itemize}
-    \item $\eta_e$表示节能动作带来的能耗降低；
-    \item $\eta_u$表示资源利用率增长带来的额外能耗；
-    \item $\eta_a$表示高开销动作带来的附加能耗；
-    \item $N_{\mathrm{highcost}}$表示策略中高开销动作数量。
-\end{itemize}
-
-高开销动作不是在性能模型中固定写死，
-而是由动作库中的
-\texttt{isHighCostAction}
-属性确定。
-
-
-\subsubsection*{普通用户性能影响}
-
-为了描述业务保障动作对非目标普通用户的影响，
-模型定义普通用户性能下降：
-
-\begin{equation}
-\Delta Q_{\mathrm{normal}}
-=
-\operatorname{clip}
-\left[
-\zeta_r r
-+
-\zeta_w(w-1)
-+
-\zeta_v v
-+
-\zeta_e e
-+
-\zeta_u
-\max(0,u'-u_0),
-0,
-1
-\right].
-\label{eq:normal_user_degradation}
-\end{equation}
-
-该指标不是硬约束，
-而是作为公平性风险进入综合风险评分。
-
-
-\subsubsection*{风险建模}
-
-当前模型从以下方面构造风险：
-
-\begin{itemize}
-    \item PRB过载风险；
-    \item 语音质量风险；
-    \item 激进节能风险；
-    \item 动作数量和控制复杂度风险；
-    \item 普通用户性能下降风险；
-    \item 视频BLER恶化风险。
-\end{itemize}
-
-PRB过载风险为：
-
-\begin{equation}
-R_u
-=
-\operatorname{clip}
-\left(
-\frac{
-u'-u_{\mathrm{cong}}
-}{
-1-u_{\mathrm{cong}}
-},
-0,
-1
-\right).
-\label{eq:overload_risk}
-\end{equation}
-
-语音绝对质量风险可表示为：
-
-\begin{equation}
-R_{q,a}
-=
-\operatorname{clip}
-\left(
-\frac{
-Q_{\min}+m-Q'
-}{
-m
-},
-0,
-1
-\right),
-\label{eq:voice_absolute_risk}
+\label{eq:ran_energy_reduced}
 \end{equation}
 
 其中，
-$m$表示语音质量风险归一化裕量。
+$\eta_e$表示节能动作带来的能耗下降，
+$\eta_u$表示资源利用率增加导致的能耗增长，
+$\eta_a$表示高开销动作的附加能耗，
+$N_{\mathrm{highcost}}$表示高开销动作数量。
 
-语音相对下降风险为：
 
-\begin{equation}
-R_{q,b}
-=
-\operatorname{clip}
-\left(
-\frac{
-\Delta Q_{\mathrm{voice}}
-}{
-\max
-\left(
-\Delta Q_{\max},
-\epsilon
-\right)
-},
-0,
-1
-\right).
-\label{eq:voice_relative_risk}
-\end{equation}
+\subsubsection*{风险计算}
 
-最终语音风险取两者较大值：
+本文综合考虑PRB过载、语音质量下降、
+节能强度、动作复杂度、普通用户性能下降和BLER恶化风险。
 
-\begin{equation}
-R_q
-=
-\max
-\left(
-R_{q,a},
-R_{q,b}
-\right).
-\label{eq:voice_risk}
-\end{equation}
-
-节能风险为：
-
-\begin{equation}
-R_e
-=
-\operatorname{clip}
-\left(
-\frac{
-e
-}{
-\max(e_{\mathrm{configured}},\epsilon)
-},
-0,
-1
-\right).
-\label{eq:energy_risk}
-\end{equation}
-
-动作复杂度风险为：
-
-\begin{equation}
-R_a
-=
-\operatorname{clip}
-\left(
-\frac{
-N_{\mathrm{active}}
-}{
-N_{\max}
-},
-0,
-1
-\right).
-\label{eq:action_count_risk}
-\end{equation}
-
-普通用户公平性风险为：
-
-\begin{equation}
-R_f
-=
-\operatorname{clip}
-\left(
-\frac{
-\Delta Q_{\mathrm{normal}}
--
-\theta_f
-}{
-1-\theta_f
-},
-0,
-1
-\right),
-\label{eq:fairness_risk}
-\end{equation}
-
-其中，
-$\theta_f$表示普通用户性能下降软门限。
-
-BLER风险为：
-
-\begin{equation}
-R_b
-=
-\operatorname{clip}
-\left(
-\frac{
-\max
-\left(
-0,
-\overline{B}'-\overline{B}_0
-\right)
-}{
-s_b
-},
-0,
-1
-\right),
-\label{eq:bler_risk}
-\end{equation}
-
-其中，
-$s_b$表示BLER风险尺度。
-
-综合风险为：
+综合风险表示为：
 
 \begin{equation}
 R
 =
 \operatorname{clip}
 \left(
-\omega_uR_u+
-\omega_qR_q+
-\omega_eR_e+
-\omega_aR_a+
-\omega_fR_f+
+\omega_uR_u
++
+\omega_qR_q
++
+\omega_eR_e
++
+\omega_aR_a
++
+\omega_fR_f
++
 \omega_bR_b,
 0,
 1
 \right),
-\label{eq:total_policy_risk}
+\label{eq:total_risk_reduced}
 \end{equation}
 
-其中，
-各风险权重均由配置文件给出。
+其中：
+
+\begin{itemize}
+    \item $R_u$表示PRB过载风险；
+    \item $R_q$表示语音质量风险；
+    \item $R_e$表示节能动作风险；
+    \item $R_a$表示动作复杂度风险；
+    \item $R_f$表示普通用户公平性风险；
+    \item $R_b$表示视频BLER风险；
+    \item $\omega_{\cdot}$表示相应风险权重。
+\end{itemize}
 
 
 \subsection*{硬约束检查与多目标评分}
 
 性能模型完成策略效果计算后，
-系统首先执行硬约束检查，
-然后只对满足全部硬约束的策略进行有效排序。
+系统对每个候选策略执行硬约束检查。
 
-硬约束检查器遍历策略中携带的全部约束，
-不会在发现第一项违约后提前停止，
-而是保留所有违约原因，
-为后续反馈优化提供诊断信息。
+当前硬约束集合为：
 
-设第$j$项硬约束满足函数为：
+\begin{equation}
+\left\{
+\begin{aligned}
+&\rho_T\geq0.95,\\
+&D_{P95}\leq30~\mathrm{ms},\\
+&Q'\geq0.95,\\
+&\Delta Q_{\mathrm{voice}}\leq0.02,\\
+&u'\leq0.90.
+\end{aligned}
+\right.
+\label{eq:hard_constraints_reduced}
+\end{equation}
+
+设第$j$项硬约束的满足函数为：
 
 \begin{equation}
 c_j(P_i)
 =
 \begin{cases}
 1,
-& \text{策略$P_i$满足第$j$项约束},\\
+& P_i\text{满足第$j$项约束},\\
 0,
-& \text{策略$P_i$违反第$j$项约束}.
+& P_i\text{违反第$j$项约束}.
 \end{cases}
-\label{eq:single_hard_constraint}
+\label{eq:constraint_indicator_reduced}
 \end{equation}
 
 候选策略的总体可行性为：
@@ -3975,38 +2114,14 @@ H(P_i)
 =
 \prod_{j=1}^{J}
 c_j(P_i).
-\label{eq:hard_constraint_feasibility}
+\label{eq:policy_feasibility_reduced}
 \end{equation}
 
-当全部硬约束均满足时：
+硬约束检查器会遍历全部约束，
+保留所有违约原因，
+而不是在发现第一项违约后停止。
 
-\begin{equation}
-H(P_i)=1;
-\end{equation}
-
-否则：
-
-\begin{equation}
-H(P_i)=0.
-\end{equation}
-
-当前演唱会场景实际检查以下硬约束：
-
-\begin{equation}
-\left\{
-\begin{aligned}
-&\rho_T\geq0.95,\\
-&D_{\mathrm{video}}^{P95}\leq30~\mathrm{ms},\\
-&Q'\geq0.95,\\
-&\Delta Q_{\mathrm{voice}}\leq0.02,\\
-&u'\leq0.90.
-\end{aligned}
-\right.
-\label{eq:hard_constraint_set_evaluation}
-\end{equation}
-
-对于不可行策略，
-本文采用硬约束不可补偿原则：
+对于不可行策略：
 
 \begin{equation}
 H(P_i)=0
@@ -4014,70 +2129,40 @@ H(P_i)=0
 Score(P_i)=0,
 \qquad
 Rank(P_i)=\varnothing.
-\label{eq:infeasible_policy_score_rule}
+\label{eq:infeasible_policy_reduced}
 \end{equation}
 
-这意味着节能收益、低风险或低资源开销，
-不能补偿视频SLA、语音保护或PRB上限违约。
+因此，节能收益和资源效率不能补偿视频SLA、
+语音保护或PRB资源上限违约。
 
-不可行策略仍保留性能结果、
-归一化指标和各子评分，
-用于分析违约原因和生成反馈，
-但其总分固定为0且不进入可行策略排名。
+对于可行策略，
+系统采用固定上下界归一化指标。
 
-
-\subsubsection*{指标归一化}
-
-不同评价指标的量纲和优化方向不同。
-本文采用固定上下界归一化，
-而不是使用当前候选集合的最小值和最大值。
-
-对于增益型指标，
-定义：
+增益型指标归一化为：
 
 \begin{equation}
 N_g(x)
 =
 \operatorname{clip}
 \left(
-\frac{
-x-x_{\min}
-}{
-x_{\max}-x_{\min}
-},
+\frac{x-x_{\min}}
+{x_{\max}-x_{\min}},
 0,
 1
-\right).
-\label{eq:gain_normalization}
+\right),
+\label{eq:gain_normalization_reduced}
 \end{equation}
 
-对于成本型指标，
-定义：
+成本型指标归一化为：
 
 \begin{equation}
 N_c(x)
 =
 1-N_g(x).
-\label{eq:cost_normalization}
+\label{eq:cost_normalization_reduced}
 \end{equation}
 
-归一化上下界均由配置文件提供。
-采用固定边界能够保证不同实验批次之间的评分口径保持一致。
-
-
-\subsubsection*{业务保障评分}
-
-当前业务保障评分综合考虑：
-
-\begin{itemize}
-    \item 视频用户达标比例；
-    \item 视频P05吞吐率；
-    \item 视频P95时延；
-    \item 视频平均BLER；
-    \item 语音质量。
-\end{itemize}
-
-其计算公式为：
+业务保障评分为：
 
 \begin{equation}
 \begin{aligned}
@@ -4094,13 +2179,10 @@ S_{\mathrm{service}}
 +
 0.15N_g(Q').
 \end{aligned}
-\label{eq:service_score}
+\label{eq:service_score_reduced}
 \end{equation}
 
-
-\subsubsection*{节能评分}
-
-节能收益定义为策略相对于基线状态的能耗下降比例：
+节能收益为：
 
 \begin{equation}
 G_E
@@ -4109,8 +2191,8 @@ G_E
 E_0-E'
 }{
 E_0
-}.
-\label{eq:energy_saving_gain}
+},
+\label{eq:energy_gain_reduced}
 \end{equation}
 
 节能评分为：
@@ -4119,13 +2201,10 @@ E_0
 S_{\mathrm{energy}}
 =
 N_g(G_E).
-\label{eq:energy_score}
+\label{eq:energy_score_reduced}
 \end{equation}
 
-
-\subsubsection*{资源评分}
-
-资源评分同时考虑策略后的PRB利用率和动作数量：
+资源评分为：
 
 \begin{equation}
 S_{\mathrm{resource}}
@@ -4133,32 +2212,19 @@ S_{\mathrm{resource}}
 0.80N_c(u')
 +
 0.20N_c(N_{\mathrm{actions}}).
-\label{eq:resource_score}
+\label{eq:resource_score_reduced}
 \end{equation}
 
-该评分倾向于选择资源占用较低、
-动作组合较简单的候选策略。
-
-
-\subsubsection*{风险评分}
-
-风险评分为综合风险的成本型归一化结果：
+风险评分为：
 
 \begin{equation}
 S_{\mathrm{risk}}
 =
 N_c(R).
-\label{eq:risk_score}
+\label{eq:risk_score_reduced}
 \end{equation}
 
-风险越低，
-$S_{\mathrm{risk}}$越高。
-
-
-\subsubsection*{综合评分}
-
-对满足全部硬约束的候选策略，
-综合评分为：
+候选策略的综合评分为：
 
 \begin{equation}
 Score(P_i)
@@ -4170,61 +2236,22 @@ Score(P_i)
 0.15S_{\mathrm{resource}}
 +
 0.10S_{\mathrm{risk}}.
-\label{eq:total_policy_score}
+\label{eq:total_score_reduced}
 \end{equation}
 
-更一般地，
-可以表示为：
+当前可行策略首先按照综合评分降序排序。
+当多个策略综合评分相同时，
+依次优先选择：
 
-\begin{equation}
-Score(P_i)
-=
-\sum_{k=1}^{4}
-\lambda_k
-S_k(P_i),
-\label{eq:general_weighted_policy_score}
-\end{equation}
+\begin{enumerate}[label=\arabic*)]
+    \item PRB利用率更低的策略；
+    \item 综合风险更低的策略；
+    \item RAN能耗更低的策略；
+    \item 动作数量更少的策略；
+    \item 策略标识字典序更小的策略。
+\end{enumerate}
 
-满足：
-
-\begin{equation}
-\sum_{k=1}^{4}
-\lambda_k
-=
-1,
-\qquad
-\lambda_k\geq0.
-\label{eq:score_weight_constraint}
-\end{equation}
-
-当前默认权重为：
-
-\begin{equation}
-\boldsymbol{\lambda}
-=
-\left[
-0.60,
-0.15,
-0.15,
-0.10
-\right],
-\label{eq:default_score_weights}
-\end{equation}
-
-分别对应业务、节能、资源和风险评分。
-
-所有权重均从配置文件读取，
-并由数据模型校验权重之和为1。
-
-
-\subsubsection*{候选策略排序}
-
-当前源码对所有可行策略首先按综合评分降序排序。
-需要注意，
-当前实现不是“先比较业务评分，再比较综合评分”，
-而是直接以综合评分作为第一排序依据。
-
-策略排序主键为：
+排序键可表示为：
 
 \begin{equation}
 K(P_i)
@@ -4237,65 +2264,18 @@ E_i',
 N_{\mathrm{actions},i},
 ID_i
 \right).
-\label{eq:policy_ranking_key}
+\label{eq:ranking_key_reduced}
 \end{equation}
-
-当多个候选策略综合评分相同或在数值舍入后相同，
-依次选择：
-
-\begin{enumerate}[label=\arabic*)]
-    \item PRB利用率更低的策略；
-    \item 综合风险更低的策略；
-    \item RAN能耗更低的策略；
-    \item 动作数量更少的策略；
-    \item 策略标识字典序更小的策略。
-\end{enumerate}
-
-这种排序方式能够保证结果完全确定，
-即使多个策略评分相同，
-也能获得稳定、可复现的排名。
-
-不可行策略统一放在可行策略之后，
-且不赋予排名。
 
 
 \subsection*{反馈优化与终止机制}
 
-候选策略评估不仅用于选出当前最优策略，
-还需要将性能结果和违约原因反馈给策略生成过程。
-
-从理论上看，
-反馈优化可以采用：
-
-\begin{itemize}
-    \item 梯度优化；
-    \item 数学规划；
-    \item 模型预测控制；
-    \item 贝叶斯优化；
-    \item 强化学习；
-    \item 多目标进化算法；
-    \item 基于数字孪生的滚动优化。
-\end{itemize}
-
-本文当前采用：
-
-\begin{equation}
-\boxed{
-\text{单父策略}
-+
-\text{相邻离散档位}
-+
-\text{单操作局部邻域搜索}
-}
-\label{eq:implemented_feedback_method}
-\end{equation}
-
-完成候选策略改进。
+候选策略评估结果用于生成下一轮局部候选策略。
+本文采用单父策略、相邻参数档位和单操作邻域搜索。
 
 设第$n$轮选中的父策略为
 $P_{\mathrm{parent}}^{(n)}$，
-反馈优化器根据该策略的约束违约和性能薄弱项，
-生成下一轮候选集合：
+则下一轮候选集合为：
 
 \begin{equation}
 \mathcal{P}^{(n+1)}
@@ -4305,49 +2285,20 @@ $P_{\mathrm{parent}}^{(n)}$，
 P_{\mathrm{parent}}^{(n)},
 F^{(n)}
 \right),
-\label{eq:next_round_policy_neighborhood}
+\label{eq:feedback_neighborhood_reduced}
 \end{equation}
 
 其中，
-$F^{(n)}$表示第$n$轮评估反馈。
-
-
-\subsubsection*{父策略选择}
+$F^{(n)}$表示第$n$轮的性能结果和违约信息。
 
 当当前轮存在可行策略时，
-系统选择排名第1的策略作为反馈父策略：
+系统选择排名第1的策略作为父策略。
+当当前轮不存在可行策略时，
+根据业务评分、资源评分、风险评分、
+PRB利用率和策略标识选择相对较优的父策略。
 
-\begin{equation}
-P_{\mathrm{parent}}^{(n)}
-=
-\arg\min_{P_i}
-Rank(P_i).
-\label{eq:feasible_parent_selection}
-\end{equation}
-
-当当前轮所有策略均不可行时，
-系统根据诊断性子评分选择相对较优的父策略，
-依次偏好：
-
-\begin{itemize}
-    \item 较高的业务保障评分；
-    \item 较高的资源评分；
-    \item 较高的风险评分；
-    \item 较低的PRB利用率；
-    \item 较小的策略标识。
-\end{itemize}
-
-这种方式使反馈优化即使在无可行策略时，
-仍能从相对接近业务目标的候选开始改进。
-
-
-\subsubsection*{相邻参数调整}
-
-当前动作参数均来自有序离散集合。
-参数“增加一档”定义为选择当前值之后的第一个更大允许值，
-参数“降低一档”定义为选择当前值之前的第一个更小允许值。
-
-可以表示为：
+动作参数均来自有序离散集合。
+参数更新采用相邻档位调整：
 
 \begin{equation}
 \theta^{(n+1)}
@@ -4357,297 +2308,99 @@ Rank(P_i).
 \theta^{(n)},
 d
 \right),
-\label{eq:adjacent_parameter_update}
+\qquad
+d\in\{-1,+1\}.
+\label{eq:adjacent_parameter_reduced}
 \end{equation}
-
-其中：
-
-\begin{equation}
-d
-\in
-\left\{
-+1,-1
-\right\}
-\end{equation}
-
-分别表示增加一档或降低一档。
-
-若父策略中不存在某类动作，
-则优化器从性能模型中对应的中性值出发，
-尝试增加该动作。
 
 当前主要反馈规则如表
-\ref{tab:implemented_feedback_rules}
+\ref{tab:feedback_rules_reduced}
 所示。
 
 \begin{table}[H]
     \centering
-    \caption{当前实现的候选策略反馈规则}
-    \label{tab:implemented_feedback_rules}
+    \caption{候选策略反馈调整规则}
+    \label{tab:feedback_rules_reduced}
     \small
     \renewcommand{\arraystretch}{1.25}
     \begin{tabularx}{\textwidth}{
-        >{\raggedright\arraybackslash}p{0.34\textwidth}
+        >{\raggedright\arraybackslash}p{0.38\textwidth}
         >{\raggedright\arraybackslash}X
     }
         \toprule
-        评估结果或触发条件 & 局部调整操作 \\
+        评估结果 & 反馈调整 \\
         \midrule
 
-        视频用户达标比例不足或P05吞吐率过低
-        &
-        增加PRB预留比例；
-        增加视频调度权重
+        视频用户达标比例不足
+        & 增加PRB预留比例或视频调度权重
         \\
 
         视频P95时延超过门限
-        &
-        增加视频调度权重；
-        增加PRB预留比例
+        & 增加视频调度权重或PRB预留比例
         \\
 
-        语音绝对质量或相对下降违约
-        &
-        增加语音最低PRB比例；
-        降低视频PRB预留；
-        降低节能强度
+        语音质量或下降幅度违约
+        & 增加语音资源保护，降低视频PRB预留或节能强度
         \\
 
-        策略后PRB利用率过高
-        &
-        降低视频PRB预留；
-        删除动作库中标记的高开销动作
+        PRB利用率超过上限
+        & 降低视频PRB预留或删除高开销动作
         \\
 
-        策略可行但RAN能耗高于基线
-        &
-        增加节能强度；
-        降低视频PRB预留
+        策略可行但能耗偏高
+        & 增加节能强度或适当降低资源预留
         \\
 
-        普通用户性能下降超过软门限
-        &
-        降低视频PRB预留；
-        降低视频调度权重
+        普通用户性能下降较大
+        & 降低视频PRB预留或视频调度权重
         \\
 
-        视频BLER风险增加
-        &
-        降低节能强度；
-        降低视频PRB预留
-        \\
-
-        无可行策略且包含节能软目标
-        &
-        在配置允许时删除节能动作，
-        并移除RAN节能优化目标
+        BLER风险较高
+        & 降低节能强度或视频PRB预留
         \\
 
         \bottomrule
     \end{tabularx}
 \end{table}
 
-需要说明的是，
-同一个评估反馈可能产生多个调整建议，
-但当前优化器不会把多个调整一次性合并到同一新策略中。
+同一轮反馈中的不同调整操作分别生成独立候选，
+而不是一次性合并到同一策略中。
+所有反馈候选仍需重新经过静态约束检查。
 
-例如，
-当视频吞吐率不足时，
-系统分别生成：
-
-\begin{equation}
-P_{r+}
-=
-P_{\mathrm{parent}}
-\oplus
-\left(
-r\uparrow
-\right),
-\end{equation}
-
-和：
-
-\begin{equation}
-P_{w+}
-=
-P_{\mathrm{parent}}
-\oplus
-\left(
-w\uparrow
-\right).
-\end{equation}
-
-每个局部操作独立形成一个新候选，
-从而便于分析单个参数变化的影响。
-
-
-\subsubsection*{动作增加与删除}
-
-反馈优化不仅可以调整已有动作参数，
-也可以增加或删除动作。
-
-当策略缺少某类必要动作时，
-优化器可以从中性值出发，
-增加一个对应动作。
-
-例如：
-
-\begin{equation}
-P'
-=
-P
-\cup
-\left\{
-a_{\mathrm{voice}}
-\right\}
-\end{equation}
-
-表示增加语音资源保护动作。
-
-当PRB过载或节能软目标导致不可行时，
-系统可以删除某些动作：
-
-\begin{equation}
-P'
-=
-P
-\setminus
-\left\{
-a_{\mathrm{energy}}
-\right\}.
-\end{equation}
-
-但语音保护动作在发生语音违约时不会被删除。
-
-所有反馈候选在生成后，
-仍需重新经过静态约束检查，
-不符合能力、参数或冲突规则的候选直接丢弃。
-
-
-\subsubsection*{反馈候选标识与去重}
-
-反馈候选保存：
-
-\begin{itemize}
-    \item 父策略标识；
-    \item 下一轮生成轮次；
-    \item 反馈原因；
-    \item 局部调整操作。
-\end{itemize}
-
-反馈候选的策略标识基于规范化策略内容的哈希生成：
-
-\begin{equation}
-PolicyId
-=
-\texttt{RAN-POLICY-R}
-\Vert
-n
-\Vert
-\texttt{-FB-}
-\Vert
-Hash(P)_{\mathrm{prefix}}.
-\label{eq:feedback_policy_id}
-\end{equation}
-
-该机制使相同内容的反馈候选获得稳定标识。
-
-优化器会排除自身已经生成过的策略签名，
-避免在连续反馈中反复生成同一局部变体。
-
-需要指出的是，
-当前端到端流水线没有将每一轮所有已评估策略的完整签名集合
-全部传给反馈优化器，
-因此还不能严格保证不会重新评估某个非父初始策略。
-这是当前实现需要进一步完善的地方。
-
-
-\subsubsection*{反馈开关}
-
-当前原型提供：
-
-\begin{equation}
-feedbackEnabled
-\in
-\left\{
-\texttt{true},
-\texttt{false}
-\right\}
-\end{equation}
-
-用于控制是否执行反馈优化。
-
-当：
+当反馈关闭时，
+系统只执行第0轮策略生成和评估，
+随后终止：
 
 \begin{equation}
 feedbackEnabled
 =
 \texttt{false}
+\quad\Longrightarrow\quad
+generationRounds=1.
+\label{eq:feedback_disabled_reduced}
 \end{equation}
-
-时，
-系统仍完整执行：
-
-\begin{itemize}
-    \item 第0轮候选策略生成；
-    \item 性能评估；
-    \item 硬约束检查；
-    \item 多目标评分；
-    \item 策略排序。
-\end{itemize}
-
-随后立即停止，
-不调用反馈优化器，
-不生成后续轮次。
-
-此时输出记录：
-
-\begin{equation}
-feedbackIterations=0,
-\end{equation}
-
-\begin{equation}
-generationRounds=1,
-\end{equation}
-
-\begin{equation}
-terminationReason
-=
-\texttt{feedback\_disabled}.
-\end{equation}
-
-其中，
-\texttt{generationRounds=1}
-表示实际执行了一个生成轮，
-该轮编号为0。
-
-
-\subsubsection*{终止条件}
 
 当反馈开启时，
-系统在每轮评估后检查是否满足终止条件。
-
 主要终止条件包括：
 
 \begin{enumerate}[label=\arabic*)]
-    \item 已存在满足全部硬约束，
-    且总分达到配置门限的策略；
-    \item 最近若干轮最优分提升均低于最小改进阈值；
+    \item 当前最优策略总分达到配置门限；
+    \item 连续若干轮最优分提升低于最小改进阈值；
     \item 达到最大反馈迭代次数；
-    \item 当前父策略无法生成新的有效邻域候选。
+    \item 当前父策略无法生成新的有效候选。
 \end{enumerate}
 
-评分门限停止条件为：
+评分门限条件为：
 
 \begin{equation}
 \max_{P_i\in\mathcal{P}^{(n)}}
 Score(P_i)
 \geq
 Score_{\mathrm{th}}.
-\label{eq:score_threshold_termination}
+\label{eq:score_threshold_stop_reduced}
 \end{equation}
 
-收敛条件可以表示为：
+收敛条件为：
 
 \begin{equation}
 \left|
@@ -4656,308 +2409,81 @@ Score_{\max}^{(n)}
 Score_{\max}^{(n-1)}
 \right|
 <
-\varepsilon_{\mathrm{score}},
-\label{eq:score_convergence_condition}
+\varepsilon_{\mathrm{score}}.
+\label{eq:score_convergence_reduced}
 \end{equation}
 
-并要求该条件连续满足配置轮数。
+整个反馈过程中不允许放宽视频、语音和PRB硬约束。
+在配置允许时，
+系统只可以取消节能这一软优化目标。
 
-最大反馈次数条件为：
-
-\begin{equation}
-n_{\mathrm{feedback}}
-\geq
-N_{\mathrm{feedback}}^{\max}.
-\label{eq:maximum_feedback_iterations}
-\end{equation}
-
-整个反馈过程始终保持：
-
-\begin{equation}
-\texttt{allowRelaxHardConstraints}
-=
-\texttt{false}.
-\label{eq:no_hard_constraint_relaxation}
-\end{equation}
-
-即使不存在可行策略，
-系统也不会降低视频、语音或PRB硬约束。
-当前唯一允许的目标调整是，
-在配置允许时取消节能软目标。
-
-
-\subsection*{评估输出与能力边界}
-
-候选策略评估最终输出：
-
-\begin{equation}
-O_{\mathrm{evaluation}}
-=
-\left\{
-P_i,
-Z_i,
-H_i,
-S_i,
-Rank_i,
-F_i
-\right\}_{i=1}^{M},
-\label{eq:evaluation_output_model}
-\end{equation}
-
-其中：
-
-\begin{itemize}
-    \item $P_i$表示候选策略；
-    \item $Z_i$表示性能评估结果；
-    \item $H_i$表示硬约束检查结果；
-    \item $S_i$表示子评分和综合评分；
-    \item $Rank_i$表示可行策略排名；
-    \item $F_i$表示反馈诊断和改进建议。
-\end{itemize}
-
-一个简化的评估输出示例如下：
-
-\begin{lstlisting}[language={},
-caption={候选策略评估结果示例},
-label={lst:candidate_policy_evaluation_example}]
-{
-  "intentId": "INTENT-CONCERT-UL-001",
-  "generationRound": 0,
-
-  "candidatePolicies": [
-    {
-      "policyId": "RAN-POLICY-R0-0016",
-
-      "performance": {
-        "videoUserSatisfactionRatio": 0.97,
-        "videoThroughputP05Mbps": 22.28,
-        "videoDelayP95Ms": 29.18,
-        "videoUplinkBlerMean": 0.08,
-        "voiceQualityScore": 0.95,
-        "voiceQualityDegradation": 0.01,
-        "prbUtilization": 0.84,
-        "ranEnergy": 0.91,
-        "normalUserDegradation": 0.06,
-        "riskScore": 0.24
-      },
-
-      "constraintCheck": {
-        "feasible": true,
-        "violations": []
-      },
-
-      "scores": {
-        "serviceScore": 0.71,
-        "energyScore": 0.45,
-        "resourceScore": 0.39,
-        "riskScore": 0.76,
-        "totalScore": 0.61
-      },
-
-      "rank": 1
-    },
-
-    {
-      "policyId": "RAN-POLICY-R0-0021",
-
-      "performance": {
-        "videoUserSatisfactionRatio": 0.91,
-        "videoThroughputP05Mbps": 18.70,
-        "videoDelayP95Ms": 34.20,
-        "voiceQualityScore": 0.96,
-        "voiceQualityDegradation": 0.01,
-        "prbUtilization": 0.79
-      },
-
-      "constraintCheck": {
-        "feasible": false,
-        "violations": [
-          "video_user_satisfaction_ratio",
-          "video_delay_p95"
-        ]
-      },
-
-      "scores": {
-        "serviceScore": 0.54,
-        "energyScore": 0.66,
-        "resourceScore": 0.52,
-        "riskScore": 0.72,
-        "totalScore": 0.0
-      },
-
-      "rank": null,
-
-      "feedback": [
-        "increase_reserved_prb_ratio",
-        "increase_video_scheduling_weight"
-      ]
-    }
-  ],
-
-  "bestPolicyId": "RAN-POLICY-R0-0016",
-  "nextAction": "feedback_or_stop"
-}
-\end{lstlisting}
-
-需要说明的是，
-上述数据仅用于展示输出结构，
-正式结果应以实际仿真实验产物为准。
-
-当前候选策略评估方法具有以下优点：
-
-\begin{itemize}
-    \item 采用统一性能评估接口，
-    便于未来替换为网络数字孪生评估器；
-    \item 对视频用户进行逐用户计算，
-    并输出P05、P95和达标比例等统计指标；
-    \item 硬约束检查不短路，
-    能够保留全部违约原因；
-    \item 不可行策略不允许由节能或资源收益补偿；
-    \item 评分边界和权重均来自版本化配置；
-    \item 排序和并列规则完全确定；
-    \item 反馈候选保留父子关系和生成原因；
-    \item 整个过程可重复执行并进行自动化测试。
-\end{itemize}
-
-但当前实现仍存在以下能力边界：
-
-\begin{enumerate}[label=\arabic*)]
-    \item \textbf{性能模型为简化解析模型。}
-
-    当前模型不包含真实无线传播、
-    协议栈、队列调度、HARQ和小区间干扰，
-    只能描述预设动作空间中的相对趋势。
-
-    \item \textbf{模型系数属于仿真假设。}
-
-    吞吐率、时延、语音和能耗公式中的系数，
-    均来自版本化配置，
-    不是由现网数据标定得到的真实参数。
-
-    \item \textbf{不包含真正的随机模式。}
-
-    当前模型记录随机种子，
-    但性能计算不执行随机采样，
-    不同种子下结果保持一致。
-
-    \item \textbf{评分采用固定加权和。}
-
-    当前以综合总分作为第一排序键，
-    不使用词典序多目标优化、
-    $\varepsilon$约束法或在线权重调整。
-
-    \item \textbf{反馈只搜索局部邻域。}
-
-    当前每轮只选择一个父策略，
-    并对单个参数或动作执行一次局部调整，
-    无法保证获得全局最优策略。
-
-    \item \textbf{没有联合多操作搜索。}
-
-    同一反馈中的多个操作不会组合为一个新候选，
-    因而可能错过需要多参数同时变化的改进方向。
-
-    \item \textbf{不更新长期策略知识。}
-
-    当前评估结果不会自动更新模板优先级、
-    历史成功率或动作经验库。
-
-    \item \textbf{动作空间不自动扩展。}
-
-    配置中虽然保留动作空间扩展开关，
-    当前算法并未实际读取和使用该功能。
-
-    \item \textbf{尚未接入高精度网络数字孪生。}
-
-    当前只通过统一接口预留未来替换能力，
-    第四章将进一步研究面向策略验证的网络数字孪生建模与编排。
-\end{enumerate}
-
-候选策略评估最终完成：
+经过候选策略评估，
+系统完成：
 
 \begin{equation}
 \text{候选策略}
 \longrightarrow
-\text{性能结果}
+\text{性能计算}
 \longrightarrow
 \text{硬约束判定}
 \longrightarrow
-\text{多目标排序}
+\text{多目标评分与排序}
 \longrightarrow
-\text{局部反馈改进}.
-\label{eq:candidate_to_ranked_policy}
+\text{局部反馈优化}.
+\label{eq:candidate_policy_to_ranked_policy}
 \end{equation}
 
-至此，
-本文构建了从自然语言业务需求、
-结构化意图、RAN需求、
-候选策略生成到策略评估与反馈优化的完整闭环。
-
-\section{仿真实现与结果分析}
+\section{仿真结果分析}
 \label{sec:simulation_results}
 
-前文分别介绍了业务意图抽取、业务意图转译、
-候选RAN策略生成以及候选策略评估与反馈优化方法。
-为验证上述方法能否形成完整、稳定和可复现的决策闭环，
-本文基于当前单小区RAN仿真原型开展正式批量实验。
+为验证本文意图驱动智能决策方法的可运行性，
+在单小区RAN场景下开展批量仿真实验。
+实验覆盖业务意图抽取、业务意图转译、
+候选策略生成、性能评估、硬约束检查、
+多目标评分和反馈优化等环节。
 
-实验主要验证以下内容：
-
-\begin{enumerate}[label=\arabic*)]
-    \item 自然语言业务需求能否依次完成意图抽取、
-    意图转译、策略生成、性能评估、约束检查和策略推荐；
-
-    \item 在不同网络负载条件下，
-    候选策略的可行空间和性能表现如何变化；
-
-    \item 开启反馈优化后，
-    是否能够发现新的可行策略或提升最优策略性能；
-
-    \item 改变业务、节能、资源和风险评分权重后，
-    策略排序是否保持稳定；
-
-    \item 简化性能模型中的输出裁剪是否会改变硬约束判定
-    和最终推荐结果。
-\end{enumerate}
-
-
-\subsection*{仿真环境与实验设置}
-
-当前仿真原型采用Python实现，
-主要依赖Pydantic完成数据模型校验，
-利用NumPy和Pandas进行性能计算与实验结果处理，
-并使用Pytest完成单元测试和端到端测试。
-
-当前实验采用的主要软件和模型版本为：
+当前仿真采用版本化配置文件统一管理SLA门限、
+动作参数空间、评分权重、反馈终止条件和性能模型系数。
+主要配置包括：
 
 \begin{itemize}
-    \item Python版本：3.11；
-    \item 仿真原型版本：v0.1.1；
-    \item 性能模型版本：\texttt{simplified-ran-v1}；
-    \item 网络范围：单小区RAN；
-    \item 策略动作空间：离散动作参数集合；
-    \item 性能计算模式：确定性模式；
-    \item 随机采样：未启用；
-    \item 反馈优化：根据实验配置开启或关闭。
+    \item 单用户视频上行吞吐率门限为$20~\mathrm{Mbps}$；
+    \item 视频用户达标比例门限为$0.95$；
+    \item 视频P95时延门限为$30~\mathrm{ms}$；
+    \item 语音质量下限为$0.95$；
+    \item 语音质量最大允许下降为$0.02$；
+    \item PRB利用率上限为$0.90$；
+    \item 每轮最大候选策略数为100；
+    \item 最大反馈迭代次数为10；
+    \item 综合评分权重为$[0.60,0.15,0.15,0.10]$。
 \end{itemize}
 
+候选动作参数采用离散配置，
+包括PRB预留比例、视频调度权重、
+语音资源保护比例和节能强度。
+上述数值均用于验证决策流程，
+不代表3GPP标准规定或现网配置建议。
+
+
+\subsection*{实验设置与总体结果}
+
 正式实验共包含31个实验实例，
-分为基线实验、负载扫描实验、
+包括基线实验、负载扫描实验、
 反馈机制对比实验和评分权重敏感性实验。
 
 实验规模如表
-\ref{tab:formal_experiment_scale}
+\ref{tab:simulation_scale_reduced}
 所示。
 
 \begin{table}[H]
     \centering
     \caption{正式仿真实验规模}
-    \label{tab:formal_experiment_scale}
+    \label{tab:simulation_scale_reduced}
     \small
     \renewcommand{\arraystretch}{1.25}
     \begin{tabular}{
-        >{\raggedright\arraybackslash}p{0.30\textwidth}
-        >{\centering\arraybackslash}p{0.14\textwidth}
+        >{\raggedright\arraybackslash}p{0.31\textwidth}
+        >{\centering\arraybackslash}p{0.15\textwidth}
         >{\centering\arraybackslash}p{0.18\textwidth}
         >{\centering\arraybackslash}p{0.18\textwidth}
     }
@@ -5000,140 +2526,39 @@ label={lst:candidate_policy_evaluation_example}]
     \end{tabular}
 \end{table}
 
-全部31个实验实例均成功完成，
+全部实验实例均成功完成，
 共评估3136个候选策略，
-其中900个策略满足全部硬约束。
+其中900个策略满足视频业务、语音业务和PRB资源硬约束。
 
-当前实验中的业务门限、
-动作参数、评分权重和性能模型系数均为仿真假设，
-其主要作用是验证方法流程和相对变化趋势，
-不代表现网参数或标准规定。
-
-
-\subsection*{端到端决策链路验证}
-
-首先对完整意图驱动决策链路进行验证。
-
-仿真输入采用如下自然语言业务需求：
-
-\begin{quote}
-“今晚演唱会期间，保障体育场内视频用户的上行体验，
-尽量减少能耗，同时不影响语音业务。”
-\end{quote}
-
-系统依次完成：
-
-\begin{equation}
-\begin{aligned}
-\text{Natural Language}
-&\rightarrow
-\text{Structured Intent}
-\rightarrow
-\text{Translated RAN Intent}
-\\
-&\rightarrow
-\text{Candidate Policies}
-\rightarrow
-\text{Performance Results}
-\\
-&\rightarrow
-\text{Constraint Check}
-\rightarrow
-\text{Policy Ranking}
-\rightarrow
-\text{Feedback}.
-\end{aligned}
-\label{eq:end_to_end_simulation_chain}
-\end{equation}
-
-在业务意图抽取阶段，
-系统识别出：
-
-\begin{itemize}
-    \item 视频上行保障意图；
-    \item RAN节能优化意图；
-    \item 语音业务保护意图；
-    \item 时间、地点、目标对象和约束关系；
-    \item 准确时间、目标小区和SLA门限等待解析项。
-\end{itemize}
-
-在业务意图转译阶段，
-静态事件库和场馆—小区映射库补全活动时间和目标小区，
-SLA模板补全视频、语音和PRB约束，
-转译状态由\texttt{blocked}转换为\texttt{ready}。
-
-在候选策略生成阶段，
-系统根据目标选择策略模板，
-对PRB预留比例、视频调度权重、
-语音资源保护比例和节能强度执行离散组合，
-并通过静态资源约束和动作冲突规则过滤候选策略。
-
-在候选策略评估阶段，
-系统计算每个策略对应的：
-
-\begin{itemize}
-    \item 视频用户达标比例；
-    \item 视频P05上行吞吐率；
-    \item 视频P95上行时延；
-    \item 平均BLER；
-    \item 语音质量及其相对下降；
-    \item PRB利用率；
-    \item RAN能耗；
-    \item 普通用户性能下降；
-    \item 综合风险。
-\end{itemize}
-
-随后执行硬约束检查和多目标评分。
-不可行策略总分置为0且不赋予排名，
-可行策略按照综合评分和并列规则进行确定性排序。
-
-当反馈开启时，
-系统根据当前最优策略或最接近可行的策略，
-生成相邻参数或动作变体，
-并继续执行下一轮评估。
-
-端到端验证结果表明，
-当前原型能够完整执行：
-
-\begin{equation}
-\text{意图理解}
-\rightarrow
-\text{网络目标量化}
-\rightarrow
-\text{候选策略生成}
-\rightarrow
-\text{策略评估}
-\rightarrow
-\text{反馈改进}.
-\label{eq:validated_closed_loop}
-\end{equation}
-
-这说明本文构建的四个模块之间的数据接口、
-状态控制和异常处理能够形成可运行的闭环流程。
+实验结果文件按运行实例和反馈轮次保存，
+主要记录候选策略、性能结果、约束检查、
+策略评分、排序结果和最终推荐策略。
+配置、模型版本和运行信息同时写入运行清单，
+以保证实验过程可追踪和可复现。
 
 
-\subsection*{不同负载条件下的策略适应性}
+\subsection*{不同负载条件下的策略表现}
 
-为分析网络负载变化对候选策略可行性和性能的影响，
+为分析网络状态变化对策略可行性和性能的影响，
 本文设置低负载、中负载和高负载三类RAN状态。
 
-不同负载条件下的主要实验结果如表
-\ref{tab:load_sweep_results}
+不同负载条件下的主要结果如表
+\ref{tab:load_results_reduced}
 所示。
 
 \begin{table}[H]
     \centering
-    \caption{不同网络负载条件下的策略评估结果}
-    \label{tab:load_sweep_results}
+    \caption{不同负载条件下的候选策略评估结果}
+    \label{tab:load_results_reduced}
     \small
     \renewcommand{\arraystretch}{1.25}
     \begin{tabular}{
-        >{\centering\arraybackslash}p{0.11\textwidth}
+        >{\centering\arraybackslash}p{0.12\textwidth}
         >{\centering\arraybackslash}p{0.14\textwidth}
         >{\centering\arraybackslash}p{0.14\textwidth}
+        >{\centering\arraybackslash}p{0.18\textwidth}
         >{\centering\arraybackslash}p{0.17\textwidth}
-        >{\centering\arraybackslash}p{0.16\textwidth}
-        >{\centering\arraybackslash}p{0.13\textwidth}
+        >{\centering\arraybackslash}p{0.14\textwidth}
     }
         \toprule
         负载状态
@@ -5173,115 +2598,65 @@ SLA模板补全视频、语音和PRB约束，
     \end{tabular}
 \end{table}
 
-随着负载从低负载升高至高负载，
-可行策略比例由0.95下降至0.14，
-说明当前离散动作空间内能够同时满足视频、
-语音和PRB硬约束的策略数量明显减少。
-
-可行率下降可以表示为：
-
-\begin{equation}
-\Delta R_{\mathrm{feasible}}
-=
-0.14-0.87
-=
--0.73,
-\label{eq:feasible_rate_drop}
-\end{equation}
-
-即从中负载到高负载，
-可行率下降0.73。
+随着负载升高，
+候选策略可行率由0.95下降至0.14，
+说明当前离散动作空间内，
+能够同时满足视频吞吐率、时延、
+语音质量和PRB资源约束的策略数量显著减少。
 
 同时，
-视频P05吞吐率由33.750 Mbps下降至22.275 Mbps，
-视频P95时延由15.357 ms上升至29.179 ms，
-PRB利用率由0.4375上升至0.8375。
+视频P05吞吐率由$33.750~\mathrm{Mbps}$
+下降至$22.275~\mathrm{Mbps}$，
+视频P95时延由$15.357~\mathrm{ms}$
+增加至$29.179~\mathrm{ms}$，
+PRB利用率由0.4375增加至0.8375。
 
-这些变化与性能模型的预期方向一致：
+其变化关系可表示为：
 
 \begin{equation}
 u_0\uparrow
-\quad\Rightarrow\quad
+\quad\Longrightarrow\quad
 u'\uparrow,
-\quad
-o\uparrow,
-\quad
+\qquad
 T_{P05}\downarrow,
-\quad
+\qquad
 D_{P95}\uparrow.
-\label{eq:load_performance_trend}
+\label{eq:load_result_trend_reduced}
 \end{equation}
 
-不同负载下的Pareto候选数量分别为：
+低、中、高负载条件下，
+Pareto候选策略数量分别为11、9和4。
+这表明随着网络负载增大，
+可供业务保障、节能、资源和风险之间权衡的策略空间逐步收缩。
 
-\begin{equation}
-N_{\mathrm{Pareto}}
-=
-\left\{
-11,9,4
-\right\},
-\label{eq:pareto_size_under_load}
-\end{equation}
-
-对应低、中、高三类负载。
-
-这表明随着网络负载升高，
-不仅满足全部硬约束的策略数量减少，
-业务、能耗、资源和风险之间可供选择的非支配策略空间也明显收缩。
-
-需要注意的是，
-三类负载条件下的最优策略标识均为：
-
-\begin{equation}
-P^{*}
-=
-\texttt{RAN-POLICY-R00-0016}.
-\label{eq:stable_best_policy}
-\end{equation}
-
-这说明在当前离散动作空间和评分模型下，
-同一策略在三个预定义负载状态中均保持首名。
-
-但是，这一结果只能说明当前候选集内的排序稳定性，
-不能证明该策略在连续动作空间或真实网络中具有全局最优性。
+三类负载状态下，
+当前候选集中的首名策略保持不变。
+这说明该策略在当前离散参数空间和评分配置下具有较好的排序稳定性，
+但不表示其在连续参数空间或真实网络中一定为全局最优策略。
 
 
 \subsection*{反馈机制对比}
 
-为分析反馈优化的实际作用，
-本文分别在相同输入条件下运行：
-
-\begin{equation}
-feedbackEnabled
-=
-\texttt{false}
-\end{equation}
-
-和：
-
-\begin{equation}
-feedbackEnabled
-=
-\texttt{true}.
-\end{equation}
+为验证反馈优化的作用，
+本文分别在反馈关闭和反馈开启条件下运行相同实验。
 
 反馈关闭时，
-系统只执行第0轮候选生成和评估；
+系统只执行第0轮候选策略生成和评估；
 反馈开启时，
-系统根据评估结果生成局部邻域策略并继续迭代。
+系统根据违约原因和当前父策略生成局部邻域候选。
 
-对比结果如表
-\ref{tab:feedback_comparison}
+实验结果如表
+\ref{tab:feedback_results_reduced}
 所示。
 
 \begin{table}[H]
     \centering
-    \caption{反馈机制开启与关闭的结果对比}
-    \label{tab:feedback_comparison}
+    \caption{反馈机制开启与关闭的实验结果}
+    \label{tab:feedback_results_reduced}
     \small
     \renewcommand{\arraystretch}{1.25}
     \begin{tabular}{
-        >{\raggedright\arraybackslash}p{0.30\textwidth}
+        >{\raggedright\arraybackslash}p{0.34\textwidth}
         >{\centering\arraybackslash}p{0.22\textwidth}
         >{\centering\arraybackslash}p{0.22\textwidth}
     }
@@ -5309,11 +2684,6 @@ feedbackEnabled
         & 15
         \\
 
-        可行率
-        & 0.140000
-        & 0.137615
-        \\
-
         最优综合评分
         & 不变
         & 不变
@@ -5329,70 +2699,41 @@ feedbackEnabled
 \end{table}
 
 反馈开启后，
-评估策略数量由100增加到109，
-可行策略数量由14增加到15。
+评估策略数量由100增加至109，
+可行策略数量由14增加至15。
+这说明局部反馈能够在初始候选集之外生成新的策略变体，
+并发现额外的可行策略。
 
-新发现的可行策略为：
+但是，
+反馈开启前后最优综合评分和首名策略均未发生变化。
+因此，本次实验表明，
+当前局部反馈机制主要起到扩展局部搜索空间的作用，
+尚未进一步提高最优策略性能。
 
-\begin{equation}
-P_{\mathrm{new}}
-=
-\texttt{RAN-POLICY-R02-FB-F73FCAE57E}.
-\label{eq:new_feasible_feedback_policy}
-\end{equation}
-
-这说明当前反馈机制能够围绕父策略扩展局部搜索，
-并发现初始模板网格中未保留的新可行策略。
-
-但是，开启反馈后最优综合评分没有提升，
-首名策略也没有发生变化。
-
-因此，当前实验能够支持的结论是：
-
-\begin{equation}
-\boxed{
-\text{反馈机制扩展了局部搜索空间并发现额外可行策略，
-但未提高当前场景下的最优策略性能。}
-}
-\label{eq:feedback_experiment_conclusion}
-\end{equation}
-
-反馈开启后可行率略有下降，
-并不是可行策略数量减少，
-而是由于总评估策略数增加：
+反馈开启后的可行率略低于反馈关闭时，
+原因是总评估策略数量增加，
+而不是可行策略数量减少：
 
 \begin{equation}
 \frac{15}{109}
 <
 \frac{14}{100}.
-\label{eq:feedback_feasible_ratio_explanation}
+\label{eq:feedback_feasible_ratio_reduced}
 \end{equation}
 
-因此，评价反馈机制时，
-不能只比较可行率，
-还需要同时比较可行策略绝对数量、最优评分和首名策略变化。
-
-此外，
-各实验种子下的结果完全一致，
-原因是当前性能模型和候选生成过程均为确定性模式，
-随机种子只用于结果追踪，
-没有参与性能扰动。
+因此，反馈机制的效果应综合比较
+新增候选数量、可行策略绝对数量、
+最优评分和首名策略变化，
+不能只比较可行率。
 
 
 \subsection*{评分权重敏感性}
 
-为分析综合评分结果对权重配置的敏感程度，
-本文设置以下五组权重方案：
+本文进一步调整业务保障、节能、
+资源效率和风险控制四类评分权重，
+分析综合评分对权重设置的敏感程度。
 
-\begin{itemize}
-    \item 默认权重；
-    \item 业务保障优先；
-    \item 节能优先；
-    \item 资源效率优先；
-    \item 风险控制优先。
-\end{itemize}
-
-综合评分统一表示为：
+综合评分表示为：
 
 \begin{equation}
 Score(P_i)
@@ -5404,33 +2745,27 @@ Score(P_i)
 \lambda_rS_{\mathrm{resource}}
 +
 \lambda_qS_{\mathrm{risk}}.
-\label{eq:weight_sensitivity_score}
+\label{eq:weight_sensitivity_score_reduced}
 \end{equation}
 
-权重敏感性主要通过以下指标评价：
-
-\begin{itemize}
-    \item 最优策略是否变化；
-    \item Top-5策略集合Jaccard相似度；
-    \item 全部可行策略排名的Spearman相关系数；
-    \item 相对于默认权重的排名变化数量。
-\end{itemize}
+本文设置默认权重、业务保障优先、
+节能优先、资源效率优先和风险控制优先五组方案。
 
 主要结果如表
-\ref{tab:weight_sensitivity_results}
+\ref{tab:weight_sensitivity_reduced}
 所示。
 
 \begin{table}[H]
     \centering
     \caption{评分权重敏感性结果}
-    \label{tab:weight_sensitivity_results}
+    \label{tab:weight_sensitivity_reduced}
     \small
     \renewcommand{\arraystretch}{1.25}
     \begin{tabular}{
-        >{\raggedright\arraybackslash}p{0.26\textwidth}
-        >{\centering\arraybackslash}p{0.19\textwidth}
+        >{\raggedright\arraybackslash}p{0.28\textwidth}
         >{\centering\arraybackslash}p{0.20\textwidth}
-        >{\centering\arraybackslash}p{0.18\textwidth}
+        >{\centering\arraybackslash}p{0.22\textwidth}
+        >{\centering\arraybackslash}p{0.17\textwidth}
     }
         \toprule
         权重方案
@@ -5474,61 +2809,32 @@ Score(P_i)
     \end{tabular}
 \end{table}
 
-五组权重方案下的首名策略均为：
-
-\begin{equation}
-P^{*}
-=
-\texttt{RAN-POLICY-R00-0016}.
-\label{eq:weight_stable_best_policy}
-\end{equation}
-
-说明在当前候选集和评分结构下，
-最优策略对权重调整具有较高稳定性。
+五组权重方案下的首名策略均保持不变，
+说明当前首名策略对评分权重具有一定稳定性。
 
 业务保障优先方案的Spearman相关系数为0.9824，
-共出现8个策略排名变化，
-说明提高业务评分权重会影响中上游策略的相对顺序，
-但未改变Top-5策略集合。
+共有8个策略发生排名变化，
+但Top-5候选集合未改变。
 
 资源效率优先方案的Top-5 Jaccard相似度为0.6667，
 Spearman相关系数为0.9604，
-共出现7个排名变化。
-这表明资源权重变化对前列策略集合的影响相对更明显。
+共有7个策略发生排名变化，
+说明资源评分权重对前列候选策略的影响相对更明显。
 
 节能优先和风险控制优先方案下，
-完整排序与默认权重保持一致。
-这说明在当前性能结果和归一化边界下，
-节能和风险评分差异不足以改变策略间的排序关系。
+完整排序未发生变化。
+这表明在当前候选策略和性能结果中，
+节能评分和风险评分的差异尚不足以改变策略相对次序。
 
-需要指出的是，
-不同权重方案下的综合评分数值不能直接解释为物理性能提升或下降。
-因为：
-
-\begin{equation}
-Score_{\lambda^{(1)}}(P)
-\neq
-Score_{\lambda^{(2)}}(P)
-\label{eq:score_not_directly_comparable}
-\end{equation}
-
-时，
-分值差异可能仅由评分偏好变化引起，
-而不是策略实际吞吐率、时延或能耗发生变化。
-
-实验还表明，
-当前首名策略属于Pareto候选集合，
-但并不支配全部可行策略。
-因此，首名稳定主要来自当前评分结构、
-候选动作空间和性能结果分布，
-不能解释为该策略在所有评价维度上均优于其他策略。
+不同权重方案下的综合分值不宜直接横向比较，
+因为分值变化可能来自偏好权重调整，
+而不是策略物理性能发生变化。
 
 
-\subsection*{模型裁剪与结果有效性边界}
+\subsection*{模型裁剪分析}
 
-为保证简化性能模型输出保持在物理或评分允许范围内，
-系统对吞吐率、时延、BLER、语音质量、
-能耗、普通用户下降和风险等指标执行边界裁剪：
+为保证性能指标位于预定义范围内，
+简化RAN性能模型对部分输出执行边界裁剪：
 
 \begin{equation}
 x'
@@ -5539,418 +2845,1666 @@ x_{\mathrm{raw}},
 x_{\min},
 x_{\max}
 \right).
-\label{eq:simulation_output_clipping}
+\label{eq:model_clipping_reduced}
 \end{equation}
 
-正式实验共记录4633次裁剪事件。
-
-其中：
+正式实验共记录4633次裁剪事件，
+包括：
 
 \begin{itemize}
     \item 风险归一化裁剪3644次，占78.65\%；
-    \item 语音质量输出裁剪725次；
-    \item 用户视频上行BLER裁剪264次。
+    \item 语音质量裁剪725次；
+    \item 视频用户BLER裁剪264次。
 \end{itemize}
 
-裁剪事件数量关系为：
+其中：
 
 \begin{equation}
-3644+725+264
-=
-4633.
-\label{eq:clipping_event_count}
+3644+725+264=4633.
+\label{eq:clipping_count_reduced}
 \end{equation}
 
-风险归一化裁剪主要发生在风险原始值低于下界时，
-表示部分候选策略的某些风险分量被归一化为0。
+风险裁剪主要发生在风险原始值低于归一化下界时；
+语音质量裁剪主要发生在原始结果高于1时；
+BLER裁剪主要发生在原始结果低于0时。
 
-语音质量裁剪主要发生在模型原始计算结果高于1时，
-系统将其限制为质量上界1。
-
-BLER裁剪主要发生在资源保障和调度增益较强时，
-原始BLER计算结果低于0，
-系统将其限制为0。
-
-为判断裁剪是否影响实验结论，
-系统同时比较裁剪前后的：
-
-\begin{itemize}
-    \item 硬约束满足情况；
-    \item 每轮首名策略；
-    \item 最终推荐策略；
-    \item 策略排序变化。
-\end{itemize}
-
-检查结果表明：
+对裁剪前后结果进行比较后发现：
 
 \begin{equation}
-N_{\mathrm{constraint\ change}}
-=
-0,
-\label{eq:no_constraint_change_by_clipping}
+N_{\mathrm{constraint\ change}}=0,
+\label{eq:clipping_constraint_change_reduced}
 \end{equation}
 
-即没有任何策略因裁剪导致硬约束判定发生变化。
+即没有候选策略因裁剪导致硬约束判定发生变化。
 
 同时：
 
 \begin{equation}
-N_{\mathrm{top\ change}}
-=
-0,
-\label{eq:no_top_policy_change_by_clipping}
+N_{\mathrm{top\ change}}=0,
+\label{eq:clipping_top_change_reduced}
 \end{equation}
 
-即裁剪没有改变每轮首名策略和最终推荐策略。
+即裁剪没有改变各轮首名策略和最终推荐策略。
 
-部分非首名策略的相对顺序发生变化，
-但不影响本章关于负载趋势、
-反馈作用和首名稳定性的主要结论。
+因此，本次实验中的裁剪没有影响硬约束结论和最终推荐结果，
+但较多的风险归一化裁剪说明，
+当前简化模型的部分边界和系数仍需要进一步标定。
 
-因此，当前裁剪现象属于需要记录的模型诊断信息，
-但在本次实验中不构成阻断性问题。
+\chapter{网络高精度孪生建模与编排}
+\label{sec:high_fidelity_twin_overview}
 
-需要强调的是，
-裁剪比例较高也说明当前简化模型的部分公式和归一化边界
-仍有进一步标定和优化空间。
-未来接入高精度网络数字孪生后，
-应根据真实网络数据重新校准模型参数和输出范围。
+网络数字孪生是在数字空间中构建物理网络虚拟映射体，
+并利用网络数据、模型和映射关系描述网络实体、
+运行状态、控制行为及性能变化的技术。
+对于意图驱动网络决策而言，
+候选策略在下发物理网络之前，
+需要在与当前网络状态相对应的孪生环境中进行推演和验证，
+以降低在线试错带来的业务风险。
 
+网络数字孪生的基本过程可以表示为：
 
-\subsection*{实验结果讨论}
+\begin{equation}
+\mathcal{N}_{\mathrm{P}}
+\xrightarrow{\mathrm{Data\ Acquisition}}
+D(t)
+\xrightarrow{\mathrm{Twin\ Modeling}}
+\mathcal{N}_{\mathrm{T}}(t)
+\xrightarrow{\mathrm{Simulation}}
+\hat{\boldsymbol{Y}}(t),
+\label{eq:physical_to_twin_overview}
+\end{equation}
 
-综合上述实验结果，
-可以得到以下主要结论。
+其中，
+$\mathcal{N}_{\mathrm{P}}$表示物理网络，
+$D(t)$表示时刻$t$获取的网络数据，
+$\mathcal{N}_{\mathrm{T}}(t)$表示数字孪生状态，
+$\hat{\boldsymbol{Y}}(t)$表示孪生环境输出的性能预测结果。
 
-第一，
-当前原型能够稳定完成从自然语言业务需求到RAN策略推荐的完整闭环，
-说明意图抽取、意图转译、策略生成和策略评估之间的数据接口设计有效。
+本文面向单小区RAN候选策略验证场景，
+将网络数字孪生表示为：
 
-第二，
-随着网络负载升高，
-视频P05吞吐率下降、P95时延上升、PRB利用率增加，
-可行策略比例和Pareto候选数量均明显下降。
-这表明高负载条件下，
-同时满足视频保障、语音保护和资源约束的策略空间显著收缩。
+\begin{equation}
+\mathcal{N}_{\mathrm{T}}(t)
+=
+\left\{
+D(t),
+M,
+X_{\mathrm{T}}(t),
+\Gamma
+\right\},
+\label{eq:network_twin_composition}
+\end{equation}
 
-第三，
-反馈机制能够在当前最优或近似最优父策略周围
-生成新的局部候选，
-并发现额外可行策略。
-但是，在当前场景和离散动作空间下，
-反馈并未提升最优综合评分，
-说明局部邻域搜索的改进空间有限。
-
-第四，
-评分权重变化没有改变首名策略，
-但业务权重和资源权重变化会影响部分中上游策略排序。
-因此，在实际系统中，
-评分权重仍需要根据业务优先级和运营目标进行配置与校准。
-
-第五，
-模型裁剪没有改变硬约束判定和最终推荐结果，
-但较高的风险归一化裁剪比例表明，
-当前简化模型仍需要进一步标定。
-
-上述结论适用于：
-
-\begin{itemize}
-    \item \texttt{simplified-ran-v1}性能模型；
-    \item 当前单小区RAN状态；
-    \item 当前四类RAN动作；
-    \item 当前离散参数集合；
-    \item 当前SLA门限和评分权重；
-    \item 当前预定义的低、中、高负载状态。
-\end{itemize}
-
-不能将实验结果直接外推到：
+其中：
 
 \begin{itemize}
-    \item 真实运营商网络；
-    \item 多小区和跨域网络；
-    \item 连续动作参数空间；
-    \item 不同业务负载和用户分布；
-    \item 真实无线信道、调度和队列过程；
-    \item 真实基站能耗和设备控制。
+    \item $D(t)$表示用于构建孪生状态的网络状态和业务数据；
+    \item $M$表示实体、资源、行为和性能模型集合；
+    \item $X_{\mathrm{T}}(t)$表示孪生环境中的网络状态；
+    \item $\Gamma$表示物理网络对象、候选策略与孪生对象之间的映射关系。
 \end{itemize}
 
-因此，本节实验的定位是：
+本文中的网络高精度孪生建模主要解决：
+
+\begin{equation}
+\text{如何围绕候选策略验证任务准确表示网络状态、实体关系和性能行为}.
+\end{equation}
+
+孪生环境编排主要解决：
+
+\begin{equation}
+\text{如何根据候选策略自动组织状态、模型、场景和验证任务}.
+\end{equation}
+
+两者之间的关系可以表示为：
+
+\begin{equation}
+\begin{aligned}
+\mathcal{N}_{\mathrm{P}}
+&\xrightarrow{\mathrm{Twin\ Modeling}}
+\mathcal{N}_{\mathrm{T}},
+\\
+P_i
+&\xrightarrow{\mathrm{Twin\ Orchestration}}
+\mathcal{E}_i
+\xrightarrow{\mathrm{Twin\ Validation}}
+V_i,
+\end{aligned}
+\label{eq:modeling_orchestration_validation_relation}
+\end{equation}
+
+其中，
+$P_i$表示第$i$个候选RAN策略，
+$\mathcal{E}_i$表示针对该策略构建的独立孪生验证场景，
+$V_i$表示对应的策略验证结果。
+
+从端到端流程看，
+本章与第三章的关系为：
+
+\begin{equation}
+\begin{aligned}
+\text{Business Intent}
+&\xrightarrow{\mathrm{Intent\ Decision}}
+\mathcal{P}_{\mathrm{candidate}}
+\\
+&\xrightarrow{\mathrm{Twin\ Orchestration}}
+\left\{
+\mathcal{E}_1,
+\ldots,
+\mathcal{E}_N
+\right\}
+\\
+&\xrightarrow{\mathrm{Twin\ Validation}}
+\mathcal{P}_{\mathrm{validated}}.
+\end{aligned}
+\label{eq:intent_to_twin_validation_flow}
+\end{equation}
+
+其中，
+$\mathcal{P}_{\mathrm{candidate}}$表示第三章生成的候选策略集合，
+$\mathcal{P}_{\mathrm{validated}}$表示经过数字孪生推演、
+硬约束检查和综合评分后的策略集合。
+
+本章的总体技术流程为：
+
+\begin{equation}
+\begin{aligned}
+\text{RAN State}
+&\xrightarrow{\mathrm{Twin\ State\ Construction}}
+\text{Twin State}
+\\
+\text{Candidate Policies}
+&\xrightarrow{\mathrm{Entity\ and\ Model\ Mapping}}
+\text{Twin Scenarios}
+\\
+&\xrightarrow{\mathrm{Performance\ Simulation}}
+\text{Predictions}
+\\
+&\xrightarrow{\mathrm{Constraint\ and\ Score}}
+\text{Validation Results}.
+\end{aligned}
+\label{eq:chapter_four_overall_flow}
+\end{equation}
+
+本文所称“高精度”并不表示当前原型已经达到实网级预测精度，
+而是指孪生模型能够围绕特定验证任务，
+在状态表达、对象映射、模型组合、场景隔离和结果追踪等方面
+提供较完整、可验证和可复现的支撑能力。
+
+高精度可从以下维度综合描述：
+
+\begin{equation}
+Q_{\mathrm{twin}}
+=
+f
+\left(
+Q_{\mathrm{state}},
+Q_{\mathrm{prediction}},
+Q_{\mathrm{scenario}},
+Q_{\mathrm{trace}}
+\right),
+\label{eq:twin_quality_dimensions_overview}
+\end{equation}
+
+其中，
+$Q_{\mathrm{state}}$表示状态表达完整性，
+$Q_{\mathrm{prediction}}$表示性能预测准确性，
+$Q_{\mathrm{scenario}}$表示场景对验证任务的覆盖程度，
+$Q_{\mathrm{trace}}$表示模型版本、输入和执行过程的可追踪程度。
+
+当前P0原型重点实现状态构建、语义建模、场景编排、
+性能模型封装和策略验证，
+实时状态同步、在线参数校准和数据驱动残差修正
+作为后续扩展方向。
+
+
+\section{网络高精度孪生建模}
+\label{sec:high_fidelity_twin_modeling}
+
+网络高精度孪生建模的目标是在数字空间中构建
+能够描述物理RAN实体、当前状态、业务对象、
+无线资源和性能变化的可计算模型，
+为候选策略编排和验证提供统一基础。
+
+本文面向演唱会场景下的单小区RAN策略验证，
+主要关注视频业务保障、语音业务保护、
+无线资源竞争和RAN节能等过程。
+
+孪生建模过程表示为：
+
+\begin{equation}
+D_{\mathrm{RAN}}
+\xrightarrow{\mathrm{State\ Construction}}
+X_{\mathrm{T}}
+\xrightarrow{\mathrm{Semantic\ Modeling}}
+G_{\mathrm{RAN}}
+\xrightarrow{\mathrm{Model\ Registration}}
+\mathcal{M}_{\mathrm{twin}},
+\label{eq:twin_modeling_process}
+\end{equation}
+
+其中，
+$D_{\mathrm{RAN}}$表示第三章已有的RAN状态数据，
+$X_{\mathrm{T}}$表示构建后的孪生状态，
+$G_{\mathrm{RAN}}$表示网络实体及其关系构成的轻量语义图，
+$\mathcal{M}_{\mathrm{twin}}$表示面向策略验证的模型集合。
+
+
+\subsection*{孪生建模对象与模型体系}
+
+网络数字孪生并不是对物理网络全部细节进行无差别复制，
+而是根据候选策略验证任务选择必要对象和状态变量。
+
+本文的建模对象包括：
+
+\begin{itemize}
+    \item 网络实体：gNB、小区、载波和调度器；
+    \item 业务对象：视频用户组、语音用户组和普通用户组；
+    \item 无线资源：PRB资源及其利用状态；
+    \item 控制行为：PRB预留、调度权重调整、语音资源保护和节能控制；
+    \item 性能指标：视频吞吐率、时延、BLER、语音质量、PRB利用率和RAN能耗。
+\end{itemize}
+
+设网络孪生模型集合为：
+
+\begin{equation}
+\mathcal{M}_{\mathrm{twin}}
+=
+\left\{
+M_{\mathrm{entity}},
+M_{\mathrm{state}},
+M_{\mathrm{resource}},
+M_{\mathrm{behavior}},
+M_{\mathrm{service}},
+M_{\mathrm{performance}}
+\right\},
+\label{eq:twin_model_system}
+\end{equation}
+
+其中：
+
+\begin{itemize}
+    \item $M_{\mathrm{entity}}$描述网络实体及其属性；
+    \item $M_{\mathrm{state}}$描述当前RAN运行状态；
+    \item $M_{\mathrm{resource}}$描述无线资源及分配关系；
+    \item $M_{\mathrm{behavior}}$描述调度和控制动作；
+    \item $M_{\mathrm{service}}$描述不同业务对象及其约束；
+    \item $M_{\mathrm{performance}}$描述状态和策略到性能指标的映射。
+\end{itemize}
+
+不同模型之间存在依赖关系，例如：
+
+\begin{equation}
+M_{\mathrm{resource}}
+\rightarrow
+M_{\mathrm{behavior}}
+\rightarrow
+M_{\mathrm{performance}}.
+\label{eq:model_dependency_chain}
+\end{equation}
+
+因此，本文通过模型注册表保存模型类型、版本、
+支持指标和依赖关系，
+根据候选策略验证需求选择所需模型，
+而不是使用单一模型描述所有网络过程。
+
+
+\subsection*{孪生状态构建}
+
+本文当前原型直接复用第三章已有的
+\texttt{RANState}作为基础网络状态真值，
+并在其外部增加快照标识、状态版本、数据来源、
+质量报告和内容哈希，形成：
+
+\begin{equation}
+X_{\mathrm{T}}
+=
+\left\{
+X_{\mathrm{RAN}},
+ID_{\mathrm{snapshot}},
+V_{\mathrm{state}},
+D_{\mathrm{source}},
+Q_{\mathrm{data}},
+H_{\mathrm{state}}
+\right\},
+\label{eq:twin_state_construction}
+\end{equation}
+
+其中：
+
+\begin{itemize}
+    \item $X_{\mathrm{RAN}}$表示第三章已有的RAN状态；
+    \item $ID_{\mathrm{snapshot}}$表示孪生快照标识；
+    \item $V_{\mathrm{state}}$表示状态版本；
+    \item $D_{\mathrm{source}}$表示数据来源信息；
+    \item $Q_{\mathrm{data}}$表示数据质量报告；
+    \item $H_{\mathrm{state}}$表示规范化状态内容的哈希。
+\end{itemize}
+
+状态构建过程校验：
+
+\begin{itemize}
+    \item 单小区标识是否一致；
+    \item 时间戳是否具有明确时区；
+    \item 用户标识是否唯一；
+    \item 数值字段是否满足范围约束；
+    \item 数据中是否包含NaN或无穷值。
+\end{itemize}
+
+相同业务内容生成相同状态哈希：
+
+\begin{equation}
+X_{\mathrm{T}}^{(1)}
+=
+X_{\mathrm{T}}^{(2)}
+\Rightarrow
+H_{\mathrm{state}}^{(1)}
+=
+H_{\mathrm{state}}^{(2)}.
+\label{eq:twin_state_hash_determinism}
+\end{equation}
+
+当前P0阶段尚未实现多源原始数据的在线时间对齐、
+插值和融合，
+上述功能在接口层面保留，
+后续可结合实际网络测量数据进一步扩展。
+
+
+\subsection*{网络实体与关系语义建模}
+
+为统一描述候选策略涉及的网络对象、业务和性能指标，
+本文采用轻量图结构构建RAN语义模型：
+
+\begin{equation}
+G_{\mathrm{RAN}}
+=
+\left(
+V_{\mathrm{RAN}},
+E_{\mathrm{RAN}},
+A_{\mathrm{RAN}}
+\right),
+\label{eq:ran_semantic_graph}
+\end{equation}
+
+其中，
+$V_{\mathrm{RAN}}$表示实体集合，
+$E_{\mathrm{RAN}}$表示实体关系集合，
+$A_{\mathrm{RAN}}$表示实体和关系属性。
+
+实体主要包括：
+
+\begin{equation}
+\begin{aligned}
+V_{\mathrm{RAN}}
+=
+\{&
+v_{\mathrm{gNB}},
+v_{\mathrm{cell}},
+v_{\mathrm{carrier}},
+v_{\mathrm{scheduler}},
+\\
+&
+v_{\mathrm{usergroup}},
+v_{\mathrm{service}},
+v_{\mathrm{resource}},
+v_{\mathrm{KPI}}
+\}.
+\end{aligned}
+\label{eq:ran_entity_types}
+\end{equation}
+
+主要关系包括：
+
+\begin{equation}
+E_{\mathrm{RAN}}
+=
+\left\{
+\operatorname{Contains},
+\operatorname{Serves},
+\operatorname{Uses},
+\operatorname{Consumes},
+\operatorname{Measures},
+\operatorname{Affects},
+\operatorname{ConstrainedBy}
+\right\}.
+\label{eq:ran_relation_types}
+\end{equation}
+
+例如：
+
+\begin{equation}
+\operatorname{Contains}
+\left(
+gNB_1,
+Cell_1
+\right)
+\end{equation}
+
+表示基站包含目标小区；
+
+\begin{equation}
+\operatorname{Serves}
+\left(
+Cell_1,
+VideoUserGroup
+\right)
+\end{equation}
+
+表示目标小区为视频用户组提供服务；
+
+\begin{equation}
+\operatorname{Affects}
+\left(
+\texttt{reservedPrbRatio},
+\texttt{videoThroughput}
+\right)
+\end{equation}
+
+表示视频PRB预留比例影响视频吞吐率。
+
+当前语义图采用确定性的实体列表和关系列表实现，
+支持实体查询、入边查询、出边查询、
+完整性检查和三元组导出，
+不依赖外部图数据库或知识推理框架。
+
+
+\subsection*{资源、行为与性能模型}
+
+候选策略表示为：
+
+\begin{equation}
+P_i
+=
+\left\{
+r_i,
+w_i,
+v_i,
+e_i
+\right\},
+\label{eq:candidate_policy_vector_twin}
+\end{equation}
+
+其中：
+
+\begin{itemize}
+    \item $r_i$表示视频业务PRB预留比例；
+    \item $w_i$表示视频业务调度权重；
+    \item $v_i$表示语音业务资源保护比例；
+    \item $e_i$表示节能控制强度。
+\end{itemize}
+
+资源模型描述总PRB数量及不同业务对资源的使用关系：
+
+\begin{equation}
+N_{\mathrm{video}}
++
+N_{\mathrm{voice}}
++
+N_{\mathrm{normal}}
++
+N_{\mathrm{idle}}
+=
+N_{\mathrm{PRB}}.
+\label{eq:prb_resource_conservation}
+\end{equation}
+
+候选策略通过资源模型和行为模型影响网络性能：
+
+\begin{equation}
+\hat{\boldsymbol{Y}}_i
+=
+f_{\mathrm{performance}}
+\left(
+X_{\mathrm{T}},
+P_i;
+\boldsymbol{\theta}
+\right),
+\label{eq:twin_performance_model}
+\end{equation}
+
+其中：
+
+\begin{equation}
+\hat{\boldsymbol{Y}}_i
+=
+\left[
+\hat{R}_{P05},
+\hat{D}_{P95},
+\widehat{BLER},
+\hat{Q}_{\mathrm{voice}},
+\hat{\rho}_{\mathrm{PRB}},
+\hat{E}_{\mathrm{RAN}}
+\right].
+\label{eq:twin_prediction_output}
+\end{equation}
+
+当前P0原型直接封装第三章已有的
+\texttt{SimplifiedRANPerformanceEvaluator}
+作为可执行性能模型。
+孪生封装层不重新计算、
+聚合、归一化或裁剪性能结果，
+而是在原性能结果外部增加场景标识、
+模型版本和诊断信息。
+
+因此，在关闭残差模型时满足：
+
+\begin{equation}
+f_{\mathrm{twin}}
+\left(
+X_{\mathrm{T}},
+P_i
+\right)
+=
+f_{\mathrm{simplified}}
+\left(
+X_{\mathrm{RAN}},
+P_i
+\right).
+\label{eq:twin_model_parity}
+\end{equation}
+
+数据驱动残差模型可以进一步表示为：
+
+\begin{equation}
+\hat{\boldsymbol{Y}}_i
+=
+\hat{\boldsymbol{Y}}_{i,\mathrm{phy}}
++
+\hat{\boldsymbol{e}}_{i,\mathrm{data}},
+\label{eq:future_hybrid_twin_prediction}
+\end{equation}
+
+但当前P0实现中：
+
+\begin{equation}
+\hat{\boldsymbol{e}}_{i,\mathrm{data}}
+=
+\boldsymbol{0},
+\end{equation}
+
+即未启用残差修正，
+该能力作为后续精度增强方向。
+
+
+\subsection*{面向验证任务的高精度建模}
+
+本文所称高精度不是单纯增加模型复杂度，
+而是根据候选策略验证任务，
+选择必要对象、模型和评价指标。
+
+对于验证任务$\tau$，
+其需求表示为：
+
+\begin{equation}
+R_{\tau}
+=
+\left\{
+O_{\tau},
+Y_{\tau},
+L_{\tau},
+C_{\tau}
+\right\},
+\label{eq:task_model_requirement}
+\end{equation}
+
+其中：
+
+\begin{itemize}
+    \item $O_{\tau}$表示需要建模的网络对象；
+    \item $Y_{\tau}$表示需要输出的性能指标；
+    \item $L_{\tau}$表示允许的验证时延；
+    \item $C_{\tau}$表示计算资源约束。
+\end{itemize}
+
+针对本文演唱会场景，
+重点建模视频吞吐率、视频时延、
+语音质量、PRB利用率和RAN能耗，
+与当前策略无关的网络过程采用简化模型。
+
+因此，当前P0阶段的高精度主要体现在：
+
+\begin{itemize}
+    \item 网络状态和模型版本具有明确来源；
+    \item 候选策略能够准确映射到孪生实体和控制变量；
+    \item 每个策略具有独立的验证场景；
+    \item 性能模型和评分模块能够无损复用；
+    \item 输入、配置、模型和输出均可追踪和复现。
+\end{itemize}
+
+
+\section{孪生模型校准方法}
+\label{sec:twin_model_calibration}
+
+由于无线环境、业务负载和调度过程具有动态性，
+孪生性能模型与真实网络行为之间可能存在偏差。
+因此，在具备实际网络观测数据后，
+需要对孪生模型参数进行校准。
+
+设孪生模型为：
+
+\begin{equation}
+\hat{\boldsymbol{Y}}
+=
+f_{\mathrm{twin}}
+\left(
+X,
+P;
+\boldsymbol{\theta}
+\right),
+\label{eq:twin_model_calibration_model}
+\end{equation}
+
+真实网络或高保真仿真观测为$\boldsymbol{Y}$，
+则模型误差为：
+
+\begin{equation}
+\boldsymbol{e}
+=
+\boldsymbol{Y}
+-
+\hat{\boldsymbol{Y}}.
+\label{eq:twin_model_error}
+\end{equation}
+
+模型校准的目标是寻找参数$\boldsymbol{\theta}^{*}$，
+使得多个样本上的预测误差最小：
+
+\begin{equation}
+\boldsymbol{\theta}^{*}
+=
+\arg\min_{\boldsymbol{\theta}}
+\sum_{n=1}^{N}
+\mathcal{L}
+\left(
+\boldsymbol{Y}^{(n)},
+f_{\mathrm{twin}}
+\left(
+X^{(n)},
+P^{(n)};
+\boldsymbol{\theta}
+\right)
+\right).
+\label{eq:twin_parameter_calibration}
+\end{equation}
+
+其中，
+$\mathcal{L}(\cdot)$表示多指标预测损失函数。
+
+
+\subsection*{待校准参数}
+
+面向本文RAN策略验证任务，
+后续可重点校准：
+
+\begin{itemize}
+    \item 视频吞吐率模型参数；
+    \item 视频时延模型参数；
+    \item BLER模型参数；
+    \item 语音质量模型参数；
+    \item RAN能耗模型参数。
+\end{itemize}
+
+参数集合表示为：
+
+\begin{equation}
+\boldsymbol{\theta}
+=
+\left\{
+\boldsymbol{\theta}_{R},
+\boldsymbol{\theta}_{D},
+\boldsymbol{\theta}_{B},
+\boldsymbol{\theta}_{Q},
+\boldsymbol{\theta}_{E}
+\right\}.
+\label{eq:twin_calibration_parameters}
+\end{equation}
+
+
+\subsection*{约束条件下的参数校准}
+
+模型校准除了降低预测误差，
+还需要满足参数边界和基本物理规律：
+
+\begin{equation}
+\boldsymbol{\theta}_{\min}
+\leq
+\boldsymbol{\theta}
+\leq
+\boldsymbol{\theta}_{\max}.
+\label{eq:twin_parameter_bounds}
+\end{equation}
+
+同时，模型输出应满足：
+
+\begin{equation}
+\hat{R}\geq0,
+\qquad
+\hat{D}\geq0,
+\qquad
+0\leq\widehat{BLER}\leq1,
+\label{eq:twin_output_bounds_one}
+\end{equation}
+
+\begin{equation}
+0\leq
+\hat{Q}_{\mathrm{voice}}
+\leq1,
+\qquad
+0\leq
+\hat{\rho}_{\mathrm{PRB}}
+\leq1.
+\label{eq:twin_output_bounds_two}
+\end{equation}
+
+还应保持必要的单调关系，例如：
+
+\begin{equation}
+\frac{\partial \hat{R}_{\mathrm{video}}}
+{\partial r}
+\geq0,
+\qquad
+\frac{\partial \hat{D}_{\mathrm{video}}}
+{\partial \rho}
+\geq0.
+\label{eq:twin_monotonic_constraints}
+\end{equation}
+
+通过上述约束，
+可以避免模型参数虽然降低了拟合误差，
+但产生违反无线网络基本规律的预测结果。
+
+
+\subsection*{当前实现边界}
+
+当前P0原型的主要目标是验证：
+
+\begin{equation}
+\text{Policy}
+\rightarrow
+\text{Twin Scenario}
+\rightarrow
+\text{Prediction}
+\rightarrow
+\text{Validation}
+\end{equation}
+
+流程的正确性，
+因此正式实验使用冻结的
+\texttt{simplified-ran-v1}模型参数，
+未执行参数搜索、在线校准和残差模型训练。
+
+本节给出的校准方法属于后续精度增强方案。
+在获得实网测量数据或高保真系统级仿真数据后，
+可以在不改变当前孪生编排和验证框架的前提下，
+引入参数校准和残差修正，
+进一步提高孪生模型的预测能力。
+
+
+\section{孪生环境中的策略编排}
+\label{sec:twin_environment_orchestration}
+
+孪生环境中的策略编排是将候选策略、
+孪生状态、语义关系和模型注册信息
+转换为可执行验证场景的过程。
+
+本文将其表示为：
+
+\begin{equation}
+\mathcal{O}
+:
+\left(
+P_i,
+X_{\mathrm{T}},
+G_{\mathrm{RAN}},
+\mathcal{M}_{\mathrm{twin}}
+\right)
+\rightarrow
+\mathcal{E}_i.
+\label{eq:twin_orchestration_definition}
+\end{equation}
+
+其中，
+$P_i$表示候选策略，
+$X_{\mathrm{T}}$表示当前孪生状态，
+$G_{\mathrm{RAN}}$表示网络语义图，
+$\mathcal{M}_{\mathrm{twin}}$表示模型注册表，
+$\mathcal{E}_i$表示策略对应的孪生验证场景。
+
+本文策略编排主要包括：
+
+\begin{enumerate}[label=\arabic*)]
+    \item 候选策略适配；
+    \item 策略与孪生实体映射；
+    \item 模型与指标选择；
+    \item 独立场景构建；
+    \item 多策略顺序任务编排。
+\end{enumerate}
+
+
+\subsection*{候选策略适配}
+
+第三章候选策略由多个动作组成，
+策略适配器将其转换为统一控制向量：
+
+\begin{equation}
+P_i
+\xrightarrow{\mathrm{Adapter}}
+\boldsymbol{u}_i
+=
+\left[
+r_i,
+w_i,
+v_i,
+e_i
+\right].
+\label{eq:candidate_policy_adapter}
+\end{equation}
+
+当某类动作未出现在候选策略中时，
+对应参数使用基础性能模型配置中定义的中性值，
+而不是在适配器中硬编码默认参数。
+
+适配过程校验：
+
+\begin{itemize}
+    \item 动作类型是否受支持；
+    \item 同类动作是否重复；
+    \item 参数是否缺失；
+    \item 参数是否为有限数值；
+    \item 参数是否满足定义范围；
+    \item 策略目标小区是否与孪生状态一致。
+\end{itemize}
+
+
+\subsection*{策略与孪生实体映射}
+
+策略参数需要映射到具体网络实体、
+控制变量、性能模型和评价指标。
+
+映射过程表示为：
+
+\begin{equation}
+P_i
+\xrightarrow{\Gamma_{P}}
+\left\{
+V_i^{\mathrm{target}},
+A_i^{\mathrm{control}},
+M_i^{\mathrm{required}},
+Y_i^{\mathrm{required}}
+\right\},
+\label{eq:policy_entity_model_mapping}
+\end{equation}
+
+其中：
+
+\begin{itemize}
+    \item $V_i^{\mathrm{target}}$表示策略作用实体；
+    \item $A_i^{\mathrm{control}}$表示控制变量；
+    \item $M_i^{\mathrm{required}}$表示所需模型；
+    \item $Y_i^{\mathrm{required}}$表示待验证指标。
+\end{itemize}
+
+本文主要策略映射关系如表
+\ref{tab:twin_policy_mapping}所示。
+
+\begin{table}[htbp]
+    \centering
+    \caption{候选策略与孪生对象映射关系}
+    \label{tab:twin_policy_mapping}
+    \begin{tabular}{p{0.25\textwidth}p{0.20\textwidth}p{0.43\textwidth}}
+        \toprule
+        策略动作 & 控制变量 & 主要作用对象 \\
+        \midrule
+        视频资源预留
+        & $r_i$
+        & 小区、视频用户组、PRB资源
+        \\
+        视频调度权重调整
+        & $w_i$
+        & 调度器、视频用户组
+        \\
+        语音资源保护
+        & $v_i$
+        & 语音用户组、PRB资源
+        \\
+        RAN节能控制
+        & $e_i$
+        & 小区、RAN能耗指标
+        \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+映射器同时记录完整映射轨迹，
+用于说明每个策略动作影响了哪些实体、
+调用了哪些模型以及关注哪些指标。
+
+
+\subsection*{孪生验证场景构建}
+
+针对候选策略$P_i$，
+定义孪生验证场景：
+
+\begin{equation}
+\mathcal{E}_i
+=
+\left\{
+X_i,
+P_i,
+\Gamma_i,
+M_i,
+Y_i,
+T_i
+\right\},
+\label{eq:twin_validation_scenario}
+\end{equation}
+
+其中：
+
+\begin{itemize}
+    \item $X_i$表示独立孪生状态副本；
+    \item $P_i$表示待验证策略；
+    \item $\Gamma_i$表示策略映射结果；
+    \item $M_i$表示选定模型；
+    \item $Y_i$表示评价指标集合；
+    \item $T_i$表示策略作用时间范围。
+\end{itemize}
+
+场景构建采用深拷贝机制，
+满足：
+
+\begin{equation}
+\operatorname{Ref}(X_i)
+\neq
+\operatorname{Ref}(X_j),
+\qquad
+i\neq j,
+\label{eq:twin_scenario_reference_isolation}
+\end{equation}
+
+并且：
+
+\begin{equation}
+\Delta X_i
+\not\Rightarrow
+\Delta X_j,
+\qquad
+\Delta X_i
+\not\Rightarrow
+\Delta X_{\mathrm{T}}.
+\label{eq:twin_scenario_state_isolation}
+\end{equation}
+
+即修改任一候选策略场景，
+不会影响其他场景或基础孪生状态。
+
+每个场景均包含稳定的场景标识和内容哈希：
+
+\begin{equation}
+ID_{\mathrm{scenario},i}
+=
+g
+\left(
+ID_{\mathrm{snapshot}},
+ID_{\mathrm{policy},i},
+V_{\mathrm{model}}
+\right).
+\label{eq:twin_scenario_id}
+\end{equation}
+
+相同输入能够生成相同场景标识、
+内容哈希和序列化结果。
+
+
+\subsection*{多策略验证任务编排}
+
+设候选策略集合为：
+
+\begin{equation}
+\mathcal{P}
+=
+\left\{
+P_1,
+P_2,
+\ldots,
+P_N
+\right\}.
+\end{equation}
+
+对应的孪生任务集合为：
+
+\begin{equation}
+\mathcal{T}
+=
+\left\{
+T_1,
+T_2,
+\ldots,
+T_N
+\right\}.
+\end{equation}
+
+当前P0原型采用顺序编排方式，
+按照候选策略生成轮次、策略标识和原输入顺序
+进行稳定排序：
+
+\begin{equation}
+T_1
+\rightarrow
+T_2
+\rightarrow
+\cdots
+\rightarrow
+T_N.
+\label{eq:sequential_twin_orchestration}
+\end{equation}
+
+每个任务记录：
+
+\begin{itemize}
+    \item 策略和场景标识；
+    \item 任务执行状态；
+    \item 模型版本；
+    \item 异常类型和错误摘要；
+    \item 场景构建和执行轨迹。
+\end{itemize}
+
+任务状态包括：
+
+\begin{equation}
+\left\{
+\texttt{succeeded},
+\texttt{failed},
+\texttt{timed\_out},
+\texttt{skipped}
+\right\}.
+\end{equation}
+
+当\texttt{failFast=false}时，
+单任务失败不会阻断后续策略验证；
+当\texttt{failFast=true}时，
+首次失败或超时后，
+其余未执行任务记为\texttt{skipped}。
+
+当前编排器采用顺序执行，
+多场景并行运行和计算资源动态调度
+作为后续扩展方向。
+
+
+\section{基于数字孪生的策略验证}
+\label{sec:twin_based_policy_validation}
+
+经过孪生状态构建和策略编排后，
+每个候选策略被转换为独立、可执行的孪生验证场景。
+
+策略验证过程表示为：
+
+\begin{equation}
+V_i
+=
+F_{\mathrm{val}}
+\left(
+\mathcal{E}_i
+\right),
+\label{eq:twin_validation_function}
+\end{equation}
+
+其执行链路为：
+
+\begin{equation}
+\mathcal{E}_i
+\xrightarrow{\mathrm{Performance\ Evaluation}}
+\hat{\boldsymbol{Y}}_i
+\xrightarrow{\mathrm{Constraint\ Check}}
+Feasible_i
+\xrightarrow{\mathrm{Scoring}}
+Score_i.
+\label{eq:twin_validation_process}
+\end{equation}
+
+
+\subsection*{孪生环境性能推演}
+
+当前P0原型采用第三章已有的
+\texttt{SimplifiedRANPerformanceEvaluator}
+作为基础可执行模型。
+
+性能推演输入为：
+
+\begin{equation}
+I_i
+=
+\left(
+X_i,
+P_i,
+V_{\mathrm{model}}
+\right),
+\end{equation}
+
+输出为：
+
+\begin{equation}
+\hat{\boldsymbol{Y}}_i
+=
+\left\{
+R_i,
+D_i,
+B_i,
+Q_i,
+\rho_i,
+E_i
+\right\},
+\label{eq:twin_validation_metrics}
+\end{equation}
+
+其中：
+
+\begin{itemize}
+    \item $R_i$表示视频业务吞吐率；
+    \item $D_i$表示视频业务时延；
+    \item $B_i$表示视频上行BLER；
+    \item $Q_i$表示语音业务质量；
+    \item $\rho_i$表示PRB利用率；
+    \item $E_i$表示RAN能耗。
+\end{itemize}
+
+孪生性能模型适配器直接调用原评估器，
+并将原始性能结果包装为
+\texttt{TwinPrediction}，
+不执行二次计算、聚合、归一化或裁剪。
+
+因此，关闭残差模型时：
+
+\begin{equation}
+\hat{\boldsymbol{Y}}_{i,\mathrm{twin}}
+=
+\hat{\boldsymbol{Y}}_{i,\mathrm{direct}}.
+\label{eq:twin_direct_prediction_equal}
+\end{equation}
+
+
+\subsection*{业务约束满足判断}
+
+策略验证需要判断性能结果是否满足
+第三章意图转译阶段形成的SLA约束。
+
+设硬约束集合为：
+
+\begin{equation}
+\mathcal{C}
+=
+\left\{
+C_{\mathrm{video}},
+C_{\mathrm{voice}},
+C_{\mathrm{resource}},
+C_{\mathrm{fairness}}
+\right\}.
+\label{eq:twin_hard_constraint_set}
+\end{equation}
+
+综合可行性表示为：
+
+\begin{equation}
+Feasible_i
+=
+\prod_{k}
+\mathbb{I}
+\left(
+C_{i,k}
+\right).
+\label{eq:twin_policy_feasibility}
+\end{equation}
+
+其中：
+
+\begin{itemize}
+    \item $Feasible_i=1$表示满足全部硬约束；
+    \item $Feasible_i=0$表示至少存在一个约束不满足。
+\end{itemize}
+
+本文的\texttt{TwinValidator}
+不重新定义SLA门限和硬约束公式，
+而是直接复用第三章已有的
+\texttt{HardConstraintChecker}。
+
+对于不可行策略：
+
+\begin{equation}
+Score_i=0,
+\qquad
+Rank_i=\varnothing.
+\label{eq:twin_infeasible_policy_result}
+\end{equation}
+
+所有违约原因均保留在原始评分结果中。
+
+
+\subsection*{多目标评分与排序}
+
+对满足硬约束的策略，
+本文复用第三章已有的
+\texttt{PolicyScorer}
+完成多目标评分与排序。
+
+综合评分可以抽象表示为：
+
+\begin{equation}
+Score_i
+=
+F_{\mathrm{score}}
+\left(
+S_i^{\mathrm{service}},
+S_i^{\mathrm{energy}},
+S_i^{\mathrm{resource}},
+S_i^{\mathrm{risk}}
+\right),
+\label{eq:twin_policy_score}
+\end{equation}
+
+其中：
+
+\begin{itemize}
+    \item $S_i^{\mathrm{service}}$表示业务保障评分；
+    \item $S_i^{\mathrm{energy}}$表示节能评分；
+    \item $S_i^{\mathrm{resource}}$表示资源利用评分；
+    \item $S_i^{\mathrm{risk}}$表示风险评分。
+\end{itemize}
+
+最优策略为：
+
+\begin{equation}
+P^{*}
+=
+\arg\max_{P_i\in\mathcal{P}_{\mathrm{feasible}}}
+Score_i.
+\label{eq:twin_best_policy_selection}
+\end{equation}
+
+由于孪生验证直接复用第三章的约束、
+归一化、评分和排序逻辑，
+能够保证相同性能结果得到相同的可行性、
+子评分、综合评分和排名。
+
+
+\subsection*{执行失败与策略不可行的区分}
+
+本文明确区分模型执行失败和策略不可行：
+
+\begin{equation}
+\text{Execution Failure}
+\neq
+\text{Policy Infeasibility}.
+\label{eq:execution_failure_not_infeasible}
+\end{equation}
+
+模型执行失败或超时表示当前任务没有得到有效性能预测，
+因此：
+
+\begin{equation}
+\text{Prediction}
+=
+\varnothing,
+\qquad
+\text{PolicyScore}
+=
+\varnothing.
+\end{equation}
+
+策略不可行表示模型已经成功执行，
+但预测结果违反一个或多个硬约束，
+此时保留完整性能结果、约束检查结果和违约原因。
+
+该设计避免将系统异常错误地解释为策略性能不满足要求。
+
+
+\subsection*{验证结果与后续优化}
+
+数字孪生验证结果可以作为后续策略优化的输入，
+例如根据视频吞吐率不足、语音质量下降或资源利用率过高
+调整候选策略参数。
+
+反馈闭环可表示为：
+
+\begin{equation}
+P_i
+\rightarrow
+V_i
+\rightarrow
+Feedback_i
+\rightarrow
+P_i^{\prime}.
+\label{eq:twin_feedback_loop}
+\end{equation}
+
+当前P0原型已经生成结构化验证结果，
+但尚未实现
+\texttt{TwinValidationResult}
+到第三章
+\texttt{FeedbackOptimizer}
+的正式适配和多轮反馈迭代。
+
+因此，本文当前实现重点验证：
+
+\begin{equation}
+\text{Policy}
+\rightarrow
+\text{Twin Orchestration}
+\rightarrow
+\text{Twin Validation}
+\end{equation}
+
+闭环中的前向验证过程，
+反馈优化作为后续扩展方向。
+
+
+\section{仿真实现与结果分析}
+\label{sec:twin_simulation_results}
+
+为验证前述孪生状态构建、场景编排和策略验证方法，
+本文基于第三章生成的候选RAN策略，
+实现了面向单小区RAN的轻量级数字孪生验证原型。
+
+原型执行流程为：
+
+\begin{equation}
+\begin{aligned}
+\text{RAN State}
++
+\text{Candidate Policies}
+&\xrightarrow{\mathrm{Twin\ Modeling}}
+\text{Twin State}
+\\
+&\xrightarrow{\mathrm{Orchestration}}
+\text{Twin Scenarios}
+\\
+&\xrightarrow{\mathrm{Evaluation}}
+\text{Twin Predictions}
+\\
+&\xrightarrow{\mathrm{Validation}}
+\text{Validation Results}.
+\end{aligned}
+\label{eq:twin_formal_experiment_pipeline}
+\end{equation}
+
+本节重点分析端到端验证结果、
+模型封装一致性、场景隔离性、
+批量处理开销、故障隔离和可复现性。
+
+
+\subsection*{实验设置}
+
+实验采用单小区RAN状态和第三章生成的候选策略，
+基础性能模型为
+\texttt{simplified-ran-v1}，
+孪生模型版本为
+\texttt{twin-ran-v1}。
+
+当前实验未启用参数校准和残差模型，
+主要验证孪生框架的功能正确性、
+场景隔离性、执行稳定性和结果可复现性。
+
+正式实验包括：
+
+\begin{itemize}
+    \item 100个候选策略的端到端孪生验证；
+    \item 直接性能评估与孪生封装的一致性比较；
+    \item 100个独立策略场景的隔离性检查；
+    \item 10、50、100和500个策略的批量开销测试；
+    \item 场景失败、模型失败和执行超时测试；
+    \item 100个策略重复运行5次的可复现性测试。
+\end{itemize}
+
+所有结果均来自简化RAN性能模型，
+不属于真实网络测量结果。
+
+
+\subsection*{端到端验证与模型一致性}
+
+100个候选策略的端到端验证结果如表
+\ref{tab:twin_end_to_end_results}所示。
+
+\begin{table}[htbp]
+    \centering
+    \caption{端到端数字孪生验证结果}
+    \label{tab:twin_end_to_end_results}
+    \begin{tabular}{lc}
+        \toprule
+        指标 & 实验结果 \\
+        \midrule
+        输入候选策略数 & 100 \\
+        成功构建的孪生场景数 & 100 \\
+        成功生成的性能预测数 & 100 \\
+        成功生成的验证结果数 & 100 \\
+        可行策略数 & 14 \\
+        不可行策略数 & 86 \\
+        最优策略 & \texttt{RAN-POLICY-R00-0016} \\
+        最优策略综合评分 & 0.6136577 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+所有候选策略均成功完成：
+
+\begin{equation}
+P_i
+\xrightarrow{\mathrm{Mapping}}
+\mathcal{E}_i
+\xrightarrow{\mathrm{Simulation}}
+\hat{\boldsymbol{Y}}_i
+\xrightarrow{\mathrm{Validation}}
+V_i.
+\end{equation}
+
+其中14个策略满足全部硬约束，
+最优策略为
+\texttt{RAN-POLICY-R00-0016}。
+
+为验证孪生封装是否改变第三章基础模型结果，
+对100个策略的完整性能结果、
+裁剪诊断、硬约束、子评分、综合评分和排名进行比较。
+
+实验结果如表
+\ref{tab:twin_parity_results}所示。
+
+\begin{table}[htbp]
+    \centering
+    \caption{直接评估与数字孪生封装一致性结果}
+    \label{tab:twin_parity_results}
+    \begin{tabular}{lc}
+        \toprule
+        检查项 & 实验结果 \\
+        \midrule
+        最大性能指标绝对误差 & 0 \\
+        完整性能结果一致率 & 100\% \\
+        裁剪诊断一致率 & 100\% \\
+        硬约束一致率 & 100\% \\
+        子评分一致率 & 100\% \\
+        综合评分一致率 & 100\% \\
+        排名一致率 & 100\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+上述结果表明，在关闭残差模型时：
+
+\begin{equation}
+F_{\mathrm{twin}}(X,P)
+=
+F_{\mathrm{simplified}}(X,P).
+\label{eq:twin_formal_parity_result}
+\end{equation}
+
+这里的100\%一致性表示孪生封装无损复用了
+第三章的简化RAN性能模型，
+并不表示该模型与真实物理网络达到100\%预测一致。
+
+
+\subsection*{场景隔离与批量处理开销}
+
+实验对100个孪生场景进行对象隔离检查。
+结果表明：
+
+\begin{itemize}
+    \item 各场景中的孪生状态对象相互独立；
+    \item 各场景中的候选策略对象相互独立；
+    \item 修改任一场景不会影响其他场景；
+    \item 修改任一场景不会影响基础孪生状态和原始策略。
+\end{itemize}
+
+场景隔离成功率为：
+
+\begin{equation}
+R_{\mathrm{isolation}}
+=
+\frac{100}{100}
+=
+100\%.
+\end{equation}
+
+不同候选策略规模下的运行开销如表
+\ref{tab:twin_scalability_results}所示。
+
+\begin{table}[htbp]
+    \centering
+    \caption{不同策略规模下的数字孪生运行开销}
+    \label{tab:twin_scalability_results}
+    \begin{tabular}{rrrrrr}
+        \toprule
+        策略数
+        & 场景编排/s
+        & 性能推演/s
+        & 验证排序/s
+        & 结果写出/s
+        & 总时间/s \\
+        \midrule
+        10
+        & 0.005352
+        & 0.002302
+        & 0.001038
+        & 0.014790
+        & 0.031646 \\
+        50
+        & 0.020673
+        & 0.011230
+        & 0.004860
+        & 0.109937
+        & 0.158530 \\
+        100
+        & 0.049343
+        & 0.024170
+        & 0.012766
+        & 0.116815
+        & 0.217105 \\
+        500
+        & 0.280341
+        & 0.220820
+        & 0.059329
+        & 0.754266
+        & 1.323483 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+在当前环境下，
+总运行时间随候选策略数量增加而上升。
+处理100个策略约需$0.22~\mathrm{s}$，
+处理500个策略约需$1.32~\mathrm{s}$。
+
+500个策略时，
+结果写出约占总时间的57\%，
+是耗时最大的阶段。
+这说明当前轻量模型的主要开销并非性能推演，
+而是独立保存场景、预测、验证结果和运行轨迹。
+
+后续可通过批量写入、结果压缩和按需持久化
+降低大规模候选策略验证的输入输出开销。
+
+
+\subsection*{故障隔离与可复现性}
+
+实验分别注入场景构建失败、
+模型执行失败和执行超时。
+
+当\texttt{failFast=false}时，
+单任务失败不会阻断其他策略验证；
+当\texttt{failFast=true}时，
+首次失败后停止后续任务，
+未执行任务标记为\texttt{skipped}。
+
+两种模式下均满足：
+
+\begin{equation}
+N_{\mathrm{fake\ prediction}}
+=
+N_{\mathrm{fake\ score}}
+=
+0.
+\end{equation}
+
+即失败或超时任务不会生成伪造的性能预测和策略评分。
+
+在可复现性实验中，
+相同输入和配置重复运行5次，
+孪生状态、语义图、场景、预测、
+验证结果和诊断信息的业务内容完全一致：
+
+\begin{equation}
+R_{\mathrm{repro}}
+=
+\frac{5}{5}
+=
+100\%.
+\end{equation}
+
+说明当前原型能够在固定输入和配置条件下，
+稳定复现策略验证过程和业务输出。
+
+
+\subsection*{结果讨论}
+
+综合上述实验，
+当前P0数字孪生原型已经实现：
+
+\begin{enumerate}[label=\arabic*)]
+    \item RAN状态到孪生状态的规范化构建；
+    \item 网络实体、业务、资源和KPI的轻量语义建模；
+    \item 候选策略到孪生实体、控制变量和模型的映射；
+    \item 独立、可追踪和可复现的孪生场景构建；
+    \item 基础性能模型的无损封装；
+    \item 硬约束检查、多目标评分和策略排序；
+    \item 单任务异常隔离和运行结果追踪。
+\end{enumerate}
+
+实验验证了：
 
 \begin{equation}
 \boxed{
-\text{验证意图驱动决策流程和相对变化趋势，
-而不是预测真实RAN性能。}
+\text{Candidate Policy}
+\rightarrow
+\text{Twin Orchestration}
+\rightarrow
+\text{Twin Validation}
 }
-\label{eq:simulation_result_positioning}
 \end{equation}
 
-当前性能评估器已经通过统一接口与上层策略决策模块解耦。
-下一章可在保持意图转译、
-策略生成和评分接口基本不变的前提下，
-将\texttt{simplified-ran-v1}替换为
-具有更高保真度的网络数字孪生评估器，
-进一步提升策略推演结果的可信度。
+在当前单小区RAN原型中的可实现性。
 
-\chapter{网络高精度孪生建模与编排}
-
-网络高精度孪生建模与编排是支撑6G意图驱动智能决策可信验证的重要技术基础。第三章中的意图驱动智能决策主要解决“业务意图如何转换为候选网络策略”的问题，而本章重点解决“如何构建可信数字孪生环境，并利用孪生环境对候选策略进行仿真推演和效果验证”的问题。
-
-在本文语境下，网络高精度孪生建模与编排并不侧重现网中的网络功能编排或资源下发，而是侧重数字孪生环境内部的数据、模型、场景、仿真任务和验证流程组织。也就是说，建模解决“数字孪生环境如何准确刻画真实网络”的问题，编排解决“如何将数据、模型和仿真任务组织起来支撑策略验证”的问题。
-
-本章围绕网络高精度孪生建模与编排关键技术展开，主要包括多源数据融合、网络语义建模、高精度孪生模型构建、孪生模型动态校准、数字孪生环境编排以及基于孪生环境的策略仿真验证等内容。
-
-\section{网络高精度孪生建模与编排概述}
-
-网络数字孪生（Network Digital Twin, NDT）的核心思想是在数字空间中构建物理网络的虚拟映射体，并通过数据交互和模型更新实现对物理网络状态、行为和性能的动态刻画。面向6G网络，网络数字孪生不仅需要反映网络当前状态，还需要具备性能预测、策略推演和风险评估能力，为智能决策提供可信验证环境。
-
-网络高精度孪生建模与编排可分为两个层面。
-
-一是高精度孪生建模，主要面向物理网络状态和行为的数字化表达，重点构建网络拓扑、无线环境、业务流量、资源状态、协议流程和性能预测等模型，使数字孪生环境能够尽可能准确地反映真实网络。
-
-二是数字孪生环境编排，主要面向特定业务意图和候选策略验证任务，对孪生环境中的数据资源、模型资源、场景资源、计算资源和仿真任务进行组织与调度，形成可运行、可验证、可评估的数字孪生实验环境。
-
-二者关系可以概括为：
-
-\begin{equation}
-Physical\ Network
-\rightarrow
-Twin\ Modeling
-\rightarrow
-Twin\ Orchestration
-\rightarrow
-Simulation
-\rightarrow
-Evaluation
-\end{equation}
-
-其中，$Twin\ Modeling$表示网络孪生建模过程，$Twin\ Orchestration$表示数字孪生环境中的模型、场景和任务编排过程，$Simulation$表示仿真推演过程，$Evaluation$表示策略效果评估过程。
-
-\section{多源异构数据感知与融合}
-
-高精度孪生建模首先依赖多源异构数据。6G网络涉及无线接入、核心网、承载网、边缘计算、终端和业务平台等多个对象，其数据来源复杂、类型多样、时间粒度不一致，需要通过统一的数据治理和融合机制，为孪生建模提供可靠数据基础。
-
-面向网络数字孪生的数据可表示为：
-
-\begin{equation}
-D=\{D_{topo},D_{config},D_{KPI},D_{service},D_{resource},D_{env}\}
-\end{equation}
-
-其中，$D_{topo}$表示网络拓扑数据，$D_{config}$表示配置参数数据，$D_{KPI}$表示性能指标数据，$D_{service}$表示业务数据，$D_{resource}$表示资源状态数据，$D_{env}$表示环境数据。
-
-具体包括：
+但当前实验仍存在以下局限：
 
 \begin{itemize}
-    \item \textbf{网络拓扑数据：} 描述基站、小区、核心网网元、边缘节点、链路和接口关系；
-    \item \textbf{配置参数数据：} 描述小区频点、带宽、功率、邻区关系、切片参数等配置状态；
-    \item \textbf{性能指标数据：} 包括吞吐量、时延、丢包率、资源利用率、接入成功率、切换成功率等；
-    \item \textbf{业务状态数据：} 描述业务类型、业务流量、用户分布、业务体验和SLA状态；
-    \item \textbf{资源状态数据：} 包括频谱、功率、PRB、算力、存储和传输资源等；
-    \item \textbf{环境数据：} 描述地理位置、无线传播环境、干扰状态、用户移动轨迹等。
+    \item 仅面向单小区、单载波RAN；
+    \item 基础性能模型为确定性简化模型；
+    \item 尚未使用实网数据进行模型参数校准；
+    \item 尚未启用数据驱动残差模型；
+    \item 尚未实现验证结果到反馈优化器的闭环适配；
+    \item 当前编排器仅支持顺序执行；
+    \item 开销结果受当前硬件和文件系统环境影响。
 \end{itemize}
 
-通过数据清洗、时空对齐、特征提取和关联融合，可形成面向孪生建模的统一数据视图，为后续语义建模、状态预测和策略验证提供基础。
-
-\section{基于知识图谱的网络语义建模}
-
-仅依靠结构化指标难以完整表达网络实体之间复杂的关联关系。为了提升孪生模型的可解释性和可扩展性，需要引入知识图谱对网络实体、业务对象、性能指标、资源状态和控制策略之间的语义关系进行建模。
-
-网络知识图谱可表示为：
-
-\begin{equation}
-G=(V,E,A)
-\end{equation}
-
-其中，$V$表示实体集合，$E$表示实体之间的关系集合，$A$表示实体属性集合。
-
-在6G网络数字孪生场景中，典型实体包括：
-
-\begin{itemize}
-    \item 网络实体：基站、小区、UE、核心网网元、边缘节点等；
-    \item 资源实体：频谱、功率、PRB、算力、存储、链路等；
-    \item 业务实体：工业控制、高清视频、车联网、低空通信等；
-    \item 指标实体：时延、吞吐量、可靠性、丢包率、能耗、QoE等；
-    \item 策略实体：资源调度、功率调整、切片保障、节能控制等。
-\end{itemize}
-
-典型关系包括：
-
-\begin{itemize}
-    \item 连接关系：如“UE连接小区”“基站连接核心网网元”；
-    \item 影响关系：如“干扰增强导致误块率升高”；
-    \item 约束关系：如“业务SLA约束资源分配策略”；
-    \item 因果关系：如“PRB不足导致吞吐量下降”；
-    \item 映射关系：如“业务意图映射为SLA指标”。
-\end{itemize}
-
-通过知识图谱，可实现从网络数据到网络知识的转换，为孪生模型构建、策略验证和结果解释提供语义支撑。
-
-\section{高精度孪生模型构建}
-
-高精度孪生模型是数字孪生环境的核心。面向6G网络，单一模型难以完整描述网络状态，需要采用多模型融合方式，构建覆盖拓扑、无线、业务、资源、协议和AI预测能力的模型体系。
-
-\subsection{拓扑模型}
-
-拓扑模型用于描述网络节点、链路和连接关系，可表示为：
-
-\begin{equation}
-T=(N,L)
-\end{equation}
-
-其中，$N$表示网络节点集合，$L$表示链路集合。拓扑模型为业务路径分析、资源关联分析和故障影响范围评估提供基础。
-
-\subsection{无线环境模型}
-
-无线环境模型用于描述信道状态、覆盖范围、干扰关系和用户移动行为。其可抽象表示为：
-
-\begin{equation}
-H_t=f(d_t,\theta_t,v_t,\rho_t)
-\end{equation}
-
-其中，$d_t$表示传播距离，$\theta_t$表示空间方向，$v_t$表示用户移动状态，$\rho_t$表示环境参数。无线环境模型是无线接入网络孪生建模中的关键模型。
-
-\subsection{业务行为模型}
-
-业务行为模型用于描述业务流量到达、用户行为和业务体验变化，可表示为：
-
-\begin{equation}
-B_t=f(\lambda_t,U_t,QoS_t)
-\end{equation}
-
-其中，$\lambda_t$表示业务到达率，$U_t$表示用户状态，$QoS_t$表示业务质量需求。
-
-\subsection{资源状态模型}
-
-资源状态模型用于描述网络资源占用和变化情况，包括无线资源、计算资源、传输资源和存储资源等，可表示为：
-
-\begin{equation}
-R_t=\{R_{radio},R_{compute},R_{transport},R_{storage}\}
-\end{equation}
-
-该模型为资源调度、策略验证和资源冲突分析提供依据。
-
-\subsection{AI预测模型}
-
-AI预测模型用于根据历史状态和实时数据预测未来网络状态变化：
-
-\begin{equation}
-\hat{X}_{t+k}=g_{\phi}(X_{0:t},D_{0:t})
-\end{equation}
-
-其中，$\hat{X}_{t+k}$表示未来时刻的预测网络状态，$g_{\phi}$表示AI预测模型，$X_{0:t}$和$D_{0:t}$分别表示历史网络状态和历史观测数据。
-
-通过上述多模型融合，可以形成面向策略验证的高精度网络孪生模型体系。
-
-\section{孪生模型动态校准与一致性维护}
-
-由于真实网络状态具有动态变化特征，数字孪生模型需要持续根据物理网络反馈进行动态校准，保证虚拟网络与物理网络之间的一致性。
-
-孪生误差可表示为：
-
-\begin{equation}
-e_t=\|X_t-\hat{X}_t\|
-\end{equation}
-
-其中，$X_t$表示物理网络真实状态，$\hat{X}_t$表示数字孪生模型估计状态，$e_t$表示孪生误差。
-
-模型校准目标是最小化孪生误差：
-
-\begin{equation}
-\min_{\theta}\sum_{t=1}^{T}\|X_t-f_{\theta}(D_{0:t},M_t)\|^2
-\end{equation}
-
-其中，$f_{\theta}$表示孪生状态映射函数，$D_{0:t}$表示历史观测数据，$M_t$表示模型集合。
-
-动态校准主要包括：
-
-\begin{itemize}
-    \item 状态同步：根据实时网络数据更新孪生状态；
-    \item 参数修正：根据观测误差调整模型参数；
-    \item 模型更新：根据网络结构和业务变化更新模型；
-    \item 版本管理：记录模型演进过程，支持回溯与比较；
-    \item 一致性评估：评估数字孪生环境与物理网络之间的偏差。
-\end{itemize}
-
-通过动态校准与一致性维护，数字孪生模型能够持续逼近物理网络状态，提高策略验证结果的可信度。
-
-\section{数字孪生环境编排}
-
-数字孪生环境编排是本文中“编排”的重点。其核心不是将策略直接下发到现网，而是根据业务意图和策略验证任务，对数字孪生环境中的数据、模型、场景、计算资源和仿真流程进行组织与调度，形成可运行的孪生验证环境。
-
-数字孪生环境编排可表示为：
-
-\begin{equation}
-O_{twin}=F(D,M,Sce,Task,Res)
-\end{equation}
-
-其中，$D$表示数据资源，$M$表示模型资源，$Sce$表示仿真场景，$Task$表示仿真任务，$Res$表示计算资源。
-
-具体包括以下内容：
-
-\subsection{数据编排}
-
-数据编排负责根据验证任务选择所需数据，例如拓扑数据、业务数据、性能数据、资源数据和环境数据，并完成数据加载、时间对齐和格式转换。
-
-\subsection{模型编排}
-
-模型编排负责根据场景需求选择和组合相应孪生模型。例如，工业控制低时延场景需要组合无线环境模型、业务时延模型、可靠性模型和资源调度模型；节能场景则需要组合流量预测模型、能耗模型和覆盖保障模型。
-
-\subsection{场景编排}
-
-场景编排负责构建面向特定业务目标的孪生实验场景，包括区域拓扑、用户分布、业务类型、资源状态、SLA约束和候选策略配置。
-
-\subsection{任务编排}
-
-任务编排负责组织仿真任务执行过程，包括任务创建、模型加载、参数配置、并行仿真、结果汇聚和指标评估等。
-
-\subsection{资源编排}
-
-资源编排负责调度数字孪生环境中的计算资源和仿真资源，保障仿真任务能够按照优先级和时延要求完成。
-
-通过上述编排过程，数字孪生环境能够根据不同业务意图和策略验证需求，快速构建对应的仿真验证空间。
-
-\section{基于孪生环境的策略仿真验证}
-
-第三章输出的候选策略需要在数字孪生环境中进行仿真验证。该过程通过在孪生空间中模拟候选策略执行效果，评估其是否满足SLA要求，并分析潜在风险。
-
-策略验证流程如下：
-
-\begin{enumerate}
-    \item 输入候选策略集合；
-    \item 调用数字孪生环境编排机制，构建验证场景；
-    \item 加载相关数据、模型和SLA约束；
-    \item 在孪生环境中执行仿真推演；
-    \item 评估策略对性能、体验、资源和能耗的影响；
-    \item 输出策略验证结果和优化建议。
-\end{enumerate}
-
-策略评价函数可表示为：
-
-\begin{equation}
-J(P_i)=\alpha QoE(P_i)-\beta Delay(P_i)+\gamma Reliability(P_i)-\eta Energy(P_i)
-\end{equation}
-
-其中，$P_i$表示候选策略，$QoE(P_i)$表示策略对应的用户体验，$Delay(P_i)$表示时延，$Reliability(P_i)$表示可靠性，$Energy(P_i)$表示能耗，$\alpha$、$\beta$、$\gamma$、$\eta$为权重系数。
-
-最终，数字孪生环境输出策略验证结果：
-
-\begin{equation}
-Result=\{P_i,J(P_i),Risk(P_i),SLA(P_i)\}
-\end{equation}
-
-其中，$Risk(P_i)$表示策略风险，$SLA(P_i)$表示策略对SLA约束的满足情况。
-
-通过该过程，数字孪生环境能够在策略作用于真实网络之前完成预验证，降低现网试错风险，提高智能决策的可信性。
-
-\section{小结}
-
-本章围绕网络高精度孪生建模与编排技术展开，重点研究了多源数据融合、网络语义建模、高精度孪生模型构建、模型动态校准、数字孪生环境编排和策略仿真验证等内容。
-
-其中，高精度孪生建模侧重于构建物理网络在数字空间中的准确表达，解决“孪生体如何准确刻画真实网络”的问题；数字孪生环境编排侧重于根据业务意图和策略验证任务，对数据、模型、场景、计算资源和仿真任务进行组织调度，解决“孪生体如何被有效调用并支撑策略验证”的问题。
-
-整体来看，本章解决的是“策略是否有效、是否安全、如何验证”的问题，与第三章“意图驱动智能决策技术”形成衔接关系，共同支撑面向6G自智网络的智能决策与可信验证闭环。
-
-
-
+后续可进一步引入实网测量或高保真仿真数据，
+实现模型参数校准和残差修正，
+并扩展多小区、并行编排和反馈优化能力，
+逐步提高数字孪生对复杂RAN场景的预测能力和工程适用性。
 
 \printbibliography
 \end{document}
